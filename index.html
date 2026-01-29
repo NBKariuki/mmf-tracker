@@ -49,11 +49,12 @@
             margin-bottom: 10px;
         }
 
-        .last-update {
+        .data-timestamp {
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.85rem;
-            margin-top: 5px;
+            margin-top: 8px;
             font-weight: 500;
+            font-style: italic;
         }
 
         .month-selector {
@@ -158,63 +159,6 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
-        /* COMPACT GROUP SUMMARY - 3 Columns Horizontal */
-        .group-summary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin: 15px 0;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .summary-item {
-            text-align: center;
-            padding: 8px 5px;
-        }
-
-        .summary-label {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .summary-value {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #84fab0;
-            line-height: 1.2;
-        }
-
-        /* Track Contributions Link */
-        .track-link {
-            text-align: center;
-            margin: 15px 0;
-        }
-
-        .track-link a {
-            display: inline-block;
-            padding: 10px 20px;
-            background: rgba(132, 250, 176, 0.1);
-            border: 1px solid rgba(132, 250, 176, 0.3);
-            border-radius: 10px;
-            color: #84fab0;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .track-link a:hover {
-            background: rgba(132, 250, 176, 0.2);
-            transform: translateY(-2px);
-        }
-
         .member-statement {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -269,57 +213,173 @@
             text-align: right;
         }
 
-        .member-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* GROUP SUMMARY AT BOTTOM */
+        .bottom-summary {
+            background: linear-gradient(135deg, rgba(132, 250, 176, 0.1) 0%, rgba(143, 211, 244, 0.1) 100%);
+            border: 1px solid rgba(132, 250, 176, 0.3);
             border-radius: 16px;
             padding: 20px;
-            margin: 15px 0;
-            transition: all 0.3s ease;
-        }
-
-        .member-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .member-alias {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #84fab0;
-            margin-bottom: 12px;
-        }
-
-        .balance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-        }
-
-        .balance-item {
+            margin: 30px auto;
+            max-width: 600px;
             text-align: center;
         }
 
-        .balance-label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .balance-value {
-            font-size: 1rem;
+        .bottom-summary-title {
+            font-size: 1.1rem;
             font-weight: 700;
-            color: #fff;
+            color: #84fab0;
+            margin-bottom: 15px;
         }
 
-        .balance-value.positive {
+        .bottom-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .bottom-summary-item {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .bottom-summary-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .bottom-summary-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #8fd3f4;
+        }
+
+        /* ALL MEMBERS TABLE */
+        .members-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .members-table thead {
+            background: rgba(132, 250, 176, 0.15);
+        }
+
+        .members-table th {
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #84fab0;
+            border-bottom: 2px solid rgba(132, 250, 176, 0.3);
+        }
+
+        .members-table td {
+            padding: 12px 10px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .members-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .members-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .members-table .alias-col {
+            font-weight: 700;
             color: #84fab0;
         }
 
-        .balance-value.total {
+        .members-table .number-col {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .members-table .total-row {
+            background: rgba(132, 250, 176, 0.1);
+            font-weight: 700;
+        }
+
+        .members-table .total-row td {
+            border-top: 2px solid rgba(132, 250, 176, 0.3);
+            padding: 15px 10px;
+        }
+
+        /* GROUP RULES SECTION */
+        .group-rules {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        .group-rules h3 {
+            color: #84fab0;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .group-rules .rule-section {
+            margin: 15px 0;
+        }
+
+        .group-rules .rule-title {
             color: #8fd3f4;
-            font-size: 1.2rem;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .group-rules .rule-content {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-left: 15px;
+        }
+
+        .group-rules .rule-date {
+            text-align: center;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+
+        .track-link {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .track-link a {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(132, 250, 176, 0.1);
+            border: 1px solid rgba(132, 250, 176, 0.3);
+            border-radius: 10px;
+            color: #84fab0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .track-link a:hover {
+            background: rgba(132, 250, 176, 0.2);
+            transform: translateY(-2px);
         }
 
         .loading {
@@ -372,14 +432,6 @@
                 font-size: 0.85rem;
             }
 
-            .summary-label {
-                font-size: 0.65rem;
-            }
-
-            .summary-value {
-                font-size: 0.85rem;
-            }
-
             .member-statement {
                 padding: 20px;
             }
@@ -388,27 +440,26 @@
                 font-size: 1.5rem;
             }
 
-            .balance-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 400px) {
-            .group-summary {
-                padding: 10px 8px;
-                gap: 6px;
-            }
-
-            .summary-item {
-                padding: 6px 3px;
-            }
-
-            .summary-label {
-                font-size: 0.6rem;
-            }
-
-            .summary-value {
+            .members-table {
                 font-size: 0.8rem;
+            }
+
+            .members-table th,
+            .members-table td {
+                padding: 8px 6px;
+            }
+
+            .bottom-summary-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .group-rules {
+                padding: 20px;
+            }
+
+            .group-rules h3 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -433,7 +484,7 @@
             const [selectedMonth, setSelectedMonth] = useState('January');
             const [selectedAlias, setSelectedAlias] = useState('');
             const [view, setView] = useState('member');
-            const [lastUpdate, setLastUpdate] = useState(null);
+            const [fileLastModified, setFileLastModified] = useState(null);
 
             useEffect(() => {
                 loadExcelFile();
@@ -449,6 +500,15 @@
                     
                     if (!response.ok) {
                         throw new Error('Could not load data file');
+                    }
+
+                    // Get last modified date from response headers
+                    const lastModified = response.headers.get('Last-Modified');
+                    if (lastModified) {
+                        setFileLastModified(new Date(lastModified));
+                    } else {
+                        // Fallback to current time if header not available
+                        setFileLastModified(new Date());
                     }
 
                     const arrayBuffer = await response.arrayBuffer();
@@ -479,7 +539,6 @@
                     });
                     
                     setData(parsedData);
-                    setLastUpdate(new Date());
                     setLoading(false);
                 } catch (err) {
                     console.error('Error loading file:', err);
@@ -502,7 +561,7 @@
                         daysActive: 0,
                         closingBalance: 0
                     }
-                }));
+                })).sort((a, b) => b.closingBalance - a.closingBalance); // Sort by closing balance descending
             };
 
             const calculateGroupStats = () => {
@@ -555,22 +614,14 @@
 
             return (
                 <div className="app-container">
-                    {/* 1. HEADER + TIMESTAMP */}
+                    {/* HEADER */}
                     <div className="header">
                         <div className="header-emoji">💰</div>
                         <h1>Like-Minded Folks</h1>
                         <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
-                        {lastUpdate && (
-                            <div className="last-update">
-                                Last updated: {lastUpdate.toLocaleString('en-KE', {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'short'
-                                })}
-                            </div>
-                        )}
                     </div>
 
-                    {/* 2. MONTH SELECTOR */}
+                    {/* MONTH SELECTOR */}
                     <div className="month-selector">
                         {MONTHS.map(month => (
                             <button
@@ -583,7 +634,7 @@
                         ))}
                     </div>
 
-                    {/* 3. VIEW TOGGLE */}
+                    {/* VIEW TOGGLE */}
                     <div className="view-toggle">
                         <button
                             className={`toggle-btn ${view === 'member' ? 'active' : ''}`}
@@ -597,9 +648,15 @@
                         >
                             👥 All Members
                         </button>
+                        <button
+                            className={`toggle-btn ${view === 'rules' ? 'active' : ''}`}
+                            onClick={() => setView('rules')}
+                        >
+                            📜 Group Rules
+                        </button>
                     </div>
 
-                    {/* 4. MEMBER VIEW (includes dropdown) */}
+                    {/* MEMBER VIEW */}
                     {view === 'member' && (
                         <MemberView
                             month={selectedMonth}
@@ -608,6 +665,7 @@
                             data={data}
                             getClosingBalance={getClosingBalance}
                             stats={stats}
+                            fileLastModified={fileLastModified}
                         />
                     )}
 
@@ -617,13 +675,17 @@
                             month={selectedMonth}
                             members={getAllMembersData(selectedMonth)}
                             stats={stats}
+                            fileLastModified={fileLastModified}
                         />
                     )}
+
+                    {/* GROUP RULES VIEW */}
+                    {view === 'rules' && <GroupRulesView />}
                 </div>
             );
         }
 
-        function MemberView({ month, selectedAlias, setSelectedAlias, data, getClosingBalance, stats }) {
+        function MemberView({ month, selectedAlias, setSelectedAlias, data, getClosingBalance, stats, fileLastModified }) {
             const memberData = data[month]?.[selectedAlias] || {
                 openingBalance: 0,
                 topups: 0,
@@ -634,7 +696,7 @@
 
             return (
                 <div className="member-view">
-                    {/* 4. MEMBER DROPDOWN */}
+                    {/* MEMBER DROPDOWN */}
                     <div className="alias-selector">
                         <select
                             value={selectedAlias}
@@ -647,77 +709,90 @@
                         </select>
                     </div>
 
-                    {/* 5. COMPACT GROUP SUMMARY - 3 Columns Horizontal */}
-                    {stats && (
-                        <div className="group-summary">
-                            <div className="summary-item">
-                                <div className="summary-label">Contributions</div>
-                                <div className="summary-value">
-                                    {(stats.totalContributions / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="summary-item">
-                                <div className="summary-label">Interest</div>
-                                <div className="summary-value">
-                                    {(stats.totalInterest / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="summary-item">
-                                <div className="summary-label">Total Balance</div>
-                                <div className="summary-value">
-                                    {(stats.totalBalance / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 6. TRACK CONTRIBUTIONS LINK */}
+                    {/* TRACK CONTRIBUTIONS LINK */}
                     <div className="track-link">
-                        <a href="#" onClick={(e) => { e.preventDefault(); alert('Coming soon: Track your contribution history!'); }}>
+                        <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer">
                             📊 Track Contributions
                         </a>
                     </div>
 
-                    {/* MEMBER STATEMENT (only shows when alias selected) */}
+                    {/* MEMBER STATEMENT */}
                     {selectedAlias && (
-                        <div className="member-statement">
-                            <div className="statement-alias">{selectedAlias}</div>
-                            <div className="statement-month">{month} 2026</div>
+                        <>
+                            <div className="member-statement">
+                                <div className="statement-alias">{selectedAlias}</div>
+                                <div className="statement-month">{month} 2026</div>
 
-                            <div style={{ marginTop: '25px' }}>
-                                <div className="statement-row">
-                                    <span className="statement-label">Started with</span>
-                                    <span className="statement-value">
-                                        KES {memberData.openingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
+                                <div style={{ marginTop: '25px' }}>
+                                    <div className="statement-row">
+                                        <span className="statement-label">Started with</span>
+                                        <span className="statement-value">
+                                            KES {memberData.openingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+
+                                    <div className="statement-row">
+                                        <span className="statement-label">Top-ups</span>
+                                        <span className="statement-value" style={{ color: '#8fd3f4' }}>
+                                            KES {memberData.topups.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+
+                                    <div className="statement-row">
+                                        <span className="statement-label">Interest earned</span>
+                                        <span className="statement-value" style={{ color: '#84fab0' }}>
+                                            KES {memberData.interest.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+
+                                    <div className="statement-row">
+                                        <span className="statement-label">Days active</span>
+                                        <span className="statement-value">
+                                            {memberData.daysActive} days
+                                        </span>
+                                    </div>
+
+                                    <div className="statement-row">
+                                        <span className="statement-label" style={{ fontSize: '1.1rem', fontWeight: '700' }}>Current Balance</span>
+                                        <span className="statement-value" style={{ fontSize: '1.6rem', color: '#84fab0' }}>
+                                            KES {memberData.closingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="statement-row">
-                                    <span className="statement-label">Top-ups</span>
-                                    <span className="statement-value" style={{ color: '#8fd3f4' }}>
-                                        KES {memberData.topups.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
-                                </div>
+                                {/* DATA TIMESTAMP */}
+                                {fileLastModified && (
+                                    <div className="data-timestamp">
+                                        Data as of {fileLastModified.toLocaleString('en-KE', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
 
-                                <div className="statement-row">
-                                    <span className="statement-label">Interest earned</span>
-                                    <span className="statement-value" style={{ color: '#84fab0' }}>
-                                        KES {memberData.interest.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
+                    {/* GROUP SUMMARY AT BOTTOM */}
+                    {stats && (
+                        <div className="bottom-summary">
+                            <div className="bottom-summary-title">📊 Group Summary - {month}</div>
+                            <div className="bottom-summary-grid">
+                                <div className="bottom-summary-item">
+                                    <div className="bottom-summary-label">Total Contributed</div>
+                                    <div className="bottom-summary-value">
+                                        KES {stats.totalContributions.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                    </div>
                                 </div>
-
-                                <div className="statement-row">
-                                    <span className="statement-label">Days active</span>
-                                    <span className="statement-value">
-                                        {memberData.daysActive} days
-                                    </span>
-                                </div>
-
-                                <div className="statement-row">
-                                    <span className="statement-label" style={{ fontSize: '1.1rem', fontWeight: '700' }}>Current Balance</span>
-                                    <span className="statement-value" style={{ fontSize: '1.6rem', color: '#84fab0' }}>
-                                        KES {memberData.closingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
+                                <div className="bottom-summary-item">
+                                    <div className="bottom-summary-label">Total Interest</div>
+                                    <div className="bottom-summary-value">
+                                        KES {stats.totalInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -726,7 +801,7 @@
             );
         }
 
-        function AllMembersView({ month, members, stats }) {
+        function AllMembersView({ month, members, stats, fileLastModified }) {
             const totalOpening = members.reduce((sum, m) => sum + m.openingBalance, 0);
             const totalTopups = members.reduce((sum, m) => sum + m.topups, 0);
             const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
@@ -734,101 +809,141 @@
 
             return (
                 <div>
-                    {/* GROUP SUMMARY for All Members View */}
-                    {stats && (
-                        <div className="group-summary" style={{ maxWidth: '600px', margin: '15px auto' }}>
-                            <div className="summary-item">
-                                <div className="summary-label">Contributions</div>
-                                <div className="summary-value">
-                                    {(stats.totalContributions / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="summary-item">
-                                <div className="summary-label">Interest</div>
-                                <div className="summary-value">
-                                    {(stats.totalInterest / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="summary-item">
-                                <div className="summary-label">Total Balance</div>
-                                <div className="summary-value">
-                                    {(stats.totalBalance / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     <h2 style={{ textAlign: 'center', margin: '25px 0 20px', fontSize: '1.6rem', color: '#84fab0' }}>
                         All Members - {month} 2026
                     </h2>
 
-                    <div className="member-card" style={{ background: 'rgba(132, 250, 176, 0.1)', borderColor: 'rgba(132, 250, 176, 0.3)' }}>
-                        <div className="member-alias" style={{ fontSize: '1.5rem' }}>GROUP TOTALS</div>
-                        <div className="balance-grid">
-                            <div className="balance-item">
-                                <div className="balance-label">Opening</div>
-                                <div className="balance-value total">
-                                    {(totalOpening / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="balance-item">
-                                <div className="balance-label">Top-ups</div>
-                                <div className="balance-value total">
-                                    {(totalTopups / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="balance-item">
-                                <div className="balance-label">Interest</div>
-                                <div className="balance-value total">
-                                    {(totalInterest / 1000).toFixed(0)}K
-                                </div>
-                            </div>
-                            <div className="balance-item">
-                                <div className="balance-label">Closing</div>
-                                <div className="balance-value total">
-                                    {(totalClosing / 1000).toFixed(0)}K
-                                </div>
-                            </div>
+                    {/* TRACK CONTRIBUTIONS LINK */}
+                    <div className="track-link">
+                        <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer">
+                            📊 Track Contributions
+                        </a>
+                    </div>
+
+                    {/* IMPROVED TABLE */}
+                    <div className="members-table-container">
+                        <table className="members-table">
+                            <thead>
+                                <tr>
+                                    <th>Alias</th>
+                                    <th className="number-col">Opening</th>
+                                    <th className="number-col">Top-ups</th>
+                                    <th className="number-col">Interest</th>
+                                    <th className="number-col">Closing</th>
+                                    <th className="number-col">Days</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {members.map(member => (
+                                    <tr key={member.alias}>
+                                        <td className="alias-col">{member.alias}</td>
+                                        <td className="number-col">
+                                            {member.openingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                        </td>
+                                        <td className="number-col">
+                                            {member.topups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                        </td>
+                                        <td className="number-col">
+                                            {member.interest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                        </td>
+                                        <td className="number-col" style={{ fontWeight: '700', color: '#8fd3f4' }}>
+                                            {member.closingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                        </td>
+                                        <td className="number-col">{member.daysActive}</td>
+                                    </tr>
+                                ))}
+                                <tr className="total-row">
+                                    <td style={{ color: '#84fab0' }}>TOTALS</td>
+                                    <td className="number-col">{totalOpening.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
+                                    <td className="number-col">{totalTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
+                                    <td className="number-col">{totalInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
+                                    <td className="number-col">{totalClosing.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
+                                    <td className="number-col">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* DATA TIMESTAMP */}
+                    {fileLastModified && (
+                        <div className="data-timestamp" style={{ textAlign: 'center', marginTop: '15px' }}>
+                            Data as of {fileLastModified.toLocaleString('en-KE', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                            })}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function GroupRulesView() {
+            return (
+                <div className="group-rules">
+                    <h3>📜 FINAL DRAFT GROUP MMF RESOLUTION</h3>
+                    
+                    <div className="rule-section">
+                        <div className="rule-title">1. CONTRIBUTION STRUCTURE</div>
+                        <div className="rule-content">
+                            The Group hereby adopts the following contribution framework effective end of January 2026:<br/>
+                            • Minimum Monthly Contribution: Ksh 4,000 (Four Thousand Shillings)<br/>
+                            • Maximum Monthly Contribution: No upper limit<br/>
+                            • Commencement Date: End of January 2026
                         </div>
                     </div>
 
-                    {members.map(member => (
-                        <div key={member.alias} className="member-card">
-                            <div className="member-alias">{member.alias}</div>
-                            <div className="balance-grid">
-                                <div className="balance-item">
-                                    <div className="balance-label">Opening</div>
-                                    <div className="balance-value">
-                                        {(member.openingBalance / 1000).toFixed(1)}K
-                                    </div>
-                                </div>
-                                <div className="balance-item">
-                                    <div className="balance-label">Top-ups</div>
-                                    <div className="balance-value">
-                                        {(member.topups / 1000).toFixed(1)}K
-                                    </div>
-                                </div>
-                                <div className="balance-item">
-                                    <div className="balance-label">Interest</div>
-                                    <div className="balance-value positive">
-                                        {(member.interest / 1000).toFixed(1)}K
-                                    </div>
-                                </div>
-                                <div className="balance-item">
-                                    <div className="balance-label">Closing</div>
-                                    <div className="balance-value total">
-                                        {(member.closingBalance / 1000).toFixed(1)}K
-                                    </div>
-                                </div>
-                                <div className="balance-item">
-                                    <div className="balance-label">Days</div>
-                                    <div className="balance-value">
-                                        {member.daysActive}
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="rule-section">
+                        <div className="rule-title">2. INTEREST ALLOCATION</div>
+                        <div className="rule-content">
+                            Members shall be entitled to monthly interest only for months in which they make a contribution. 
+                            Any month without a MINIMUM contribution shall result in forfeiture of that month's interest 
+                            allocation for the respective member.
                         </div>
-                    ))}
+                    </div>
+
+                    <div className="rule-section">
+                        <div className="rule-title">3. WITHDRAWAL POLICY</div>
+                        <div className="rule-content">
+                            Withdrawals shall be permitted in December, strictly before the commencement of Week 3 of the month.
+                        </div>
+                    </div>
+
+                    <div className="rule-section">
+                        <div className="rule-title">4. FUND MANAGER</div>
+                        <div className="rule-content">
+                            The Group shall use Etica MMF, based on superior yield performance and convenience.
+                        </div>
+                    </div>
+
+                    <div className="rule-section">
+                        <div className="rule-title">5. ACCOUNT SIGNATORIES</div>
+                        <div className="rule-content">
+                            Tobias is co-opted as an account signatory alongside Burton and Antony. All three signatories 
+                            shall have equal authority over account operations as members may choose.
+                        </div>
+                    </div>
+
+                    <div className="rule-section">
+                        <div className="rule-title">6. MEMBERSHIP EXPANSION</div>
+                        <div className="rule-content">
+                            Membership may be increased to a maximum of 15 members on a first-come, first-served basis. 
+                            Current members shall have priority in recommending prospective members.
+                        </div>
+                    </div>
+
+                    <div className="rule-date">
+                        ADOPTED this 9th day of January 2026
+                    </div>
+
+                    <div className="track-link" style={{ marginTop: '25px' }}>
+                        <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer">
+                            📊 Track Contributions
+                        </a>
+                    </div>
                 </div>
             );
         }
