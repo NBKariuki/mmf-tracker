@@ -383,42 +383,42 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 20px;
-            margin: 25px auto;
+            padding: 15px;
+            margin: 20px auto;
             max-width: 800px;
             text-align: center;
         }
 
         .group-summary h3 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 12px;
             color: rgba(255, 255, 255, 0.8);
             font-weight: 600;
         }
 
         .summary-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .summary-stat {
             background: rgba(255, 255, 255, 0.02);
-            padding: 15px;
+            padding: 10px 8px;
             border-radius: 8px;
         }
 
         .summary-stat-label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .summary-stat-value {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
             color: #8fd3f4;
@@ -546,12 +546,25 @@
             }
 
             .summary-stats {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .summary-stat {
+                padding: 8px 4px;
+            }
+
+            .summary-stat-label {
+                font-size: 0.65rem;
+            }
+
+            .summary-stat-value {
+                font-size: 0.95rem;
             }
 
             .group-rules,
             .group-summary {
-                padding: 20px;
+                padding: 15px;
             }
         }
     </style>
