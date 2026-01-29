@@ -562,7 +562,7 @@
         const { useState, useEffect } = React;
 
         const EXCEL_URL = 'MMF_Tracker_2026_For_Website.xlsx';
-        const MEMBERS = ['Tokyo', 'Berlin', 'Rio', 'Denver', 'Helsinki', 'Nairobi', 'Moscow', 'Oslo', 'Bogota', 'Lisbon', 'Palermo'];
+        const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Manilla', 'Scofield', 'Bogota', 'Emirates', 'Dublin', 'Doha'];
         const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         function App() {
@@ -707,10 +707,6 @@
                         ))}
                     </div>
 
-                    <GroupSummary totals={groupTotals} month={selectedMonth} />
-
-                    <QuickLinks />
-
                     <div className="view-toggle">
                         <button
                             className={`toggle-btn ${view === 'member' ? 'active' : ''}`}
@@ -731,6 +727,10 @@
                             📋 Group Rules
                         </button>
                     </div>
+
+                    <GroupSummary totals={groupTotals} month={selectedMonth} />
+
+                    <QuickLinks />
 
                     {view === 'member' && (
                         <MemberView
