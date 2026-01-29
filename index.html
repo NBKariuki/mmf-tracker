@@ -32,35 +32,294 @@
 
         .header {
             text-align: center;
-            padding: 40px 20px 20px;
+            padding: 30px 20px 15px;
         }
 
         .header h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-size: clamp(1.8rem, 5vw, 3rem);
             font-weight: 800;
             background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .header-emoji {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
         .last-update {
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-top: 10px;
+            font-size: 0.85rem;
+            margin-top: 5px;
             font-weight: 500;
         }
 
-        .data-timestamp {
-            color: rgba(255, 255, 255, 0.5);
+        .month-selector {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            padding: 0 10px;
+        }
+
+        .month-btn {
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        .month-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .month-btn.active {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            border: none;
+            color: #0f0c29;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            padding: 10px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            border-color: transparent;
+            color: #0f0c29;
+        }
+
+        .member-view {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .alias-selector {
+            margin: 15px 0;
+        }
+
+        .alias-selector select {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 2px solid rgba(132, 250, 176, 0.3);
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .alias-selector select:focus {
+            outline: none;
+            border-color: #84fab0;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .alias-selector select option {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .alias-selector select option:first-child {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* COMPACT GROUP SUMMARY - 3 Columns Horizontal */
+        .group-summary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 8px 5px;
+        }
+
+        .summary-label {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #84fab0;
+            line-height: 1.2;
+        }
+
+        /* Track Contributions Link */
+        .track-link {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .track-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(132, 250, 176, 0.1);
+            border: 1px solid rgba(132, 250, 176, 0.3);
+            border-radius: 10px;
+            color: #84fab0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .track-link a:hover {
+            background: rgba(132, 250, 176, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .member-statement {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .statement-alias {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .statement-month {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .statement-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .statement-row:last-child {
+            border-bottom: none;
             margin-top: 15px;
-            font-style: italic;
+            padding-top: 20px;
+            border-top: 2px solid rgba(132, 250, 176, 0.3);
+        }
+
+        .statement-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .statement-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            text-align: right;
+        }
+
+        .member-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .member-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .member-alias {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #84fab0;
+            margin-bottom: 12px;
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .balance-item {
+            text-align: center;
+        }
+
+        .balance-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .balance-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .balance-value.positive {
+            color: #84fab0;
+        }
+
+        .balance-value.total {
+            color: #8fd3f4;
+            font-size: 1.2rem;
         }
 
         .loading {
@@ -98,573 +357,178 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-
-        .toggle-btn {
-            padding: 12px 28px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .toggle-btn.active {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            border-color: transparent;
-            color: #0f0c29;
-        }
-
-        .month-selector {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin: 20px 0;
-            flex-wrap: wrap;
-            padding: 0 10px;
-        }
-
-        .month-btn {
-            padding: 10px 18px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .month-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .month-btn.active {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            border: none;
-            color: #0f0c29;
-        }
-
-        .member-view {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .alias-selector {
-            margin: 30px 0;
-        }
-
-        .alias-selector select {
-            width: 100%;
-            padding: 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            border: 2px solid rgba(132, 250, 176, 0.3);
-            border-radius: 12px;
-            font-family: 'Outfit', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .alias-selector select:focus {
-            outline: none;
-            border-color: #84fab0;
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .alias-selector select option {
-            background: #1a1a2e;
-            color: #fff;
-            padding: 10px;
-        }
-
-        .member-statement {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .statement-alias {
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: center;
-            color: #84fab0;
-            margin-bottom: 5px;
-        }
-
-        .statement-month {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-        }
-
-        .statement-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .statement-row:last-child {
-            border-bottom: none;
-            margin-top: 20px;
-            padding-top: 25px;
-            border-top: 2px solid rgba(132, 250, 176, 0.3);
-        }
-
-        .statement-label {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .statement-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .member-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .member-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-
-        .member-alias {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8fd3f4;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .balance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-        }
-
-        .balance-item {
-            text-align: center;
-        }
-
-        .balance-label {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .balance-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            color: #fff;
-        }
-
-        .balance-value.positive {
-            color: #84fab0;
-        }
-
-        .balance-value.total {
-            color: #8fd3f4;
-            font-size: 1.2rem;
-        }
-
-        /* Enhanced Table Styles */
-        .comparison-table-container {
-            overflow-x: auto;
-            margin: 30px 0;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 20px;
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 0.95rem;
-        }
-
-        .comparison-table thead {
-            background: rgba(132, 250, 176, 0.15);
-        }
-
-        .comparison-table th {
-            padding: 16px 12px;
-            text-align: left;
-            font-weight: 700;
-            color: #84fab0;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid rgba(132, 250, 176, 0.3);
-        }
-
-        .comparison-table th:first-child {
-            border-top-left-radius: 12px;
-        }
-
-        .comparison-table th:last-child {
-            border-top-right-radius: 12px;
-        }
-
-        .comparison-table tbody tr {
-            background: rgba(255, 255, 255, 0.02);
-            transition: all 0.2s ease;
-        }
-
-        .comparison-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .comparison-table tbody tr.total-row {
-            background: rgba(132, 250, 176, 0.1);
-            font-weight: 700;
-        }
-
-        .comparison-table tbody tr.total-row:hover {
-            background: rgba(132, 250, 176, 0.15);
-        }
-
-        .comparison-table td {
-            padding: 14px 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .comparison-table td:first-child {
-            font-weight: 600;
-            color: #8fd3f4;
-        }
-
-        .comparison-table .number-cell {
-            font-family: 'JetBrains Mono', monospace;
-            text-align: right;
-        }
-
-        .comparison-table .total-row td {
-            color: #84fab0;
-            border-bottom: 2px solid rgba(132, 250, 176, 0.3);
-        }
-
-        /* Group Summary Section */
-        .group-summary {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px auto;
-            max-width: 800px;
-            text-align: center;
-        }
-
-        .group-summary h3 {
-            font-size: 1rem;
-            margin-bottom: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 600;
-        }
-
-        .summary-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .summary-stat {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 10px 8px;
-            border-radius: 8px;
-        }
-
-        .summary-stat-label {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .summary-stat-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            color: #8fd3f4;
-        }
-
-        /* Group Rules Section */
-        .group-rules {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 30px;
-            margin: 40px auto;
-            max-width: 900px;
-        }
-
-        .group-rules h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #8fd3f4;
-            text-align: center;
-        }
-
-        .rules-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .rules-date {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-        }
-
-        .rules-resolved {
-            color: #84fab0;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .rule-item {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            border-left: 4px solid #84fab0;
-        }
-
-        .rule-number {
-            color: #8fd3f4;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
-        .rule-content {
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .rule-content ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-
-        .rule-content li {
-            margin: 8px 0;
-        }
-
-        .rules-footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Quick Links Section */
-        .quick-links {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px auto;
-            max-width: 600px;
-            text-align: center;
-        }
-
-        .quick-links h4 {
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 600;
-        }
-
-        .link-button {
-            display: inline-block;
-            background: rgba(132, 250, 176, 0.15);
-            color: #8fd3f4;
-            padding: 10px 24px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 600;
-            margin: 5px;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            border: 1px solid rgba(132, 250, 176, 0.2);
-        }
-
-        .link-button:hover {
-            background: rgba(132, 250, 176, 0.25);
-            transform: translateY(-1px);
-        }
-
         @media (max-width: 768px) {
-            .comparison-table {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .month-btn {
+                padding: 7px 12px;
+                font-size: 0.8rem;
+            }
+
+            .toggle-btn {
+                padding: 9px 20px;
                 font-size: 0.85rem;
             }
 
-            .comparison-table th,
-            .comparison-table td {
-                padding: 10px 8px;
-            }
-
-            .summary-stats {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-            }
-
-            .summary-stat {
-                padding: 8px 4px;
-            }
-
-            .summary-stat-label {
+            .summary-label {
                 font-size: 0.65rem;
             }
 
-            .summary-stat-value {
-                font-size: 0.95rem;
+            .summary-value {
+                font-size: 0.85rem;
             }
 
-            .group-rules,
+            .member-statement {
+                padding: 20px;
+            }
+
+            .statement-alias {
+                font-size: 1.5rem;
+            }
+
+            .balance-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 400px) {
             .group-summary {
-                padding: 15px;
+                padding: 10px 8px;
+                gap: 6px;
+            }
+
+            .summary-item {
+                padding: 6px 3px;
+            }
+
+            .summary-label {
+                font-size: 0.6rem;
+            }
+
+            .summary-value {
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
+
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const EXCEL_URL = 'MMF_Tracker_2026_For_Website.xlsx';
-        const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Manilla', 'Scofield', 'Bogota', 'Emirates', 'Dublin', 'Doha'];
-        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 
+                        'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 
+                        'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Manilla', 'Scofield', 
+                        'Bogota', 'Emirates', 'Dublin', 'Doha'];
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
 
         function App() {
             const [data, setData] = useState(null);
             const [loading, setLoading] = useState(true);
             const [error, setError] = useState(null);
-            const [lastUpdate, setLastUpdate] = useState(null);
-            const [fileModified, setFileModified] = useState(null);
-            const [view, setView] = useState('member');
             const [selectedMonth, setSelectedMonth] = useState('January');
             const [selectedAlias, setSelectedAlias] = useState('');
+            const [view, setView] = useState('member');
+            const [lastUpdate, setLastUpdate] = useState(null);
 
             useEffect(() => {
-                loadData();
+                loadExcelFile();
             }, []);
 
-            async function loadData() {
+            const loadExcelFile = async () => {
                 try {
-                    const response = await fetch(EXCEL_URL);
-                    if (!response.ok) throw new Error('Failed to load Excel file');
-
-                    const lastModified = response.headers.get('Last-Modified');
-                    if (lastModified) {
-                        const modDate = new Date(lastModified);
-                        setFileModified(modDate);
+                    setLoading(true);
+                    setError(null);
+                    
+                    const cacheBuster = new Date().getTime();
+                    const response = await fetch(`MMF_Tracker_2026_For_Website.xlsx?v=${cacheBuster}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Could not load data file');
                     }
 
                     const arrayBuffer = await response.arrayBuffer();
                     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-
+                    
                     const parsedData = {};
-                    MONTHS.forEach(month => {
-                        if (workbook.SheetNames.includes(month)) {
-                            const sheet = workbook.Sheets[month];
-                            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-                            const monthData = {};
-                            for (let i = 3; i < jsonData.length; i++) {
-                                const row = jsonData[i];
-                                if (row[0] && MEMBERS.includes(row[0])) {
-                                    monthData[row[0]] = {
-                                        openingBalance: parseFloat(row[1]) || 0,
-                                        topups: parseFloat(row[2]) || 0,
-                                        interest: parseFloat(row[3]) || 0,
-                                        daysActive: parseInt(row[4]) || 0,
-                                        closingBalance: parseFloat(row[5]) || 0
-                                    };
-                                }
+                    
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        
+                        const monthData = {};
+                        
+                        for (let i = 2; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            if (row[0] && MEMBERS.includes(row[0])) {
+                                monthData[row[0]] = {
+                                    openingBalance: parseFloat(row[1]) || 0,
+                                    topups: parseFloat(row[2]) || 0,
+                                    interest: parseFloat(row[3]) || 0,
+                                    daysActive: parseInt(row[4]) || 0,
+                                    closingBalance: parseFloat(row[5]) || 0
+                                };
                             }
-                            parsedData[month] = monthData;
                         }
+                        
+                        parsedData[sheetName] = monthData;
                     });
-
+                    
                     setData(parsedData);
                     setLastUpdate(new Date());
                     setLoading(false);
                 } catch (err) {
-                    setError(err.message);
+                    console.error('Error loading file:', err);
+                    setError('Unable to load data. Please refresh the page or contact the admin.');
                     setLoading(false);
                 }
-            }
+            };
 
-            function getAllMembersData(month) {
-                if (!data || !data[month]) return [];
+            const getClosingBalance = (month, alias) => {
+                return data[month]?.[alias]?.closingBalance || 0;
+            };
+
+            const getAllMembersData = (month) => {
                 return MEMBERS.map(alias => ({
                     alias,
-                    ...(data[month][alias] || {
+                    ...data[month]?.[alias] || {
                         openingBalance: 0,
                         topups: 0,
                         interest: 0,
                         daysActive: 0,
                         closingBalance: 0
-                    })
+                    }
                 }));
-            }
+            };
 
-            function getGroupTotals(month) {
-                const members = getAllMembersData(month);
+            const calculateGroupStats = () => {
+                if (!data || !data[selectedMonth]) return null;
+                
+                const members = getAllMembersData(selectedMonth);
+                const totalContributions = members.reduce((sum, m) => sum + m.topups, 0);
+                const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
+                const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
+                
                 return {
-                    totalContributions: members.reduce((sum, m) => sum + m.topups, 0),
-                    totalInterest: members.reduce((sum, m) => sum + m.interest, 0),
-                    totalBalance: members.reduce((sum, m) => sum + m.closingBalance, 0)
+                    totalContributions,
+                    totalInterest,
+                    totalBalance
                 };
-            }
+            };
 
             if (loading) {
                 return (
                     <div className="app-container">
-                        <div className="loading">💰 Loading MMF data...</div>
+                        <div className="header">
+                            <div className="header-emoji">💰</div>
+                            <h1>Like-Minded Folks</h1>
+                            <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                        </div>
+                        <div className="loading">Loading your data...</div>
                     </div>
                 );
             }
@@ -672,42 +536,41 @@
             if (error) {
                 return (
                     <div className="app-container">
+                        <div className="header">
+                            <div className="header-emoji">💰</div>
+                            <h1>Like-Minded Folks</h1>
+                            <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                        </div>
                         <div className="error">
-                            <h2>Error Loading Data</h2>
                             <p>{error}</p>
-                            <button className="btn-secondary" onClick={loadData}>
-                                Try Again
+                            <button className="btn-secondary" onClick={loadExcelFile}>
+                                Retry
                             </button>
                         </div>
                     </div>
                 );
             }
 
-            const groupTotals = getGroupTotals(selectedMonth);
+            const stats = calculateGroupStats();
 
             return (
                 <div className="app-container">
+                    {/* 1. HEADER + TIMESTAMP */}
                     <div className="header">
                         <div className="header-emoji">💰</div>
                         <h1>Like-Minded Folks</h1>
-                        <div className="last-update">
-                            MMF Investment Tracker 2026
-                        </div>
-                        {fileModified && (
-                            <div className="data-timestamp">
-                                Data as of {fileModified.toLocaleDateString('en-GB', { 
-                                    day: '2-digit', 
-                                    month: '2-digit', 
-                                    year: 'numeric' 
-                                })} at {fileModified.toLocaleTimeString('en-GB', { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit',
-                                    hour12: true 
+                        <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                        {lastUpdate && (
+                            <div className="last-update">
+                                Last updated: {lastUpdate.toLocaleString('en-KE', {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short'
                                 })}
                             </div>
                         )}
                     </div>
 
+                    {/* 2. MONTH SELECTOR */}
                     <div className="month-selector">
                         {MONTHS.map(month => (
                             <button
@@ -720,6 +583,7 @@
                         ))}
                     </div>
 
+                    {/* 3. VIEW TOGGLE */}
                     <div className="view-toggle">
                         <button
                             className={`toggle-btn ${view === 'member' ? 'active' : ''}`}
@@ -733,94 +597,33 @@
                         >
                             👥 All Members
                         </button>
-                        <button
-                            className={`toggle-btn ${view === 'rules' ? 'active' : ''}`}
-                            onClick={() => setView('rules')}
-                        >
-                            📋 Group Rules
-                        </button>
                     </div>
 
-                    <GroupSummary totals={groupTotals} month={selectedMonth} />
-
-                    <QuickLinks />
-
+                    {/* 4. MEMBER VIEW (includes dropdown) */}
                     {view === 'member' && (
                         <MemberView
                             month={selectedMonth}
                             selectedAlias={selectedAlias}
                             setSelectedAlias={setSelectedAlias}
                             data={data}
-                            fileModified={fileModified}
+                            getClosingBalance={getClosingBalance}
+                            stats={stats}
                         />
                     )}
 
+                    {/* ALL MEMBERS VIEW */}
                     {view === 'all' && (
                         <AllMembersView
                             month={selectedMonth}
                             members={getAllMembersData(selectedMonth)}
+                            stats={stats}
                         />
                     )}
-
-                    {view === 'rules' && <GroupRules />}
                 </div>
             );
         }
 
-        function QuickLinks() {
-            return (
-                <div className="quick-links">
-                    <h4>Track Your Contributions</h4>
-                    <a 
-                        href="https://shorturl.at/7dQr0" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="link-button"
-                    >
-                        Open Contribution Tracker
-                    </a>
-                </div>
-            );
-        }
-
-        function GroupSummary({ totals, month }) {
-            return (
-                <div className="group-summary">
-                    <h3>Group Summary - {month} 2026</h3>
-                    <div className="summary-stats">
-                        <div className="summary-stat">
-                            <div className="summary-stat-label">Total Contributions</div>
-                            <div className="summary-stat-value">
-                                KES {totals.totalContributions.toLocaleString('en-KE', { 
-                                    minimumFractionDigits: 0, 
-                                    maximumFractionDigits: 0 
-                                })}
-                            </div>
-                        </div>
-                        <div className="summary-stat">
-                            <div className="summary-stat-label">Total Interest</div>
-                            <div className="summary-stat-value" style={{ color: '#84fab0' }}>
-                                KES {totals.totalInterest.toLocaleString('en-KE', { 
-                                    minimumFractionDigits: 2, 
-                                    maximumFractionDigits: 2 
-                                })}
-                            </div>
-                        </div>
-                        <div className="summary-stat">
-                            <div className="summary-stat-label">Total Balance</div>
-                            <div className="summary-stat-value">
-                                KES {totals.totalBalance.toLocaleString('en-KE', { 
-                                    minimumFractionDigits: 0, 
-                                    maximumFractionDigits: 0 
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        function MemberView({ month, selectedAlias, setSelectedAlias, data, fileModified }) {
+        function MemberView({ month, selectedAlias, setSelectedAlias, data, getClosingBalance, stats }) {
             const memberData = data[month]?.[selectedAlias] || {
                 openingBalance: 0,
                 topups: 0,
@@ -831,6 +634,7 @@
 
             return (
                 <div className="member-view">
+                    {/* 4. MEMBER DROPDOWN */}
                     <div className="alias-selector">
                         <select
                             value={selectedAlias}
@@ -843,12 +647,44 @@
                         </select>
                     </div>
 
+                    {/* 5. COMPACT GROUP SUMMARY - 3 Columns Horizontal */}
+                    {stats && (
+                        <div className="group-summary">
+                            <div className="summary-item">
+                                <div className="summary-label">Contributions</div>
+                                <div className="summary-value">
+                                    {(stats.totalContributions / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="summary-item">
+                                <div className="summary-label">Interest</div>
+                                <div className="summary-value">
+                                    {(stats.totalInterest / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="summary-item">
+                                <div className="summary-label">Total Balance</div>
+                                <div className="summary-value">
+                                    {(stats.totalBalance / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 6. TRACK CONTRIBUTIONS LINK */}
+                    <div className="track-link">
+                        <a href="#" onClick={(e) => { e.preventDefault(); alert('Coming soon: Track your contribution history!'); }}>
+                            📊 Track Contributions
+                        </a>
+                    </div>
+
+                    {/* MEMBER STATEMENT (only shows when alias selected) */}
                     {selectedAlias && (
                         <div className="member-statement">
                             <div className="statement-alias">{selectedAlias}</div>
                             <div className="statement-month">{month} 2026</div>
 
-                            <div style={{ marginTop: '30px' }}>
+                            <div style={{ marginTop: '25px' }}>
                                 <div className="statement-row">
                                     <span className="statement-label">Started with</span>
                                     <span className="statement-value">
@@ -878,164 +714,121 @@
                                 </div>
 
                                 <div className="statement-row">
-                                    <span className="statement-label" style={{ fontSize: '1.3rem', fontWeight: '700' }}>Current Balance</span>
-                                    <span className="statement-value" style={{ fontSize: '1.8rem', color: '#84fab0' }}>
+                                    <span className="statement-label" style={{ fontSize: '1.1rem', fontWeight: '700' }}>Current Balance</span>
+                                    <span className="statement-value" style={{ fontSize: '1.6rem', color: '#84fab0' }}>
                                         KES {memberData.closingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
                             </div>
-
-                            {fileModified && (
-                                <div className="data-timestamp" style={{ marginTop: '20px', textAlign: 'center' }}>
-                                    Data as of {fileModified.toLocaleDateString('en-GB', { 
-                                        day: '2-digit', 
-                                        month: '2-digit', 
-                                        year: 'numeric' 
-                                    })} at {fileModified.toLocaleTimeString('en-GB', { 
-                                        hour: '2-digit', 
-                                        minute: '2-digit',
-                                        hour12: true 
-                                    })}
-                                </div>
-                            )}
                         </div>
                     )}
                 </div>
             );
         }
 
-        function AllMembersView({ month, members }) {
+        function AllMembersView({ month, members, stats }) {
             const totalOpening = members.reduce((sum, m) => sum + m.openingBalance, 0);
             const totalTopups = members.reduce((sum, m) => sum + m.topups, 0);
             const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
             const totalClosing = members.reduce((sum, m) => sum + m.closingBalance, 0);
-            const totalDays = members.reduce((sum, m) => sum + m.daysActive, 0);
 
             return (
                 <div>
-                    <h2 style={{ textAlign: 'center', marginBottom: '30px', fontSize: '2rem', color: '#84fab0' }}>
-                        All Members Comparison - {month} 2026
+                    {/* GROUP SUMMARY for All Members View */}
+                    {stats && (
+                        <div className="group-summary" style={{ maxWidth: '600px', margin: '15px auto' }}>
+                            <div className="summary-item">
+                                <div className="summary-label">Contributions</div>
+                                <div className="summary-value">
+                                    {(stats.totalContributions / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="summary-item">
+                                <div className="summary-label">Interest</div>
+                                <div className="summary-value">
+                                    {(stats.totalInterest / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="summary-item">
+                                <div className="summary-label">Total Balance</div>
+                                <div className="summary-value">
+                                    {(stats.totalBalance / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <h2 style={{ textAlign: 'center', margin: '25px 0 20px', fontSize: '1.6rem', color: '#84fab0' }}>
+                        All Members - {month} 2026
                     </h2>
 
-                    <div className="comparison-table-container">
-                        <table className="comparison-table">
-                            <thead>
-                                <tr>
-                                    <th>Member</th>
-                                    <th>Opening Balance</th>
-                                    <th>Top-ups</th>
-                                    <th>Interest</th>
-                                    <th>Days Active</th>
-                                    <th>Closing Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="total-row">
-                                    <td>GROUP TOTALS</td>
-                                    <td className="number-cell">
-                                        KES {totalOpening.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </td>
-                                    <td className="number-cell">
-                                        KES {totalTopups.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </td>
-                                    <td className="number-cell">
-                                        KES {totalInterest.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </td>
-                                    <td className="number-cell">{totalDays}</td>
-                                    <td className="number-cell">
-                                        KES {totalClosing.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </td>
-                                </tr>
-                                {members.map(member => (
-                                    <tr key={member.alias}>
-                                        <td>{member.alias}</td>
-                                        <td className="number-cell">
-                                            KES {member.openingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </td>
-                                        <td className="number-cell">
-                                            KES {member.topups.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </td>
-                                        <td className="number-cell">
-                                            KES {member.interest.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </td>
-                                        <td className="number-cell">{member.daysActive}</td>
-                                        <td className="number-cell">
-                                            KES {member.closingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            );
-        }
-
-        function GroupRules() {
-            return (
-                <div className="group-rules">
-                    <h3>📋 Group Rules</h3>
-                    
-                    <div className="rules-header">
-                        <div className="rules-date">Date: Friday, 9th January 2026</div>
-                        <div className="rules-resolved">FINAL DRAFT GROUP MMF RESOLUTION</div>
-                        <div style={{ marginTop: '10px', color: 'rgba(255, 255, 255, 0.7)' }}>RESOLVED THAT:</div>
-                    </div>
-
-                    <div className="rule-item">
-                        <div className="rule-number">1. CONTRIBUTION STRUCTURE</div>
-                        <div className="rule-content">
-                            The Group hereby adopts the following contribution framework effective end of January 2026:
-                            <ul>
-                                <li>Minimum Monthly Contribution: Ksh 4,000 (Four Thousand Shillings)</li>
-                                <li>Maximum Monthly Contribution: No upper limit</li>
-                                <li>Commencement Date: End of January 2026</li>
-                            </ul>
+                    <div className="member-card" style={{ background: 'rgba(132, 250, 176, 0.1)', borderColor: 'rgba(132, 250, 176, 0.3)' }}>
+                        <div className="member-alias" style={{ fontSize: '1.5rem' }}>GROUP TOTALS</div>
+                        <div className="balance-grid">
+                            <div className="balance-item">
+                                <div className="balance-label">Opening</div>
+                                <div className="balance-value total">
+                                    {(totalOpening / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="balance-item">
+                                <div className="balance-label">Top-ups</div>
+                                <div className="balance-value total">
+                                    {(totalTopups / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="balance-item">
+                                <div className="balance-label">Interest</div>
+                                <div className="balance-value total">
+                                    {(totalInterest / 1000).toFixed(0)}K
+                                </div>
+                            </div>
+                            <div className="balance-item">
+                                <div className="balance-label">Closing</div>
+                                <div className="balance-value total">
+                                    {(totalClosing / 1000).toFixed(0)}K
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="rule-item">
-                        <div className="rule-number">2. INTEREST ALLOCATION</div>
-                        <div className="rule-content">
-                            Members shall be entitled to monthly interest only for months in which they make a contribution. 
-                            Any month without a MINIMUM contribution shall result in forfeiture of that month's interest 
-                            allocation for the respective member.
+                    {members.map(member => (
+                        <div key={member.alias} className="member-card">
+                            <div className="member-alias">{member.alias}</div>
+                            <div className="balance-grid">
+                                <div className="balance-item">
+                                    <div className="balance-label">Opening</div>
+                                    <div className="balance-value">
+                                        {(member.openingBalance / 1000).toFixed(1)}K
+                                    </div>
+                                </div>
+                                <div className="balance-item">
+                                    <div className="balance-label">Top-ups</div>
+                                    <div className="balance-value">
+                                        {(member.topups / 1000).toFixed(1)}K
+                                    </div>
+                                </div>
+                                <div className="balance-item">
+                                    <div className="balance-label">Interest</div>
+                                    <div className="balance-value positive">
+                                        {(member.interest / 1000).toFixed(1)}K
+                                    </div>
+                                </div>
+                                <div className="balance-item">
+                                    <div className="balance-label">Closing</div>
+                                    <div className="balance-value total">
+                                        {(member.closingBalance / 1000).toFixed(1)}K
+                                    </div>
+                                </div>
+                                <div className="balance-item">
+                                    <div className="balance-label">Days</div>
+                                    <div className="balance-value">
+                                        {member.daysActive}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="rule-item">
-                        <div className="rule-number">3. WITHDRAWAL POLICY</div>
-                        <div className="rule-content">
-                            Withdrawals shall be permitted in December, strictly before the commencement of Week 3 of the month.
-                        </div>
-                    </div>
-
-                    <div className="rule-item">
-                        <div className="rule-number">4. FUND MANAGER</div>
-                        <div className="rule-content">
-                            The Group shall use Etica MMF, based on superior yield performance and convenience.
-                        </div>
-                    </div>
-
-                    <div className="rule-item">
-                        <div className="rule-number">5. ACCOUNT SIGNATORIES</div>
-                        <div className="rule-content">
-                            Tobias is co-opted as an account signatory alongside Burton and Antony. 
-                            All three signatories shall have equal authority over account operations as members may choose.
-                        </div>
-                    </div>
-
-                    <div className="rule-item">
-                        <div className="rule-number">6. MEMBERSHIP EXPANSION</div>
-                        <div className="rule-content">
-                            Membership may be increased to a maximum of 15 members on a first-come, first-served basis. 
-                            Current members shall have priority in recommending prospective members.
-                        </div>
-                    </div>
-
-                    <div className="rules-footer">
-                        ADOPTED this 9th day of January 2026
-                    </div>
+                    ))}
                 </div>
             );
         }
