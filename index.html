@@ -135,7 +135,7 @@
 
         .header {
             text-align: center;
-            padding: 30px 20px 15px;
+            padding: 20px 20px 30px;
         }
 
         .header h1 {
@@ -164,7 +164,7 @@
             display: flex;
             gap: 6px;
             justify-content: center;
-            margin: 15px 0;
+            margin: 0 0 25px 0;
             flex-wrap: wrap;
             padding: 0 10px;
         }
@@ -196,7 +196,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin: 15px 0;
+            margin: 0 0 25px 0;
             flex-wrap: wrap;
         }
 
@@ -229,7 +229,7 @@
         }
 
         .alias-selector {
-            margin: 15px 0;
+            margin: 0 0 25px 0;
         }
 
         .alias-selector select {
@@ -262,12 +262,46 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        /* WARNING MESSAGE */
+        .warning-message {
+            background: rgba(255, 193, 7, 0.15);
+            border: 2px solid rgba(255, 193, 7, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .warning-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .warning-text {
+            flex: 1;
+        }
+
+        .warning-title {
+            color: #ffc107;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .warning-content {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
         .member-statement {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 25px;
-            margin: 20px 0;
+            margin: 0 0 30px 0;
         }
 
         .statement-alias {
@@ -316,43 +350,45 @@
             text-align: right;
         }
 
-        .bottom-summary {
+        /* HORIZONTAL GROUP SUMMARY */
+        .group-summary {
             background: linear-gradient(135deg, rgba(132, 250, 176, 0.1) 0%, rgba(143, 211, 244, 0.1) 100%);
             border: 1px solid rgba(132, 250, 176, 0.3);
             border-radius: 16px;
             padding: 20px;
-            margin: 30px auto;
+            margin: 30px auto 0;
             max-width: 600px;
-            text-align: center;
         }
 
-        .bottom-summary-title {
-            font-size: 1.1rem;
+        .group-summary-title {
+            font-size: 1rem;
             font-weight: 700;
             color: #84fab0;
             margin-bottom: 15px;
+            text-align: center;
         }
 
-        .bottom-summary-grid {
+        .group-summary-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
 
-        .bottom-summary-item {
-            padding: 12px;
+        .summary-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
+            padding: 15px;
+            text-align: center;
         }
 
-        .bottom-summary-label {
+        .summary-label {
             font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.7);
             margin-bottom: 8px;
         }
 
-        .bottom-summary-value {
-            font-size: 1.5rem;
+        .summary-value {
+            font-size: 1.4rem;
             font-weight: 800;
             color: #8fd3f4;
         }
@@ -546,9 +582,8 @@
                 padding: 8px 6px;
             }
 
-            .bottom-summary-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
+            .summary-value {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -565,6 +600,8 @@
                         'Bogota', 'Emirates', 'Dublin', 'Doha'];
         const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
                        'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        const MINIMUM_CONTRIBUTION = 4000;
 
         function App() {
             const [data, setData] = useState(null);
@@ -659,6 +696,15 @@
                 return { totalContributions, totalInterest, totalBalance };
             };
 
+            const getCurrentMonth = () => {
+                const now = new Date();
+                return MONTHS[now.getMonth()];
+            };
+
+            const isCurrentMonth = (month) => {
+                return month === getCurrentMonth();
+            };
+
             if (loading) {
                 return (
                     <div className="app-layout">
@@ -748,6 +794,28 @@
                                     View Full Resolution →
                                 </a>
                             </div>
+
+                            {/* Monthly Statements */}
+                            <div className="sidebar-section">
+                                <h3>📄 Monthly Statements</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    {MONTHS.map(month => {
+                                        const pdfUrl = `${month}_2026_Statement.pdf`;
+                                        return (
+                                            <a 
+                                                key={month}
+                                                href={pdfUrl} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="sidebar-link"
+                                                style={{ fontSize: '0.9rem', padding: '10px 14px' }}
+                                            >
+                                                📥 {month} 2026
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </aside>
 
                         {/* MAIN CONTENT */}
@@ -793,6 +861,7 @@
                                     data={data}
                                     stats={stats}
                                     fileLastModified={fileLastModified}
+                                    isCurrentMonth={isCurrentMonth(selectedMonth)}
                                 />
                             )}
 
@@ -814,7 +883,7 @@
             );
         }
 
-        function MemberView({ month, selectedAlias, setSelectedAlias, data, stats, fileLastModified }) {
+        function MemberView({ month, selectedAlias, setSelectedAlias, data, stats, fileLastModified, isCurrentMonth }) {
             const memberData = data[month]?.[selectedAlias] || {
                 openingBalance: 0,
                 topups: 0,
@@ -822,6 +891,8 @@
                 daysActive: 0,
                 closingBalance: 0
             };
+
+            const showWarning = isCurrentMonth && selectedAlias && memberData.topups < MINIMUM_CONTRIBUTION;
 
             return (
                 <div className="member-view">
@@ -833,6 +904,22 @@
                             ))}
                         </select>
                     </div>
+
+                    {/* WARNING FOR NO/LOW CONTRIBUTION */}
+                    {showWarning && (
+                        <div className="warning-message">
+                            <div className="warning-icon">⚠️</div>
+                            <div className="warning-text">
+                                <div className="warning-title">Contribution Reminder</div>
+                                <div className="warning-content">
+                                    {memberData.topups === 0 
+                                        ? `No contribution made this month. Remember: Interest is only earned in months with at least KES ${MINIMUM_CONTRIBUTION.toLocaleString()} contribution.`
+                                        : `Current contribution (KES ${memberData.topups.toLocaleString()}) is below the minimum of KES ${MINIMUM_CONTRIBUTION.toLocaleString()}. You won't earn interest this month unless you top up.`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {selectedAlias && (
                         <>
@@ -893,19 +980,20 @@
                         </>
                     )}
 
+                    {/* HORIZONTAL GROUP SUMMARY AT BOTTOM */}
                     {stats && (
-                        <div className="bottom-summary">
-                            <div className="bottom-summary-title">📊 Group Summary - {month}</div>
-                            <div className="bottom-summary-grid">
-                                <div className="bottom-summary-item">
-                                    <div className="bottom-summary-label">Total Contributed</div>
-                                    <div className="bottom-summary-value">
+                        <div className="group-summary">
+                            <div className="group-summary-title">📊 Group Summary - {month}</div>
+                            <div className="group-summary-grid">
+                                <div className="summary-item">
+                                    <div className="summary-label">Total Contributed</div>
+                                    <div className="summary-value">
                                         KES {stats.totalContributions.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                     </div>
                                 </div>
-                                <div className="bottom-summary-item">
-                                    <div className="bottom-summary-label">Total Interest</div>
-                                    <div className="bottom-summary-value">
+                                <div className="summary-item">
+                                    <div className="summary-label">Total Interest</div>
+                                    <div className="summary-value">
                                         KES {stats.totalInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                     </div>
                                 </div>
@@ -924,7 +1012,7 @@
 
             return (
                 <div>
-                    <h2 style={{ textAlign: 'center', margin: '25px 0 20px', fontSize: '1.6rem', color: '#84fab0' }}>
+                    <h2 style={{ textAlign: 'center', margin: '0 0 20px', fontSize: '1.6rem', color: '#84fab0' }}>
                         All Members - {month} 2026
                     </h2>
 
