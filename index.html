@@ -24,10 +24,113 @@
             color: #fff;
         }
 
-        .app-container {
+        .app-layout {
+            display: flex;
             max-width: 1400px;
             margin: 0 auto;
+            gap: 20px;
             padding: 20px;
+        }
+
+        /* LEFT SIDEBAR */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            color: #84fab0;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 12px 16px;
+            background: rgba(132, 250, 176, 0.1);
+            border: 1px solid rgba(132, 250, 176, 0.3);
+            border-radius: 10px;
+            color: #84fab0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(132, 250, 176, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .deposit-method {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .deposit-method:last-child {
+            margin-bottom: 0;
+        }
+
+        .deposit-title {
+            color: #8fd3f4;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .deposit-info {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .deposit-info strong {
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .rules-list {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .rules-list li {
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+
+        .rules-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #8fd3f4;
+            font-size: 0.85rem;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .rules-link:hover {
+            text-decoration: underline;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            min-width: 0;
         }
 
         .header {
@@ -213,7 +316,6 @@
             text-align: right;
         }
 
-        /* GROUP SUMMARY AT BOTTOM */
         .bottom-summary {
             background: linear-gradient(135deg, rgba(132, 250, 176, 0.1) 0%, rgba(143, 211, 244, 0.1) 100%);
             border: 1px solid rgba(132, 250, 176, 0.3);
@@ -255,7 +357,6 @@
             color: #8fd3f4;
         }
 
-        /* ALL MEMBERS TABLE */
         .members-table-container {
             overflow-x: auto;
             margin: 20px 0;
@@ -316,70 +417,26 @@
             padding: 15px 10px;
         }
 
-        /* GROUP RULES SECTION */
-        .group-rules {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 25px;
-            margin: 30px auto;
-            max-width: 800px;
+        /* MOBILE MENU TOGGLE */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            color: #0f0c29;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(132, 250, 176, 0.4);
+            z-index: 1000;
         }
 
-        .group-rules h3 {
-            color: #84fab0;
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .group-rules .rule-section {
-            margin: 15px 0;
-        }
-
-        .group-rules .rule-title {
-            color: #8fd3f4;
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-
-        .group-rules .rule-content {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-left: 15px;
-        }
-
-        .group-rules .rule-date {
-            text-align: center;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            margin-top: 20px;
-        }
-
-        .track-link {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .track-link a {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(132, 250, 176, 0.1);
-            border: 1px solid rgba(132, 250, 176, 0.3);
-            border-radius: 10px;
-            color: #84fab0;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .track-link a:hover {
-            background: rgba(132, 250, 176, 0.2);
-            transform: translateY(-2px);
+        .sidebar.mobile-open {
+            display: block;
         }
 
         .loading {
@@ -415,6 +472,46 @@
 
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 968px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+                z-index: 999;
+                overflow-y: auto;
+                padding: 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar-close {
+                text-align: right;
+                margin-bottom: 10px;
+            }
+
+            .sidebar-close button {
+                background: rgba(255, 100, 100, 0.2);
+                border: 1px solid rgba(255, 100, 100, 0.3);
+                color: #ff6b6b;
+                padding: 8px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+            }
         }
 
         @media (max-width: 768px) {
@@ -453,14 +550,6 @@
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
-
-            .group-rules {
-                padding: 20px;
-            }
-
-            .group-rules h3 {
-                font-size: 1.2rem;
-            }
         }
     </style>
 </head>
@@ -485,6 +574,7 @@
             const [selectedAlias, setSelectedAlias] = useState('');
             const [view, setView] = useState('member');
             const [fileLastModified, setFileLastModified] = useState(null);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
             useEffect(() => {
                 loadExcelFile();
@@ -502,12 +592,10 @@
                         throw new Error('Could not load data file');
                     }
 
-                    // Get last modified date from response headers
                     const lastModified = response.headers.get('Last-Modified');
                     if (lastModified) {
                         setFileLastModified(new Date(lastModified));
                     } else {
-                        // Fallback to current time if header not available
                         setFileLastModified(new Date());
                     }
 
@@ -547,10 +635,6 @@
                 }
             };
 
-            const getClosingBalance = (month, alias) => {
-                return data[month]?.[alias]?.closingBalance || 0;
-            };
-
             const getAllMembersData = (month) => {
                 return MEMBERS.map(alias => ({
                     alias,
@@ -561,7 +645,7 @@
                         daysActive: 0,
                         closingBalance: 0
                     }
-                })).sort((a, b) => b.closingBalance - a.closingBalance); // Sort by closing balance descending
+                })).sort((a, b) => b.closingBalance - a.closingBalance);
             };
 
             const calculateGroupStats = () => {
@@ -572,39 +656,37 @@
                 const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
                 const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
                 
-                return {
-                    totalContributions,
-                    totalInterest,
-                    totalBalance
-                };
+                return { totalContributions, totalInterest, totalBalance };
             };
 
             if (loading) {
                 return (
-                    <div className="app-container">
-                        <div className="header">
-                            <div className="header-emoji">💰</div>
-                            <h1>Like-Minded Folks</h1>
-                            <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                    <div className="app-layout">
+                        <div className="main-content">
+                            <div className="header">
+                                <div className="header-emoji">💰</div>
+                                <h1>Like-Minded Folks</h1>
+                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                            </div>
+                            <div className="loading">Loading your data...</div>
                         </div>
-                        <div className="loading">Loading your data...</div>
                     </div>
                 );
             }
 
             if (error) {
                 return (
-                    <div className="app-container">
-                        <div className="header">
-                            <div className="header-emoji">💰</div>
-                            <h1>Like-Minded Folks</h1>
-                            <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
-                        </div>
-                        <div className="error">
-                            <p>{error}</p>
-                            <button className="btn-secondary" onClick={loadExcelFile}>
-                                Retry
-                            </button>
+                    <div className="app-layout">
+                        <div className="main-content">
+                            <div className="header">
+                                <div className="header-emoji">💰</div>
+                                <h1>Like-Minded Folks</h1>
+                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                            </div>
+                            <div className="error">
+                                <p>{error}</p>
+                                <button className="btn-secondary" onClick={loadExcelFile}>Retry</button>
+                            </div>
                         </div>
                     </div>
                 );
@@ -613,79 +695,126 @@
             const stats = calculateGroupStats();
 
             return (
-                <div className="app-container">
-                    {/* HEADER */}
-                    <div className="header">
-                        <div className="header-emoji">💰</div>
-                        <h1>Like-Minded Folks</h1>
-                        <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                <>
+                    <div className="app-layout">
+                        {/* LEFT SIDEBAR */}
+                        <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+                            <div className="sidebar-close">
+                                <button onClick={() => setMobileMenuOpen(false)}>✕ Close</button>
+                            </div>
+
+                            {/* Track Contributions */}
+                            <div className="sidebar-section">
+                                <h3>📊 Track Activity</h3>
+                                <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer" className="sidebar-link">
+                                    View Contributions
+                                </a>
+                            </div>
+
+                            {/* Make a Deposit */}
+                            <div className="sidebar-section">
+                                <h3>💳 Make a Deposit</h3>
+                                
+                                <div className="deposit-method">
+                                    <div className="deposit-title">M-PESA</div>
+                                    <div className="deposit-info">
+                                        Paybill: <strong>4096483</strong><br/>
+                                        Account: <strong>308398M</strong>
+                                    </div>
+                                </div>
+
+                                <div className="deposit-method">
+                                    <div className="deposit-title">Bank Transfer</div>
+                                    <div className="deposit-info">
+                                        Bank: <strong>Equity Bank</strong><br/>
+                                        A/C Name: Etica Unit Trust Collection<br/>
+                                        A/C No: <strong>0180 28395 1027</strong><br/>
+                                        Reference: <strong>308398M</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Group Rules */}
+                            <div className="sidebar-section">
+                                <h3>📜 Group Rules</h3>
+                                <ul className="rules-list">
+                                    <li>Min. contribution: <strong>KES 4,000/month</strong></li>
+                                    <li>Interest only on months with contribution</li>
+                                    <li>Withdrawals: December (before Week 3)</li>
+                                    <li>Fund: <strong>Etica MMF</strong></li>
+                                    <li>Max members: <strong>15</strong></li>
+                                </ul>
+                                <a href="#" onClick={(e) => { e.preventDefault(); alert('Full resolution:\n\n1. Min KES 4,000/month\n2. Interest only for contributing months\n3. December withdrawals (before Week 3)\n4. Fund: Etica MMF\n5. Signatories: Tobias, Burton, Antony\n6. Max 15 members\n\nAdopted: 9th January 2026'); }} className="rules-link">
+                                    View Full Resolution →
+                                </a>
+                            </div>
+                        </aside>
+
+                        {/* MAIN CONTENT */}
+                        <main className="main-content">
+                            <div className="header">
+                                <div className="header-emoji">💰</div>
+                                <h1>Like-Minded Folks</h1>
+                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                            </div>
+
+                            <div className="month-selector">
+                                {MONTHS.map(month => (
+                                    <button
+                                        key={month}
+                                        className={`month-btn ${selectedMonth === month ? 'active' : ''}`}
+                                        onClick={() => setSelectedMonth(month)}
+                                    >
+                                        {month}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="view-toggle">
+                                <button
+                                    className={`toggle-btn ${view === 'member' ? 'active' : ''}`}
+                                    onClick={() => setView('member')}
+                                >
+                                    📱 Member View
+                                </button>
+                                <button
+                                    className={`toggle-btn ${view === 'all' ? 'active' : ''}`}
+                                    onClick={() => setView('all')}
+                                >
+                                    👥 All Members
+                                </button>
+                            </div>
+
+                            {view === 'member' && (
+                                <MemberView
+                                    month={selectedMonth}
+                                    selectedAlias={selectedAlias}
+                                    setSelectedAlias={setSelectedAlias}
+                                    data={data}
+                                    stats={stats}
+                                    fileLastModified={fileLastModified}
+                                />
+                            )}
+
+                            {view === 'all' && (
+                                <AllMembersView
+                                    month={selectedMonth}
+                                    members={getAllMembersData(selectedMonth)}
+                                    fileLastModified={fileLastModified}
+                                />
+                            )}
+                        </main>
                     </div>
 
-                    {/* MONTH SELECTOR */}
-                    <div className="month-selector">
-                        {MONTHS.map(month => (
-                            <button
-                                key={month}
-                                className={`month-btn ${selectedMonth === month ? 'active' : ''}`}
-                                onClick={() => setSelectedMonth(month)}
-                            >
-                                {month}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* VIEW TOGGLE */}
-                    <div className="view-toggle">
-                        <button
-                            className={`toggle-btn ${view === 'member' ? 'active' : ''}`}
-                            onClick={() => setView('member')}
-                        >
-                            📱 Member View
-                        </button>
-                        <button
-                            className={`toggle-btn ${view === 'all' ? 'active' : ''}`}
-                            onClick={() => setView('all')}
-                        >
-                            👥 All Members
-                        </button>
-                        <button
-                            className={`toggle-btn ${view === 'rules' ? 'active' : ''}`}
-                            onClick={() => setView('rules')}
-                        >
-                            📜 Group Rules
-                        </button>
-                    </div>
-
-                    {/* MEMBER VIEW */}
-                    {view === 'member' && (
-                        <MemberView
-                            month={selectedMonth}
-                            selectedAlias={selectedAlias}
-                            setSelectedAlias={setSelectedAlias}
-                            data={data}
-                            getClosingBalance={getClosingBalance}
-                            stats={stats}
-                            fileLastModified={fileLastModified}
-                        />
-                    )}
-
-                    {/* ALL MEMBERS VIEW */}
-                    {view === 'all' && (
-                        <AllMembersView
-                            month={selectedMonth}
-                            members={getAllMembersData(selectedMonth)}
-                            stats={stats}
-                            fileLastModified={fileLastModified}
-                        />
-                    )}
-
-                    {/* GROUP RULES VIEW */}
-                    {view === 'rules' && <GroupRulesView />}
-                </div>
+                    {/* MOBILE MENU TOGGLE */}
+                    <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                        ☰
+                    </button>
+                </>
             );
         }
 
-        function MemberView({ month, selectedAlias, setSelectedAlias, data, getClosingBalance, stats, fileLastModified }) {
+        function MemberView({ month, selectedAlias, setSelectedAlias, data, stats, fileLastModified }) {
             const memberData = data[month]?.[selectedAlias] || {
                 openingBalance: 0,
                 topups: 0,
@@ -696,12 +825,8 @@
 
             return (
                 <div className="member-view">
-                    {/* MEMBER DROPDOWN */}
                     <div className="alias-selector">
-                        <select
-                            value={selectedAlias}
-                            onChange={(e) => setSelectedAlias(e.target.value)}
-                        >
+                        <select value={selectedAlias} onChange={(e) => setSelectedAlias(e.target.value)}>
                             <option value="" disabled>👆 Select your alias to view balance</option>
                             {MEMBERS.map(alias => (
                                 <option key={alias} value={alias}>{alias}</option>
@@ -709,14 +834,6 @@
                         </select>
                     </div>
 
-                    {/* TRACK CONTRIBUTIONS LINK */}
-                    <div className="track-link">
-                        <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer">
-                            📊 Track Contributions
-                        </a>
-                    </div>
-
-                    {/* MEMBER STATEMENT */}
                     {selectedAlias && (
                         <>
                             <div className="member-statement">
@@ -760,7 +877,6 @@
                                     </div>
                                 </div>
 
-                                {/* DATA TIMESTAMP */}
                                 {fileLastModified && (
                                     <div className="data-timestamp">
                                         Data as of {fileLastModified.toLocaleString('en-KE', {
@@ -777,7 +893,6 @@
                         </>
                     )}
 
-                    {/* GROUP SUMMARY AT BOTTOM */}
                     {stats && (
                         <div className="bottom-summary">
                             <div className="bottom-summary-title">📊 Group Summary - {month}</div>
@@ -801,7 +916,7 @@
             );
         }
 
-        function AllMembersView({ month, members, stats, fileLastModified }) {
+        function AllMembersView({ month, members, fileLastModified }) {
             const totalOpening = members.reduce((sum, m) => sum + m.openingBalance, 0);
             const totalTopups = members.reduce((sum, m) => sum + m.topups, 0);
             const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
@@ -813,14 +928,6 @@
                         All Members - {month} 2026
                     </h2>
 
-                    {/* TRACK CONTRIBUTIONS LINK */}
-                    <div className="track-link">
-                        <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer">
-                            📊 Track Contributions
-                        </a>
-                    </div>
-
-                    {/* IMPROVED TABLE */}
                     <div className="members-table-container">
                         <table className="members-table">
                             <thead>
@@ -864,7 +971,6 @@
                         </table>
                     </div>
 
-                    {/* DATA TIMESTAMP */}
                     {fileLastModified && (
                         <div className="data-timestamp" style={{ textAlign: 'center', marginTop: '15px' }}>
                             Data as of {fileLastModified.toLocaleString('en-KE', {
@@ -877,73 +983,6 @@
                             })}
                         </div>
                     )}
-                </div>
-            );
-        }
-
-        function GroupRulesView() {
-            return (
-                <div className="group-rules">
-                    <h3>📜 FINAL DRAFT GROUP MMF RESOLUTION</h3>
-                    
-                    <div className="rule-section">
-                        <div className="rule-title">1. CONTRIBUTION STRUCTURE</div>
-                        <div className="rule-content">
-                            The Group hereby adopts the following contribution framework effective end of January 2026:<br/>
-                            • Minimum Monthly Contribution: Ksh 4,000 (Four Thousand Shillings)<br/>
-                            • Maximum Monthly Contribution: No upper limit<br/>
-                            • Commencement Date: End of January 2026
-                        </div>
-                    </div>
-
-                    <div className="rule-section">
-                        <div className="rule-title">2. INTEREST ALLOCATION</div>
-                        <div className="rule-content">
-                            Members shall be entitled to monthly interest only for months in which they make a contribution. 
-                            Any month without a MINIMUM contribution shall result in forfeiture of that month's interest 
-                            allocation for the respective member.
-                        </div>
-                    </div>
-
-                    <div className="rule-section">
-                        <div className="rule-title">3. WITHDRAWAL POLICY</div>
-                        <div className="rule-content">
-                            Withdrawals shall be permitted in December, strictly before the commencement of Week 3 of the month.
-                        </div>
-                    </div>
-
-                    <div className="rule-section">
-                        <div className="rule-title">4. FUND MANAGER</div>
-                        <div className="rule-content">
-                            The Group shall use Etica MMF, based on superior yield performance and convenience.
-                        </div>
-                    </div>
-
-                    <div className="rule-section">
-                        <div className="rule-title">5. ACCOUNT SIGNATORIES</div>
-                        <div className="rule-content">
-                            Tobias is co-opted as an account signatory alongside Burton and Antony. All three signatories 
-                            shall have equal authority over account operations as members may choose.
-                        </div>
-                    </div>
-
-                    <div className="rule-section">
-                        <div className="rule-title">6. MEMBERSHIP EXPANSION</div>
-                        <div className="rule-content">
-                            Membership may be increased to a maximum of 15 members on a first-come, first-served basis. 
-                            Current members shall have priority in recommending prospective members.
-                        </div>
-                    </div>
-
-                    <div className="rule-date">
-                        ADOPTED this 9th day of January 2026
-                    </div>
-
-                    <div className="track-link" style={{ marginTop: '25px' }}>
-                        <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer">
-                            📊 Track Contributions
-                        </a>
-                    </div>
                 </div>
             );
         }
