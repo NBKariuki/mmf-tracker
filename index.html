@@ -602,6 +602,14 @@
                        'July', 'August', 'September', 'October', 'November', 'December'];
         
         const MINIMUM_CONTRIBUTION = 4000;
+        
+        // Member pairs who contribute together
+        const MEMBER_PAIRS = {
+            'California': 'Lisbon',
+            'Lisbon': 'California',
+            'Paris': 'Marseille',
+            'Marseille': 'Paris'
+        };
 
         function App() {
             const [data, setData] = useState(null);
@@ -798,23 +806,39 @@
                             {/* Monthly Statements */}
                             <div className="sidebar-section">
                                 <h3>📄 Monthly Statements</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    {MONTHS.map(month => {
-                                        const pdfUrl = `${month}_2026_Statement.pdf`;
-                                        return (
-                                            <a 
-                                                key={month}
-                                                href={pdfUrl} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="sidebar-link"
-                                                style={{ fontSize: '0.9rem', padding: '10px 14px' }}
-                                            >
-                                                📥 {month} 2026
-                                            </a>
-                                        );
-                                    })}
-                                </div>
+                                <select 
+                                    className="statements-dropdown"
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            window.open(e.target.value, '_blank');
+                                            e.target.value = ''; // Reset dropdown
+                                        }
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '600',
+                                        background: 'rgba(132, 250, 176, 0.1)',
+                                        color: '#84fab0',
+                                        border: '1px solid rgba(132, 250, 176, 0.3)',
+                                        borderRadius: '10px',
+                                        fontFamily: 'Outfit, sans-serif',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    <option value="">📥 Select Month to Download</option>
+                                    {MONTHS.map(month => (
+                                        <option 
+                                            key={month} 
+                                            value={`${month}_2026_Statement.pdf`}
+                                            style={{ background: '#1a1a2e', color: '#fff' }}
+                                        >
+                                            {month} 2026
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </aside>
 
@@ -892,7 +916,29 @@
                 closingBalance: 0
             };
 
-            const showWarning = isCurrentMonth && selectedAlias && memberData.topups < MINIMUM_CONTRIBUTION;
+            // Check if member is part of a pair
+            const partnerAlias = MEMBER_PAIRS[selectedAlias];
+            let showWarning = false;
+            let warningMessage = '';
+
+            if (isCurrentMonth && selectedAlias) {
+                if (partnerAlias) {
+                    // Member is part of a pair - check combined contribution
+                    const partnerData = data[month]?.[partnerAlias] || { topups: 0 };
+                    const combinedTopups = memberData.topups + partnerData.topups;
+                    
+                    if (combinedTopups < MINIMUM_CONTRIBUTION) {
+                        showWarning = true;
+                        warningMessage = `Your combined ${month} contribution with ${partnerAlias} (KES ${combinedTopups.toLocaleString()}) is below the group minimum of KES ${MINIMUM_CONTRIBUTION.toLocaleString()}. Please coordinate to top up soon so you don't lose out on this month's interest.`;
+                    }
+                } else {
+                    // Individual member - check personal contribution
+                    if (memberData.topups < MINIMUM_CONTRIBUTION) {
+                        showWarning = true;
+                        warningMessage = `Your ${month} balance (KES ${memberData.closingBalance.toLocaleString()}) is below the agreed group minimum. Please top it up soon so you don't lose out on this month's interest.`;
+                    }
+                }
+            }
 
             return (
                 <div className="member-view">
@@ -904,22 +950,6 @@
                             ))}
                         </select>
                     </div>
-
-                    {/* WARNING FOR NO/LOW CONTRIBUTION */}
-                    {showWarning && (
-                        <div className="warning-message">
-                            <div className="warning-icon">⚠️</div>
-                            <div className="warning-text">
-                                <div className="warning-title">Contribution Reminder</div>
-                                <div className="warning-content">
-                                    {memberData.topups === 0 
-                                        ? `No contribution made this month. Remember: Interest is only earned in months with at least KES ${MINIMUM_CONTRIBUTION.toLocaleString()} contribution.`
-                                        : `Current contribution (KES ${memberData.topups.toLocaleString()}) is below the minimum of KES ${MINIMUM_CONTRIBUTION.toLocaleString()}. You won't earn interest this month unless you top up.`
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
                     {selectedAlias && (
                         <>
@@ -977,6 +1007,19 @@
                                     </div>
                                 )}
                             </div>
+
+                            {/* WARNING BELOW BALANCE CARD */}
+                            {showWarning && (
+                                <div className="warning-message">
+                                    <div className="warning-icon">⚠️</div>
+                                    <div className="warning-text">
+                                        <div className="warning-title">Friendly Reminder</div>
+                                        <div className="warning-content">
+                                            {warningMessage}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </>
                     )}
 
