@@ -614,7 +614,13 @@
         
         // Get current year dynamically
         const CURRENT_YEAR = new Date().getFullYear();
-        
+
+        // Returns current month name — defined here so it's available
+        // before App's useState initialiser runs
+        function getCurrentMonth() {
+            return MONTHS[new Date().getMonth()];
+        }
+
         // Password protection
         const CORRECT_PASSWORD = 'LikeMinded2026';
 
@@ -880,11 +886,6 @@
                 const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
                 
                 return { totalContributions, totalInterest, totalBalance };
-            };
-
-            const getCurrentMonth = () => {
-                const now = new Date();
-                return MONTHS[now.getMonth()];
             };
 
             const isCurrentMonth = (month) => {
