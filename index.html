@@ -594,6 +594,29 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
+        // 🔒 PASSWORD PROTECTION - Check access before loading app
+        const checkAccess = () => {
+            const hasAccess = sessionStorage.getItem('mmfAccess');
+            if (!hasAccess) {
+                const password = prompt('🔒 Enter password to access Like-Minded Folks MMF Tracker:');
+                if (password === 'LikeMinded2026') {
+                    sessionStorage.setItem('mmfAccess', 'true');
+                    return true;
+                } else {
+                    alert('❌ Incorrect password. Please contact the group admin for access.');
+                    document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);color:#fff;font-family:Arial;text-align:center;"><div><h1>🔒 Access Denied</h1><p>Contact your group admin for the password.</p></div></div>';
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        // Check password before proceeding
+        if (!checkAccess()) {
+            // Stop execution if password is wrong
+            throw new Error('Access denied');
+        }
+
         const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 
                         'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 
                         'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Manilla', 'Scofield', 
