@@ -961,11 +961,10 @@
             return <App showTour={showTour} onTourDone={() => {
                 localStorage.setItem('mmf_tour_seen', 'true');
                 setShowTour(false);
-            }} />;
-        }
+            }} />;        }
 
         // SITE TOUR COMPONENT
-        function SiteTour({ onDone }) {
+        function SiteTour({ onDone, openSidebar, closeSidebar, onSidebarStepChange }) {
             const [step, setStep] = useState(0);
             const [highlightRect, setHighlightRect] = useState(null);
             const tooltipRef = React.useRef(null);
@@ -975,44 +974,75 @@
                     selector: '.month-selector',
                     title: 'Pick a Month',
                     text: 'Tap any month to view that month\'s data across the whole group.',
-                    position: 'below'
+                    position: 'below',
+                    sidebar: false
                 },
                 {
                     selector: '.view-toggle',
                     title: 'Switch Views',
                     text: 'Member View lets you check your own balance. All Members shows everyone side by side for easy comparison.',
-                    position: 'below'
+                    position: 'below',
+                    sidebar: false
                 },
                 {
                     selector: '.alias-selector',
                     title: 'Select Your Alias',
                     text: 'Choose your alias from the dropdown to see your personal balance card for the selected month.',
-                    position: 'below'
+                    position: 'below',
+                    sidebar: false
+                },
+                {
+                    selector: '.sidebar-section:nth-child(2)',
+                    title: 'Track Activity',
+                    text: 'Tap here to open the shared tracker and see everyone\'s contribution activity.',
+                    position: 'below',
+                    sidebar: true
                 },
                 {
                     selector: '.sidebar-section:nth-child(3)',
                     title: 'Make a Deposit',
                     text: 'M-PESA and bank deposit details are right here. Always include 308398M as your reference.',
-                    position: 'below'
+                    position: 'below',
+                    sidebar: true
                 },
                 {
                     selector: '.sidebar-section:nth-child(4)',
                     title: 'Group Rules',
                     text: 'Quick reference for contribution minimums, interest rules, and withdrawal policy.',
-                    position: 'below'
+                    position: 'below',
+                    sidebar: true
                 },
                 {
                     selector: '.sidebar-section:nth-child(5)',
                     title: 'Etica Statements',
                     text: 'Download the official monthly statements from Etica directly here when they\'re available.',
-                    position: 'below'
+                    position: 'below',
+                    sidebar: true
                 }
             ];
 
+            // Open/close sidebar AND notify App whether current step is a sidebar step
             useEffect(() => {
-                positionHighlight();
+                const isMobile = window.innerWidth <= 968;
+                const isSidebarStep = TOUR_STEPS[step].sidebar;
+                if (isMobile && isSidebarStep) {
+                    openSidebar();
+                } else if (isMobile) {
+                    closeSidebar();
+                }
+                onSidebarStepChange(isSidebarStep);
+            }, [step]);
+
+            // Position highlight whenever step changes, with a short delay to let sidebar animate open
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    positionHighlight();
+                }, 350);
                 window.addEventListener('resize', positionHighlight);
-                return () => window.removeEventListener('resize', positionHighlight);
+                return () => {
+                    clearTimeout(timer);
+                    window.removeEventListener('resize', positionHighlight);
+                };
             }, [step]);
 
             function positionHighlight() {
@@ -1045,22 +1075,25 @@
             const currentStep = TOUR_STEPS[step];
             const isLast = step === TOUR_STEPS.length - 1;
 
-            // On mobile, sidebar steps (3-5) need the sidebar open — skip them
-            const isMobile = window.innerWidth <= 968;
-            const visibleSteps = isMobile ? TOUR_STEPS.slice(0, 3) : TOUR_STEPS;
-            const visibleIsLast = step >= visibleSteps.length - 1;
-
             function handleNext() {
-                if (visibleIsLast) {
+                if (isLast) {
+                    closeSidebar();
+                    onSidebarStepChange(false);
                     onDone();
                 } else {
                     setStep(s => s + 1);
                 }
             }
 
+            function handleDone() {
+                closeSidebar();
+                onSidebarStepChange(false);
+                onDone();
+            }
+
             return (
                 <>
-                    <div className="tour-overlay" onClick={onDone} />
+                    <div className="tour-overlay" onClick={handleDone} />
                     {highlightRect && (
                         <div className="tour-highlight" style={{
                             top: highlightRect.top + 'px',
@@ -1071,19 +1104,19 @@
                     )}
                     <div className="tour-tooltip" style={getTooltipStyle()} ref={tooltipRef}>
                         <div className={`tour-tooltip-arrow arrow-${currentStep.position === 'below' ? 'top' : 'bottom'}`} />
-                        <div className="tour-step-badge">STEP {step + 1} OF {visibleSteps.length}</div>
+                        <div className="tour-step-badge">STEP {step + 1} OF {TOUR_STEPS.length}</div>
                         <h4>{currentStep.title}</h4>
                         <p>{currentStep.text}</p>
                         <div className="tour-controls">
-                            <button className="tour-btn-skip" onClick={onDone}>Skip tour</button>
+                            <button className="tour-btn-skip" onClick={handleDone}>Skip tour</button>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <div className="tour-dots">
-                                    {visibleSteps.map((_, i) => (
+                                    {TOUR_STEPS.map((_, i) => (
                                         <div key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
                                     ))}
                                 </div>
                                 <button className="tour-btn-next" onClick={handleNext}>
-                                    {visibleIsLast ? '🎉 Done' : 'Next →'}
+                                    {isLast ? '🎉 Done' : 'Next →'}
                                 </button>
                             </div>
                         </div>
@@ -1096,11 +1129,12 @@
             const [data, setData] = useState(null);
             const [loading, setLoading] = useState(true);
             const [error, setError] = useState(null);
-            const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth()); // Auto-select current month
+            const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
             const [selectedAlias, setSelectedAlias] = useState('');
             const [view, setView] = useState('member');
             const [fileLastModified, setFileLastModified] = useState(null);
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [tourSidebarActive, setTourSidebarActive] = useState(false);
 
             useEffect(() => {
                 loadExcelFile();
@@ -1233,7 +1267,7 @@
                 <>
                     <div className="app-layout">
                         {/* LEFT SIDEBAR */}
-                        <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+                        <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`} style={tourSidebarActive ? { zIndex: 10001 } : {}}>
                             <div className="sidebar-close">
                                 <button onClick={() => setMobileMenuOpen(false)}>✕ Close</button>
                             </div>
@@ -1416,7 +1450,7 @@
                     </div>
 
                     {/* SITE TOUR */}
-                    {showTour && <SiteTour onDone={onTourDone} />}
+                    {showTour && <SiteTour onDone={onTourDone} openSidebar={() => setMobileMenuOpen(true)} closeSidebar={() => setMobileMenuOpen(false)} onSidebarStepChange={setTourSidebarActive} />}
 
                     {/* MOBILE MENU TOGGLE */}
                     <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
