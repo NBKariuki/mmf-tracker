@@ -594,29 +594,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // 🔒 PASSWORD PROTECTION - Check access before loading app
-        const checkAccess = () => {
-            const hasAccess = sessionStorage.getItem('mmfAccess');
-            if (!hasAccess) {
-                const password = prompt('🔒 Enter password to access Like-Minded Folks MMF Tracker:');
-                if (password === 'LikeMinded2026') {
-                    sessionStorage.setItem('mmfAccess', 'true');
-                    return true;
-                } else {
-                    alert('❌ Incorrect password. Please contact the group admin for access.');
-                    document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);color:#fff;font-family:Arial;text-align:center;"><div><h1>🔒 Access Denied</h1><p>Contact your group admin for the password.</p></div></div>';
-                    return false;
-                }
-            }
-            return true;
-        };
-
-        // Check password before proceeding
-        if (!checkAccess()) {
-            // Stop execution if password is wrong
-            throw new Error('Access denied');
-        }
-
         const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 
                         'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 
                         'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Manilla', 'Scofield', 
@@ -637,6 +614,180 @@
         
         // Get current year dynamically
         const CURRENT_YEAR = new Date().getFullYear();
+        
+        // Password protection
+        const CORRECT_PASSWORD = 'LikeMinded2026';
+
+        // Password Screen Component
+        function PasswordScreen({ onSuccess }) {
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [shake, setShake] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (password === CORRECT_PASSWORD) {
+                    sessionStorage.setItem('mmfAccess', 'true');
+                    onSuccess();
+                } else {
+                    setError('Incorrect password. Please try again or contact admin.');
+                    setShake(true);
+                    setTimeout(() => setShake(false), 500);
+                    setPassword('');
+                }
+            };
+
+            return (
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+                    padding: '20px'
+                }}>
+                    <div style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '20px',
+                        padding: '40px',
+                        maxWidth: '400px',
+                        width: '100%',
+                        textAlign: 'center',
+                        animation: shake ? 'shake 0.5s' : 'none'
+                    }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>💰</div>
+                        <h1 style={{
+                            fontSize: '1.8rem',
+                            fontWeight: '800',
+                            background: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            marginBottom: '10px'
+                        }}>
+                            Like-Minded Folks
+                        </h1>
+                        <p style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '1rem',
+                            marginBottom: '30px'
+                        }}>
+                            MMF Account Tracker
+                        </p>
+
+                        <div style={{
+                            background: 'rgba(132, 250, 176, 0.1)',
+                            border: '1px solid rgba(132, 250, 176, 0.3)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            marginBottom: '25px'
+                        }}>
+                            <div style={{
+                                fontSize: '2rem',
+                                marginBottom: '10px'
+                            }}>🔒</div>
+                            <p style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '0.9rem',
+                                lineHeight: '1.5'
+                            }}>
+                                Enter password to access your account
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubmit}>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter password"
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    padding: '14px',
+                                    fontSize: '1rem',
+                                    fontWeight: '600',
+                                    background: 'rgba(255, 255, 255, 0.08)',
+                                    color: '#fff',
+                                    border: error ? '2px solid rgba(255, 100, 100, 0.5)' : '2px solid rgba(132, 250, 176, 0.3)',
+                                    borderRadius: '12px',
+                                    fontFamily: 'Outfit, sans-serif',
+                                    marginBottom: '15px',
+                                    outline: 'none',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#84fab0'}
+                                onBlur={(e) => e.target.style.borderColor = 'rgba(132, 250, 176, 0.3)'}
+                            />
+
+                            {error && (
+                                <div style={{
+                                    background: 'rgba(255, 100, 100, 0.1)',
+                                    border: '1px solid rgba(255, 100, 100, 0.3)',
+                                    borderRadius: '8px',
+                                    padding: '10px',
+                                    marginBottom: '15px',
+                                    color: '#ff6b6b',
+                                    fontSize: '0.85rem'
+                                }}>
+                                    ❌ {error}
+                                </div>
+                            )}
+
+                            <button
+                                type="submit"
+                                style={{
+                                    width: '100%',
+                                    padding: '14px',
+                                    fontSize: '1rem',
+                                    fontWeight: '700',
+                                    background: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+                                    color: '#0f0c29',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontFamily: 'Outfit, sans-serif',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                            >
+                                🔓 Access Tracker
+                            </button>
+                        </form>
+
+                        <p style={{
+                            marginTop: '20px',
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            fontSize: '0.8rem'
+                        }}>
+                            Don't have the password?<br/>Contact your group admin
+                        </p>
+                    </div>
+
+                    <style>{`
+                        @keyframes shake {
+                            0%, 100% { transform: translateX(0); }
+                            25% { transform: translateX(-10px); }
+                            75% { transform: translateX(10px); }
+                        }
+                    `}</style>
+                </div>
+            );
+        }
+
+        // Main App Wrapper with Password Check
+        function AppWithAuth() {
+            const [isAuthenticated, setIsAuthenticated] = useState(
+                sessionStorage.getItem('mmfAccess') === 'true'
+            );
+
+            if (!isAuthenticated) {
+                return <PasswordScreen onSuccess={() => setIsAuthenticated(true)} />;
+            }
+
+            return <App />;
+        }
 
         function App() {
             const [data, setData] = useState(null);
@@ -1186,7 +1337,7 @@
             );
         }
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(<AppWithAuth />, document.getElementById('root'));
     </script>
 </body>
 </html>
