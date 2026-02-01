@@ -586,6 +586,139 @@
                 font-size: 1.2rem;
             }
         }
+
+        /* SITE TOUR */
+        .tour-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9998;
+        }
+
+        .tour-highlight {
+            position: absolute;
+            border-radius: 10px;
+            box-shadow: 0 0 0 4px rgba(132, 250, 176, 0.6), 0 0 0 9999px rgba(0, 0, 0, 0.55);
+            z-index: 9999;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        .tour-tooltip {
+            position: absolute;
+            z-index: 10000;
+            background: #1e1e3a;
+            border: 1px solid rgba(132, 250, 176, 0.4);
+            border-radius: 14px;
+            padding: 22px 24px 18px;
+            max-width: 300px;
+            width: 90vw;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+        }
+
+        .tour-tooltip-arrow {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #1e1e3a;
+            border-left: 1px solid rgba(132, 250, 176, 0.4);
+            border-bottom: 1px solid rgba(132, 250, 176, 0.4);
+        }
+
+        .tour-tooltip-arrow.arrow-top {
+            top: -7px;
+            left: 30px;
+            transform: rotate(-135deg);
+        }
+
+        .tour-tooltip-arrow.arrow-bottom {
+            bottom: -7px;
+            left: 30px;
+            transform: rotate(45deg);
+        }
+
+        .tour-step-badge {
+            display: inline-block;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            color: #0f0c29;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .tour-tooltip h4 {
+            color: #84fab0;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .tour-tooltip p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .tour-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .tour-btn-next {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            color: #0f0c29;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: transform 0.2s ease;
+        }
+
+        .tour-btn-next:hover {
+            transform: translateY(-1px);
+        }
+
+        .tour-btn-skip {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            padding: 4px 0;
+        }
+
+        .tour-btn-skip:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .tour-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tour-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transition: background 0.3s ease;
+        }
+
+        .tour-dot.active {
+            background: #84fab0;
+        }
     </style>
 </head>
 <body>
@@ -623,6 +756,32 @@
 
         // Password protection
         const CORRECT_PASSWORD = 'LikeMinded2026';
+        const AUTH_EXPIRY_DAYS = 30;
+
+        function getAuthToken() {
+            try {
+                const raw = localStorage.getItem('mmf_auth');
+                if (!raw) return null;
+                const token = JSON.parse(raw);
+                const now = new Date().getTime();
+                if (now > token.expiresAt) {
+                    localStorage.removeItem('mmf_auth');
+                    return null;
+                }
+                return token;
+            } catch (e) {
+                localStorage.removeItem('mmf_auth');
+                return null;
+            }
+        }
+
+        function setAuthToken() {
+            const token = {
+                authenticated: true,
+                expiresAt: new Date().getTime() + (AUTH_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
+            };
+            localStorage.setItem('mmf_auth', JSON.stringify(token));
+        }
 
         // Password Screen Component
         function PasswordScreen({ onSuccess }) {
@@ -633,7 +792,7 @@
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (password === CORRECT_PASSWORD) {
-                    sessionStorage.setItem('mmfAccess', 'true');
+                    setAuthToken();
                     onSuccess();
                 } else {
                     setError('Incorrect password. Please try again or contact admin.');
@@ -784,18 +943,156 @@
 
         // Main App Wrapper with Password Check
         function AppWithAuth() {
-            const [isAuthenticated, setIsAuthenticated] = useState(
-                sessionStorage.getItem('mmfAccess') === 'true'
-            );
+            const [isAuthenticated, setIsAuthenticated] = useState(() => !!getAuthToken());
+            const [showTour, setShowTour] = useState(false);
+
+            const handleAuthSuccess = () => {
+                setIsAuthenticated(true);
+                // If this is the very first login (no tour-seen flag), trigger the tour
+                if (!localStorage.getItem('mmf_tour_seen')) {
+                    setShowTour(true);
+                }
+            };
 
             if (!isAuthenticated) {
-                return <PasswordScreen onSuccess={() => setIsAuthenticated(true)} />;
+                return <PasswordScreen onSuccess={handleAuthSuccess} />;
             }
 
-            return <App />;
+            return <App showTour={showTour} onTourDone={() => {
+                localStorage.setItem('mmf_tour_seen', 'true');
+                setShowTour(false);
+            }} />;
         }
 
-        function App() {
+        // SITE TOUR COMPONENT
+        function SiteTour({ onDone }) {
+            const [step, setStep] = useState(0);
+            const [highlightRect, setHighlightRect] = useState(null);
+            const tooltipRef = React.useRef(null);
+
+            const TOUR_STEPS = [
+                {
+                    selector: '.month-selector',
+                    title: 'Pick a Month',
+                    text: 'Tap any month to view that month\'s data across the whole group.',
+                    position: 'below'
+                },
+                {
+                    selector: '.view-toggle',
+                    title: 'Switch Views',
+                    text: 'Member View lets you check your own balance. All Members shows everyone side by side for easy comparison.',
+                    position: 'below'
+                },
+                {
+                    selector: '.alias-selector',
+                    title: 'Select Your Alias',
+                    text: 'Choose your alias from the dropdown to see your personal balance card for the selected month.',
+                    position: 'below'
+                },
+                {
+                    selector: '.sidebar-section:nth-child(2)',
+                    title: 'Make a Deposit',
+                    text: 'M-PESA and bank deposit details are right here. Always include 308398M as your reference.',
+                    position: 'below'
+                },
+                {
+                    selector: '.sidebar-section:nth-child(3)',
+                    title: 'Group Rules',
+                    text: 'Quick reference for contribution minimums, interest rules, and withdrawal policy.',
+                    position: 'below'
+                },
+                {
+                    selector: '.sidebar-section:nth-child(4)',
+                    title: 'Etica Statements',
+                    text: 'Download the official monthly statements from Etica directly here when they\'re available.',
+                    position: 'below'
+                }
+            ];
+
+            useEffect(() => {
+                positionHighlight();
+                window.addEventListener('resize', positionHighlight);
+                return () => window.removeEventListener('resize', positionHighlight);
+            }, [step]);
+
+            function positionHighlight() {
+                const el = document.querySelector(TOUR_STEPS[step].selector);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    setHighlightRect({
+                        top: rect.top + window.scrollY - 6,
+                        left: rect.left - 6,
+                        width: rect.width + 12,
+                        height: rect.height + 12
+                    });
+                }
+            }
+
+            function getTooltipStyle() {
+                if (!highlightRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+                const pos = TOUR_STEPS[step].position;
+                const base = {
+                    left: Math.max(10, Math.min(highlightRect.left, window.innerWidth - 310)) + 'px',
+                };
+                if (pos === 'below') {
+                    base.top = (highlightRect.top + highlightRect.height + 14) + 'px';
+                } else {
+                    base.top = (highlightRect.top - 180) + 'px';
+                }
+                return base;
+            }
+
+            const currentStep = TOUR_STEPS[step];
+            const isLast = step === TOUR_STEPS.length - 1;
+
+            // On mobile, sidebar steps (3-5) need the sidebar open — skip them
+            const isMobile = window.innerWidth <= 968;
+            const visibleSteps = isMobile ? TOUR_STEPS.slice(0, 3) : TOUR_STEPS;
+            const visibleIsLast = step >= visibleSteps.length - 1;
+
+            function handleNext() {
+                if (visibleIsLast) {
+                    onDone();
+                } else {
+                    setStep(s => s + 1);
+                }
+            }
+
+            return (
+                <>
+                    <div className="tour-overlay" onClick={onDone} />
+                    {highlightRect && (
+                        <div className="tour-highlight" style={{
+                            top: highlightRect.top + 'px',
+                            left: highlightRect.left + 'px',
+                            width: highlightRect.width + 'px',
+                            height: highlightRect.height + 'px'
+                        }} />
+                    )}
+                    <div className="tour-tooltip" style={getTooltipStyle()} ref={tooltipRef}>
+                        <div className={`tour-tooltip-arrow arrow-${currentStep.position === 'below' ? 'top' : 'bottom'}`} />
+                        <div className="tour-step-badge">STEP {step + 1} OF {visibleSteps.length}</div>
+                        <h4>{currentStep.title}</h4>
+                        <p>{currentStep.text}</p>
+                        <div className="tour-controls">
+                            <button className="tour-btn-skip" onClick={onDone}>Skip tour</button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div className="tour-dots">
+                                    {visibleSteps.map((_, i) => (
+                                        <div key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
+                                    ))}
+                                </div>
+                                <button className="tour-btn-next" onClick={handleNext}>
+                                    {visibleIsLast ? '🎉 Done' : 'Next →'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            );
+        }
+
+        function App({ showTour, onTourDone }) {
             const [data, setData] = useState(null);
             const [loading, setLoading] = useState(true);
             const [error, setError] = useState(null);
@@ -1117,6 +1414,9 @@
                             )}
                         </main>
                     </div>
+
+                    {/* SITE TOUR */}
+                    {showTour && <SiteTour onDone={onTourDone} />}
 
                     {/* MOBILE MENU TOGGLE */}
                     <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
