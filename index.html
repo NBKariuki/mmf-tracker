@@ -354,9 +354,9 @@
             background: linear-gradient(135deg, rgba(132, 250, 176, 0.1) 0%, rgba(143, 211, 244, 0.1) 100%);
             border: 1px solid rgba(132, 250, 176, 0.3);
             border-radius: 16px;
-            padding: 20px;
-            margin: 30px auto 0;
-            max-width: 600px;
+            padding: 18px;
+            margin: 50px auto 0;
+            max-width: 650px;
         }
 
         .group-summary-title {
@@ -369,27 +369,29 @@
 
         .group-summary-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
 
         .summary-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px 6px;
             text-align: center;
         }
 
         .summary-label {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            line-height: 1.2;
         }
 
         .summary-value {
-            font-size: 1.4rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: #8fd3f4;
+            line-height: 1.2;
         }
 
         .members-table-container {
@@ -1282,20 +1284,38 @@
                 if (!data || !data[selectedMonth]) return null;
                 
                 const members = getAllMembersData(selectedMonth);
-                const totalContributions = members.reduce((sum, m) => sum + m.topups, 0);
-                const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
+                const monthTopups = members.reduce((sum, m) => sum + m.topups, 0);
+                const monthInterest = members.reduce((sum, m) => sum + m.interest, 0);
                 const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
+                
+                // Calculate cumulative contributions (all months up to selected month)
+                const selectedMonthIndex = MONTHS.indexOf(selectedMonth);
+                let cumulativeContributions = 0;
+                
+                for (let i = 0; i <= selectedMonthIndex; i++) {
+                    const monthName = MONTHS[i];
+                    if (data[monthName]) {
+                        const monthMembers = getAllMembersData(monthName);
+                        cumulativeContributions += monthMembers.reduce((sum, m) => sum + m.topups, 0);
+                    }
+                }
                 
                 // Debug log
                 console.log(`Group Stats for ${selectedMonth}:`, {
                     memberCount: members.length,
-                    totalContributions,
-                    totalInterest,
+                    monthTopups,
+                    monthInterest,
+                    cumulativeContributions,
                     totalBalance,
                     sampleMember: members[0]
                 });
                 
-                return { totalContributions, totalInterest, totalBalance };
+                return { 
+                    monthTopups,           // This month's contributions only
+                    monthInterest,         // This month's interest
+                    cumulativeContributions, // All contributions from Jan to selected month
+                    totalBalance 
+                };
             };
 
             const isCurrentMonth = (month) => {
@@ -1408,6 +1428,15 @@
                             {/* Etica Monthly Statements */}
                             <div className="sidebar-section">
                                 <h3>📄 Etica Monthly Statements</h3>
+                                <div style={{ 
+                                    fontSize: '0.75rem', 
+                                    fontStyle: 'italic', 
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    marginBottom: '12px',
+                                    textAlign: 'center'
+                                }}>
+                                    Hint: statements password is 308398M
+                                </div>
                                 <select 
                                     className="statements-dropdown"
                                     onChange={(e) => {
@@ -1625,22 +1654,22 @@
                                             KES {memberData.interest.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </span>
                                     </div>
+                                    <div style={{ 
+                                        fontSize: '0.7rem', 
+                                        fontStyle: 'italic', 
+                                        color: '#ff9800',
+                                        marginTop: '-8px',
+                                        marginBottom: '10px',
+                                        textAlign: 'center'
+                                    }}>
+                                        *Early month deposits earn more*
+                                    </div>
 
                                     <div className="statement-row">
                                         <span className="statement-label">Days Earning</span>
                                         <span className="statement-value">
                                             {memberData.daysActive} days
                                         </span>
-                                    </div>
-                                    <div style={{ 
-                                        fontSize: '0.75rem', 
-                                        fontStyle: 'italic', 
-                                        color: 'rgba(255, 255, 255, 0.5)', 
-                                        marginTop: '-8px',
-                                        marginBottom: '10px',
-                                        textAlign: 'center'
-                                    }}>
-                                        *Early month deposits earn more*
                                     </div>
 
                                     <div className="statement-row">
@@ -1686,15 +1715,21 @@
                             <div className="group-summary-title">📊 Group Summary - {month}</div>
                             <div className="group-summary-grid">
                                 <div className="summary-item">
-                                    <div className="summary-label">Total Contributed</div>
+                                    <div className="summary-label">Total Contributions<br/>(Jan-{month})</div>
                                     <div className="summary-value">
-                                        KES {stats.totalContributions.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                        KES {stats.cumulativeContributions.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                     </div>
                                 </div>
                                 <div className="summary-item">
-                                    <div className="summary-label">Total Interest</div>
+                                    <div className="summary-label">{month} Top-ups</div>
                                     <div className="summary-value">
-                                        KES {stats.totalInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                        KES {stats.monthTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                    </div>
+                                </div>
+                                <div className="summary-item">
+                                    <div className="summary-label">{month} Interest</div>
+                                    <div className="summary-value">
+                                        KES {stats.monthInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                     </div>
                                 </div>
                             </div>
