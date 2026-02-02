@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMF Tracker - Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .debug-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success { color: #84fab0; }
+        .error { color: #ff6b6b; }
+        .loading { color: #8fd3f4; }
+    </style>
+</head>
+<body>
+    <h1>🔍 MMF Tracker Debug Test</h1>
+    <div id="status" class="debug-box loading">Testing Google Sheets connection...</div>
+    <div id="results" class="debug-box"></div>
+
+    <script>
+        const TEST_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1881761154&single=true&output=csv';
+
+        async function testGoogleSheets() {
+            const status = document.getElementById('status');
+            const results = document.getElementById('results');
+            
+            try {
+                status.innerHTML = '⏳ Fetching January data from Google Sheets...';
+                
+                const response = await fetch(TEST_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                
+                status.className = 'debug-box success';
+                status.innerHTML = '✅ SUCCESS! Google Sheets is accessible';
+                
+                results.innerHTML = `
+                    <h3>Response Details:</h3>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Content-Type:</strong> ${response.headers.get('content-type')}</p>
+                    <p><strong>Total Lines:</strong> ${lines.length}</p>
+                    <p><strong>First 5 lines:</strong></p>
+                    <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; overflow-x: auto;">
+${lines.slice(0, 5).join('\n')}
+                    </pre>
+                    <h3>Parsed Members:</h3>
+                    <div id="members"></div>
+                `;
+                
+                // Try to parse the data
+                const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 
+                                'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 
+                                'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Manilla', 'Scofield', 
+                                'Bogota', 'Emirates', 'Dublin', 'Doha'];
+                
+                const membersDiv = document.getElementById('members');
+                let foundMembers = [];
+                
+                for (let i = 3; i < lines.length; i++) {
+                    const cols = lines[i].split(',');
+                    const alias = cols[0]?.trim().replace(/"/g, '');
+                    
+                    if (alias && MEMBERS.includes(alias)) {
+                        foundMembers.push({
+                            alias,
+                            openingBalance: cols[1],
+                            topups: cols[2],
+                            interest: cols[3],
+                            days: cols[4],
+                            closingBalance: cols[5]
+                        });
+                    }
+                }
+                
+                if (foundMembers.length > 0) {
+                    membersDiv.innerHTML = `
+                        <p class="success">✅ Found ${foundMembers.length} members:</p>
+                        <ul>
+                            ${foundMembers.map(m => `<li><strong>${m.alias}</strong>: Balance ${m.closingBalance}</li>`).join('')}
+                        </ul>
+                    `;
+                } else {
+                    membersDiv.innerHTML = '<p class="error">❌ No members found in CSV. Check data format!</p>';
+                }
+                
+            } catch (err) {
+                status.className = 'debug-box error';
+                status.innerHTML = `❌ ERROR: ${err.message}`;
+                
+                results.innerHTML = `
+                    <h3>Error Details:</h3>
+                    <p><strong>Type:</strong> ${err.name}</p>
+                    <p><strong>Message:</strong> ${err.message}</p>
+                    <p><strong>Stack:</strong></p>
+                    <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 0.8em;">
+${err.stack}
+                    </pre>
+                    
+                    <h3>Common Issues:</h3>
+                    <ul>
+                        <li><strong>CORS Error:</strong> Google Sheets might not be published correctly</li>
+                        <li><strong>Network Error:</strong> Check your internet connection</li>
+                        <li><strong>404 Error:</strong> Sheet GID might be wrong</li>
+                    </ul>
+                    
+                    <h3>How to Fix:</h3>
+                    <ol>
+                        <li>Open your Google Sheet</li>
+                        <li>Click <strong>File → Share → Publish to web</strong></li>
+                        <li>Choose <strong>Entire Document</strong> or specific sheet</li>
+                        <li>Select <strong>Comma-separated values (.csv)</strong></li>
+                        <li>Click <strong>Publish</strong></li>
+                        <li>Copy the published URL</li>
+                    </ol>
+                `;
+            }
+        }
+        
+        // Run test
+        testGoogleSheets();
+    </script>
+</body>
+</html>
