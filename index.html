@@ -390,7 +390,6 @@
             font-size: 1.4rem;
             font-weight: 800;
             color: #8fd3f4;
-            text-align: center;
         }
 
         .members-table-container {
@@ -411,17 +410,17 @@
         }
 
         .members-table th {
-            padding: 10px 8px;
+            padding: 12px 10px;
             text-align: left;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: #84fab0;
             border-bottom: 2px solid rgba(132, 250, 176, 0.3);
         }
 
         .members-table td {
-            padding: 10px 8px;
-            font-size: 0.8rem;
+            padding: 12px 10px;
+            font-size: 0.9rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -773,21 +772,6 @@
         // Get current year dynamically
         const CURRENT_YEAR = new Date().getFullYear();
 
-        // Google Sheets CSV URLs for each month
-        const MONTH_CSV_URLS = {
-            'January': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1881761154&single=true&output=csv',
-            'February': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1182077627&single=true&output=csv',
-            'March': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1149226024&single=true&output=csv',
-            'April': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=962111704&single=true&output=csv',
-            'May': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=514492782&single=true&output=csv',
-            'June': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=599461857&single=true&output=csv',
-            'July': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=703792530&single=true&output=csv',
-            'August': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=2093708979&single=true&output=csv',
-            'September': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1079237043&single=true&output=csv',
-            'October': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=362389640&single=true&output=csv',
-            'November': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=350315922&single=true&output=csv',
-            'December': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1016561798&single=true&output=csv'
-        };
 
         // Returns current month name — defined here so it's available
         // before App's useState initialiser runs
@@ -1191,7 +1175,8 @@
                     // Fetch all 12 months in parallel
                     const fetchPromises = MONTHS.map(async (month) => {
                         const csvUrl = MONTH_CSV_URLS[month];
-                        const response = await fetch(csvUrl);
+                        const cacheBuster = new Date().getTime();
+                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`);
                         
                         if (!response.ok) {
                             throw new Error(`Could not load ${month} data`);
@@ -1205,16 +1190,38 @@
                         // Skip first 3 rows (title, blank, headers) — data starts at row 4 (index 3)
                         for (let i = 3; i < lines.length; i++) {
                             const cols = parseCSVLine(lines[i]);
-                            const alias = cols[0]?.trim();
+                            const alias = cols[0]?.trim().replace(/"/g, '');
                             
                             if (alias && MEMBERS.includes(alias)) {
-                                monthData[alias] = {
-                                    openingBalance: parseFloat(cols[1]) || 0,
-                                    topups: parseFloat(cols[2]) || 0,
-                                    interest: parseFloat(cols[3]) || 0,
-                                    daysActive: parseInt(cols[4]) || 0,
-                                    closingBalance: parseFloat(cols[5]) || 0
+                                // Helper function to parse numbers (removes commas, quotes, etc.)
+                                const parseNumber = (str) => {
+                                    if (!str) return 0;
+                                    // Remove quotes, commas, and whitespace, then parse
+                                    const cleaned = str.replace(/["',\s]/g, '');
+                                    return parseFloat(cleaned) || 0;
                                 };
+                                
+                                const openingBalance = parseNumber(cols[1]);
+                                const topups = parseNumber(cols[2]);
+                                const interest = parseNumber(cols[3]);
+                                const daysActive = parseInt(cols[4]?.replace(/[",\s]/g, '')) || 0;
+                                const closingBalance = parseNumber(cols[5]);
+                                
+                                monthData[alias] = {
+                                    openingBalance,
+                                    topups,
+                                    interest,
+                                    daysActive,
+                                    closingBalance
+                                };
+                                
+                                // Debug log for first member only
+                                if (Object.keys(monthData).length === 1) {
+                                    console.log(`${month} - First member (${alias}):`, {
+                                        raw: cols.slice(1, 6),
+                                        parsed: { openingBalance, topups, interest, daysActive, closingBalance }
+                                    });
+                                }
                             }
                         }
                         
@@ -1279,6 +1286,15 @@
                 const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
                 const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
                 
+                // Debug log
+                console.log(`Group Stats for ${selectedMonth}:`, {
+                    memberCount: members.length,
+                    totalContributions,
+                    totalInterest,
+                    totalBalance,
+                    sampleMember: members[0]
+                });
+                
                 return { totalContributions, totalInterest, totalBalance };
             };
 
@@ -1338,7 +1354,7 @@
                             {/* Track Contributions */}
                             <div className="sidebar-section">
                                 <h3>📊 Track Activity</h3>
-                                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQfQdBVl01cxsIoGnfJLltGDuOkIVDFqj-rNg3KwFVZ8-GGbUqk1DSs_CVaygisjaLhg30g1gjzIsdC/pubhtml?gid=2079453016&single=true" target="_blank" rel="noopener noreferrer" className="sidebar-link">
+                                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pubhtml" target="_blank" rel="noopener noreferrer" className="sidebar-link">
                                     View Contributions
                                 </a>
                             </div>
@@ -1451,16 +1467,6 @@
                                         </option>
                                     ))}
                                 </select>
-                                <div style={{
-                                    marginTop: '8px',
-                                    fontSize: '0.75rem',
-                                    fontStyle: 'italic',
-                                    color: '#ff9800',
-                                    textAlign: 'right',
-                                    opacity: 0.9
-                                }}>
-                                    Password: 308398
-                                </div>
                             </div>
                         </aside>
 
@@ -1627,15 +1633,14 @@
                                         </span>
                                     </div>
                                     <div style={{ 
-                                        fontSize: '0.73rem', 
+                                        fontSize: '0.75rem', 
                                         fontStyle: 'italic', 
-                                        color: 'rgba(255, 255, 255, 0.45)', 
-                                        marginTop: '-6px',
-                                        marginBottom: '12px',
-                                        textAlign: 'right',
-                                        paddingRight: '4px'
+                                        color: 'rgba(255, 255, 255, 0.5)', 
+                                        marginTop: '-8px',
+                                        marginBottom: '10px',
+                                        textAlign: 'center'
                                     }}>
-                                        Early deposits earn more interest
+                                        *Early month deposits earn more*
                                     </div>
 
                                     <div className="statement-row">
@@ -1718,8 +1723,9 @@
                                     <th>Alias</th>
                                     <th className="number-col">Opening</th>
                                     <th className="number-col">Top-ups</th>
-                                    <th className="number-col">{month.slice(0, 3)} Interest</th>
+                                    <th className="number-col">Interest</th>
                                     <th className="number-col">Closing</th>
+                                    <th className="number-col">Days</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1738,6 +1744,7 @@
                                         <td className="number-col" style={{ fontWeight: '700', color: '#8fd3f4' }}>
                                             {member.closingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                         </td>
+                                        <td className="number-col">{member.daysActive}</td>
                                     </tr>
                                 ))}
                                 <tr className="total-row">
@@ -1746,6 +1753,7 @@
                                     <td className="number-col">{totalTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
                                     <td className="number-col">{totalInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
                                     <td className="number-col">{totalClosing.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
+                                    <td className="number-col">-</td>
                                 </tr>
                             </tbody>
                         </table>
