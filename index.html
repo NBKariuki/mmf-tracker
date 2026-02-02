@@ -1190,16 +1190,38 @@
                         // Skip first 3 rows (title, blank, headers) — data starts at row 4 (index 3)
                         for (let i = 3; i < lines.length; i++) {
                             const cols = parseCSVLine(lines[i]);
-                            const alias = cols[0]?.trim();
+                            const alias = cols[0]?.trim().replace(/"/g, '');
                             
                             if (alias && MEMBERS.includes(alias)) {
-                                monthData[alias] = {
-                                    openingBalance: parseFloat(cols[1]) || 0,
-                                    topups: parseFloat(cols[2]) || 0,
-                                    interest: parseFloat(cols[3]) || 0,
-                                    daysActive: parseInt(cols[4]) || 0,
-                                    closingBalance: parseFloat(cols[5]) || 0
+                                // Helper function to parse numbers (removes commas, quotes, etc.)
+                                const parseNumber = (str) => {
+                                    if (!str) return 0;
+                                    // Remove quotes, commas, and whitespace, then parse
+                                    const cleaned = str.replace(/["',\s]/g, '');
+                                    return parseFloat(cleaned) || 0;
                                 };
+                                
+                                const openingBalance = parseNumber(cols[1]);
+                                const topups = parseNumber(cols[2]);
+                                const interest = parseNumber(cols[3]);
+                                const daysActive = parseInt(cols[4]?.replace(/[",\s]/g, '')) || 0;
+                                const closingBalance = parseNumber(cols[5]);
+                                
+                                monthData[alias] = {
+                                    openingBalance,
+                                    topups,
+                                    interest,
+                                    daysActive,
+                                    closingBalance
+                                };
+                                
+                                // Debug log for first member only
+                                if (Object.keys(monthData).length === 1) {
+                                    console.log(`${month} - First member (${alias}):`, {
+                                        raw: cols.slice(1, 6),
+                                        parsed: { openingBalance, topups, interest, daysActive, closingBalance }
+                                    });
+                                }
                             }
                         }
                         
@@ -1263,6 +1285,15 @@
                 const totalContributions = members.reduce((sum, m) => sum + m.topups, 0);
                 const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
                 const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
+                
+                // Debug log
+                console.log(`Group Stats for ${selectedMonth}:`, {
+                    memberCount: members.length,
+                    totalContributions,
+                    totalInterest,
+                    totalBalance,
+                    sampleMember: members[0]
+                });
                 
                 return { totalContributions, totalInterest, totalBalance };
             };
