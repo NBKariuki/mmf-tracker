@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Like-Minded Folks - MMF Tracker</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23302b63%22/><rect x=%225%22 y=%225%22 width=%2290%22 height=%2290%22 rx=%2215%22 fill=%22none%22 stroke=%22%2384fab0%22 stroke-width=%223%22/><text x=%2250%22 y=%2265%22 font-family=%22Arial,sans-serif%22 font-size=%2236%22 font-weight=%22700%22 fill=%22%2384fab0%22 text-anchor=%22middle%22>LMF</text></svg>">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -734,6 +733,22 @@
         const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
                        'July', 'August', 'September', 'October', 'November', 'December'];
         
+        // Google Sheets CSV URLs for each month
+        const MONTH_CSV_URLS = {
+            'January': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1881761154&single=true&output=csv',
+            'February': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1182077627&single=true&output=csv',
+            'March': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1149226024&single=true&output=csv',
+            'April': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=962111704&single=true&output=csv',
+            'May': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=514492782&single=true&output=csv',
+            'June': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=599461857&single=true&output=csv',
+            'July': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=703792530&single=true&output=csv',
+            'August': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=2093708979&single=true&output=csv',
+            'September': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1079237043&single=true&output=csv',
+            'October': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=362389640&single=true&output=csv',
+            'November': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=350315922&single=true&output=csv',
+            'December': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1016561798&single=true&output=csv'
+        };
+        
         const MINIMUM_CONTRIBUTION = 4000;
         const WARNING_START_DAY = 10; // Warnings show from 10th onwards
         
@@ -744,9 +759,34 @@
             'Paris': 'Marseille',
             'Marseille': 'Paris'
         };
+
+        // Playful warning messages for partial contributions
+        const PARTIAL_CONTRIBUTION_MESSAGES = [
+            (amount, remaining) => `Hey there! 👋 You've put in KES ${amount.toLocaleString()} this month. Just KES ${remaining.toLocaleString()} more and you're all set for interest. You've got this! 💪`,
+            (amount, remaining) => `Nice start! 🌟 You're at KES ${amount.toLocaleString()} so far. Top up KES ${remaining.toLocaleString()} more to unlock this month's interest. Almost there!`,
+            (amount, remaining) => `Good progress! 🎯 Your KES ${amount.toLocaleString()} is working. Add KES ${remaining.toLocaleString()} more to hit the minimum and earn interest. Keep going!`,
+            (amount, remaining) => `You're on the right track! 🚀 KES ${amount.toLocaleString()} down, KES ${remaining.toLocaleString()} to go. Top up soon and don't miss out on this month's interest!`,
+            (amount, remaining) => `Almost there, friend! 😊 You've contributed KES ${amount.toLocaleString()}. Just KES ${remaining.toLocaleString()} more to qualify for interest this month!`
+        ];
         
         // Get current year dynamically
         const CURRENT_YEAR = new Date().getFullYear();
+
+        // Google Sheets CSV URLs for each month
+        const MONTH_CSV_URLS = {
+            'January': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1881761154&single=true&output=csv',
+            'February': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1182077627&single=true&output=csv',
+            'March': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1149226024&single=true&output=csv',
+            'April': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=962111704&single=true&output=csv',
+            'May': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=514492782&single=true&output=csv',
+            'June': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=599461857&single=true&output=csv',
+            'July': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=703792530&single=true&output=csv',
+            'August': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=2093708979&single=true&output=csv',
+            'September': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1079237043&single=true&output=csv',
+            'October': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=362389640&single=true&output=csv',
+            'November': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=350315922&single=true&output=csv',
+            'December': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pub?gid=1016561798&single=true&output=csv'
+        };
 
         // Returns current month name — defined here so it's available
         // before App's useState initialiser runs
@@ -1137,62 +1177,85 @@
             const [tourSidebarActive, setTourSidebarActive] = useState(false);
 
             useEffect(() => {
-                loadExcelFile();
+                loadDataFromGoogleSheets();
             }, []);
 
-            const loadExcelFile = async () => {
+            const loadDataFromGoogleSheets = async () => {
                 try {
                     setLoading(true);
                     setError(null);
                     
-                    const cacheBuster = new Date().getTime();
-                    const response = await fetch(`MMF_Tracker_2026_For_Website.xlsx?v=${cacheBuster}`);
-                    
-                    if (!response.ok) {
-                        throw new Error('Could not load data file');
-                    }
-
-                    const lastModified = response.headers.get('Last-Modified');
-                    if (lastModified) {
-                        setFileLastModified(new Date(lastModified));
-                    } else {
-                        setFileLastModified(new Date());
-                    }
-
-                    const arrayBuffer = await response.arrayBuffer();
-                    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                    
                     const parsedData = {};
                     
-                    workbook.SheetNames.forEach(sheetName => {
-                        const worksheet = workbook.Sheets[sheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    // Fetch all 12 months in parallel
+                    const fetchPromises = MONTHS.map(async (month) => {
+                        const csvUrl = MONTH_CSV_URLS[month];
+                        const cacheBuster = new Date().getTime();
+                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`);
+                        
+                        if (!response.ok) {
+                            throw new Error(`Could not load ${month} data`);
+                        }
+                        
+                        const csvText = await response.text();
+                        const lines = csvText.split('\n').filter(line => line.trim());
                         
                         const monthData = {};
                         
-                        for (let i = 2; i < jsonData.length; i++) {
-                            const row = jsonData[i];
-                            if (row[0] && MEMBERS.includes(row[0])) {
-                                monthData[row[0]] = {
-                                    openingBalance: parseFloat(row[1]) || 0,
-                                    topups: parseFloat(row[2]) || 0,
-                                    interest: parseFloat(row[3]) || 0,
-                                    daysActive: parseInt(row[4]) || 0,
-                                    closingBalance: parseFloat(row[5]) || 0
+                        // Skip first 3 rows (title, blank, headers) — data starts at row 4 (index 3)
+                        for (let i = 3; i < lines.length; i++) {
+                            const cols = parseCSVLine(lines[i]);
+                            const alias = cols[0]?.trim();
+                            
+                            if (alias && MEMBERS.includes(alias)) {
+                                monthData[alias] = {
+                                    openingBalance: parseFloat(cols[1]) || 0,
+                                    topups: parseFloat(cols[2]) || 0,
+                                    interest: parseFloat(cols[3]) || 0,
+                                    daysActive: parseInt(cols[4]) || 0,
+                                    closingBalance: parseFloat(cols[5]) || 0
                                 };
                             }
                         }
                         
-                        parsedData[sheetName] = monthData;
+                        return { month, monthData };
+                    });
+                    
+                    const results = await Promise.all(fetchPromises);
+                    results.forEach(({ month, monthData }) => {
+                        parsedData[month] = monthData;
                     });
                     
                     setData(parsedData);
+                    setFileLastModified(new Date()); // Current timestamp since Google Sheets doesn't send Last-Modified
                     setLoading(false);
                 } catch (err) {
-                    console.error('Error loading file:', err);
-                    setError('Unable to load data. Please refresh the page or contact the admin.');
+                    console.error('Error loading data:', err);
+                    setError('Unable to load data from Google Sheets. Please refresh the page or contact the admin.');
                     setLoading(false);
                 }
+            };
+
+            // Simple CSV parser that handles quoted fields
+            const parseCSVLine = (line) => {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current);
+                return result;
             };
 
             const getAllMembersData = (month) => {
@@ -1254,7 +1317,7 @@
                             </div>
                             <div className="error">
                                 <p>{error}</p>
-                                <button className="btn-secondary" onClick={loadExcelFile}>Retry</button>
+                                <button className="btn-secondary" onClick={loadDataFromGoogleSheets}>Retry</button>
                             </div>
                         </div>
                     </div>
@@ -1275,7 +1338,7 @@
                             {/* Track Contributions */}
                             <div className="sidebar-section">
                                 <h3>📊 Track Activity</h3>
-                                <a href="https://shorturl.at/7dQr0" target="_blank" rel="noopener noreferrer" className="sidebar-link">
+                                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSvEu3eXswAQIvzcgYTNYJAMLHZwAzgDD8LqUiu0tmC8SjTWUi_Z1YBJ0ZRhyowfJA5BIOUPVJy7tvj/pubhtml" target="_blank" rel="noopener noreferrer" className="sidebar-link">
                                     View Contributions
                                 </a>
                             </div>
@@ -1481,15 +1544,29 @@
                     const partnerData = data[month]?.[partnerAlias] || { topups: 0 };
                     const combinedTopups = memberData.topups + partnerData.topups;
                     
-                    if (combinedTopups < MINIMUM_CONTRIBUTION) {
+                    if (combinedTopups > 0 && combinedTopups < MINIMUM_CONTRIBUTION) {
+                        // Partial contribution - soft message
                         showWarning = true;
-                        warningMessage = `Your combined ${month} contribution with ${partnerAlias} (KES ${combinedTopups.toLocaleString()}) is below the group minimum of KES ${MINIMUM_CONTRIBUTION.toLocaleString()}. Please coordinate to top up soon so you don't lose out on this month's interest.`;
+                        const remaining = MINIMUM_CONTRIBUTION - combinedTopups;
+                        const randomMsg = PARTIAL_CONTRIBUTION_MESSAGES[Math.floor(Math.random() * PARTIAL_CONTRIBUTION_MESSAGES.length)];
+                        warningMessage = randomMsg(combinedTopups, remaining) + ` (Combined with ${partnerAlias})`;
+                    } else if (combinedTopups === 0) {
+                        // Zero contribution - more direct
+                        showWarning = true;
+                        warningMessage = `Your combined ${month} contribution with ${partnerAlias} hasn't been recorded yet. Please coordinate to deposit KES ${MINIMUM_CONTRIBUTION.toLocaleString()} soon so you don't miss out on this month's interest.`;
                     }
                 } else {
-                    // Individual member - check personal contribution
-                    if (memberData.topups < MINIMUM_CONTRIBUTION) {
+                    // Individual member
+                    if (memberData.topups > 0 && memberData.topups < MINIMUM_CONTRIBUTION) {
+                        // Partial contribution - soft message
                         showWarning = true;
-                        warningMessage = `Your ${month} balance (KES ${memberData.closingBalance.toLocaleString()}) is below the agreed group minimum. Please top it up soon so you don't lose out on this month's interest.`;
+                        const remaining = MINIMUM_CONTRIBUTION - memberData.topups;
+                        const randomMsg = PARTIAL_CONTRIBUTION_MESSAGES[Math.floor(Math.random() * PARTIAL_CONTRIBUTION_MESSAGES.length)];
+                        warningMessage = randomMsg(memberData.topups, remaining);
+                    } else if (memberData.topups === 0) {
+                        // Zero contribution - more direct
+                        showWarning = true;
+                        warningMessage = `Your ${month} contribution hasn't been recorded yet. Please deposit at least KES ${MINIMUM_CONTRIBUTION.toLocaleString()} soon to qualify for this month's interest.`;
                     }
                 }
             }
@@ -1534,10 +1611,20 @@
                                     </div>
 
                                     <div className="statement-row">
-                                        <span className="statement-label">Days active</span>
+                                        <span className="statement-label">Days Earning</span>
                                         <span className="statement-value">
                                             {memberData.daysActive} days
                                         </span>
+                                    </div>
+                                    <div style={{ 
+                                        fontSize: '0.75rem', 
+                                        fontStyle: 'italic', 
+                                        color: 'rgba(255, 255, 255, 0.5)', 
+                                        marginTop: '-8px',
+                                        marginBottom: '10px',
+                                        textAlign: 'center'
+                                    }}>
+                                        *Early month deposits earn more*
                                     </div>
 
                                     <div className="statement-row">
