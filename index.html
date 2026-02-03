@@ -956,7 +956,6 @@
         
         // ═══════════════════════════════════════════════════════════════
         
-        const MINIMUM_CONTRIBUTION = 4000;
         const WARNING_START_DAY = 10; // Warnings show from 10th onwards
         
         // Member pairs who contribute together
@@ -1870,7 +1869,7 @@
 
             // Build mixed bar/line chart (bars = contributions, line = balance trend with December projection)
             React.useEffect(() => {
-                if (!chartRef.current || !selectedAlias || !allMonthsData) return;
+                if (!chartRef.current || !selectedAlias || !allMonthsData || !window.Chart) return;
                 
                 if (chartInstanceRef.current) {
                     chartInstanceRef.current.destroy();
@@ -2142,37 +2141,42 @@
                                     
                                     {/* ARCHETYPE MESSAGE FOOTER */}
                                     {(() => {
-                                        const projection = calculateMemberProjection(selectedAlias, allMonthsData, month);
-                                        const groupAvgInterest = stats ? stats.monthInterest / MEMBERS.length : 0;
-                                        const groupStats = {
-                                            avgInterest: groupAvgInterest,
-                                            totalMembers: MEMBERS.length,
-                                            membersAboveMin: stats ? Math.round(stats.monthTopups / MINIMUM_CONTRIBUTION) : 0,
-                                            membersWithPartial: Math.round(MEMBERS.length * 0.4),
-                                            membersActive: Math.round(MEMBERS.length * 0.75),
-                                            totalBalance: stats ? stats.monthTopups : 0
-                                        };
-                                        const archetype = classifyMember(projection, memberData, groupStats);
-                                        const message = generateArchetypeMessage(archetype, projection, memberData, groupStats, month);
-                                        
-                                        const icons = {
-                                            overachiever: '🏆',
-                                            late_bloomer: '🚀',
-                                            optimizer: '🎯',
-                                            ghost: '👻',
-                                            erratic: '🌱',
-                                            consistent: '✅'
-                                        };
-                                        
-                                        return (
-                                            <div className="archetype-message">
-                                                <div className="archetype-header">
-                                                    <span className="archetype-icon">{icons[archetype] || '📊'}</span>
-                                                    <span>December Projection: KES {Math.round(projection.decemberTotal).toLocaleString()}</span>
+                                        try {
+                                            const projection = calculateMemberProjection(selectedAlias, allMonthsData, month);
+                                            const groupAvgInterest = stats ? stats.monthInterest / MEMBERS.length : 0;
+                                            const groupStats = {
+                                                avgInterest: groupAvgInterest,
+                                                totalMembers: MEMBERS.length,
+                                                membersAboveMin: stats ? Math.round(stats.monthTopups / MINIMUM_CONTRIBUTION) : 0,
+                                                membersWithPartial: Math.round(MEMBERS.length * 0.4),
+                                                membersActive: Math.round(MEMBERS.length * 0.75),
+                                                totalBalance: stats ? stats.monthTopups : 0
+                                            };
+                                            const archetype = classifyMember(projection, memberData, groupStats);
+                                            const message = generateArchetypeMessage(archetype, projection, memberData, groupStats, month);
+                                            
+                                            const icons = {
+                                                overachiever: '🏆',
+                                                late_bloomer: '🚀',
+                                                optimizer: '🎯',
+                                                ghost: '👻',
+                                                erratic: '🌱',
+                                                consistent: '✅'
+                                            };
+                                            
+                                            return (
+                                                <div className="archetype-message">
+                                                    <div className="archetype-header">
+                                                        <span className="archetype-icon">{icons[archetype] || '📊'}</span>
+                                                        <span>December Projection: KES {Math.round(projection.decemberTotal).toLocaleString()}</span>
+                                                    </div>
+                                                    <div dangerouslySetInnerHTML={{ __html: message }} />
                                                 </div>
-                                                <div dangerouslySetInnerHTML={{ __html: message }} />
-                                            </div>
-                                        );
+                                            );
+                                        } catch (error) {
+                                            console.error('Archetype message error:', error);
+                                            return null;
+                                        }
                                     })()}
                                 </div>
                             )}
@@ -2228,7 +2232,7 @@
 
             // Build simple line chart for group balance
             React.useEffect(() => {
-                if (!chartRef.current || !allMonthsData) return;
+                if (!chartRef.current || !allMonthsData || !window.Chart) return;
                 
                 if (chartInstanceRef.current) {
                     chartInstanceRef.current.destroy();
