@@ -1172,6 +1172,11 @@
 
             useEffect(() => {
                 loadDataFromGoogleSheets();
+
+                // Auto-refresh every 5 minutes so the page stays up-to-date
+                // even if the user leaves it open
+                const refreshInterval = setInterval(loadDataFromGoogleSheets, 5 * 60 * 1000);
+                return () => clearInterval(refreshInterval);
             }, []);
 
             const loadDataFromGoogleSheets = async () => {
@@ -1185,7 +1190,9 @@
                     const fetchPromises = MONTHS.map(async (month) => {
                         const csvUrl = MONTH_CSV_URLS[month];
                         const cacheBuster = new Date().getTime();
-                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`);
+                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`, {
+                            cache: 'no-store'   // bypass browser cache entirely
+                        });
                         
                         if (!response.ok) {
                             throw new Error(`Could not load ${month} data`);
@@ -1513,6 +1520,33 @@
                                 <div className="header-emoji">💰</div>
                                 <h1>Like-Minded Folks</h1>
                                 <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                                {fileLastModified && (
+                                    <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                                        <span className="data-timestamp" style={{ margin: 0 }}>
+                                            Last updated: {fileLastModified.toLocaleString('en-KE', {
+                                                day: '2-digit', month: '2-digit', year: 'numeric',
+                                                hour: '2-digit', minute: '2-digit', hour12: true
+                                            })}
+                                        </span>
+                                        <button
+                                            onClick={loadDataFromGoogleSheets}
+                                            style={{
+                                                background: 'rgba(132, 250, 176, 0.15)',
+                                                border: '1px solid rgba(132, 250, 176, 0.4)',
+                                                color: '#84fab0',
+                                                padding: '4px 10px',
+                                                borderRadius: '14px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.78rem',
+                                                fontWeight: '600',
+                                                fontFamily: 'Outfit, sans-serif',
+                                                transition: 'background 0.2s'
+                                            }}
+                                            onMouseEnter={e => e.target.style.background = 'rgba(132, 250, 176, 0.25)'}
+                                            onMouseLeave={e => e.target.style.background = 'rgba(132, 250, 176, 0.15)'}
+                                        >🔄 Refresh</button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="month-selector">
