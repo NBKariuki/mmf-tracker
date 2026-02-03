@@ -1172,102 +1172,17 @@
 
             useEffect(() => {
                 loadDataFromGoogleSheets();
-
-                // Auto-refresh every 5 minutes so the page stays up-to-date
-                // even if the user leaves it open
-                const refreshInterval = setInterval(loadDataFromGoogleSheets, 5 * 60 * 1000);
-                return () => clearInterval(refreshInterval);
             }, []);
 
-            const loadDataFromGoogleSheets = async () => {
-                try {
-                    setLoading(true);
-                    setError(null);
-                    
-                    const parsedData = {};
-                    
-                    // Fetch all 12 months in parallel
-                    const fetchPromises = MONTHS.map(async (month) => {
-                        const csvUrl = MONTH_CSV_URLS[month];
-                        const cacheBuster = new Date().getTime();
-                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`, {
-                            cache: 'no-store'   // bypass browser cache entirely
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`Could not load ${month} data`);
-                        }
-                        
-                        const csvText = await response.text();
-                        const lines = csvText.split('\n').filter(line => line.trim());
-                        
-                        const monthData = {};
-                        
-                        // Skip first 3 rows (title, blank, headers) — data starts at row 4 (index 3)
-                        for (let i = 3; i < lines.length; i++) {
-                            const cols = parseCSVLine(lines[i]);
-                            const alias = cols[0]?.trim().replace(/"/g, '');
-                            
-                            if (alias && MEMBERS.includes(alias)) {
-                                // Helper function to parse numbers (removes commas, quotes, etc.)
-                                const parseNumber = (str) => {
-                                    if (!str) return 0;
-                                    // Remove quotes, commas, and whitespace, then parse
-                                    const cleaned = str.replace(/["',\s]/g, '');
-                                    return parseFloat(cleaned) || 0;
-                                };
-                                
-                                const openingBalance = parseNumber(cols[1]);
-                                const topups = parseNumber(cols[2]);
-                                const interest = parseNumber(cols[3]);
-                                const daysActive = parseInt(cols[4]?.replace(/[",\s]/g, '')) || 0;
-                                const closingBalance = parseNumber(cols[5]);
-                                
-                                monthData[alias] = {
-                                    openingBalance,
-                                    topups,
-                                    interest,
-                                    daysActive,
-                                    closingBalance
-                                };
-                                
-                                // Debug log for first member only
-                                if (Object.keys(monthData).length === 1) {
-                                    console.log(`${month} - First member (${alias}):`, {
-                                        raw: cols.slice(1, 6),
-                                        parsed: { openingBalance, topups, interest, daysActive, closingBalance }
-                                    });
-                                }
-                            }
-                        }
-                        
-                        return { month, monthData };
-                    });
-                    
-                    const results = await Promise.all(fetchPromises);
-                    results.forEach(({ month, monthData }) => {
-                        parsedData[month] = monthData;
-                    });
-                    
-                    setData(parsedData);
-                    setFileLastModified(new Date()); // Current timestamp since Google Sheets doesn't send Last-Modified
-                    setLoading(false);
-                } catch (err) {
-                    console.error('Error loading data:', err);
-                    setError('Unable to load data from Google Sheets. Please refresh the page or contact the admin.');
-                    setLoading(false);
-                }
-            };
-
-            // Simple CSV parser that handles quoted fields
+            // CSV parser that handles quoted fields and strips \r
             const parseCSVLine = (line) => {
                 const result = [];
                 let current = '';
                 let inQuotes = false;
-                
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    
+                // strip any trailing \r so it doesn't pollute the last column
+                const clean = line.replace(/\r$/, '');
+                for (let i = 0; i < clean.length; i++) {
+                    const char = clean[i];
                     if (char === '"') {
                         inQuotes = !inQuotes;
                     } else if (char === ',' && !inQuotes) {
@@ -1279,6 +1194,125 @@
                 }
                 result.push(current);
                 return result;
+            };
+
+            // Parse a numeric cell value (handles quotes, commas, whitespace)
+            const parseNumber = (str) => {
+                if (!str) return 0;
+                const cleaned = str.replace(/["',\s]/g, '');
+                return parseFloat(cleaned) || 0;
+            };
+
+            const loadDataFromGoogleSheets = async () => {
+                try {
+                    setLoading(true);
+                    setError(null);
+
+                    const parsedData = {};
+
+                    // Fetch all 12 months in parallel
+                    const fetchPromises = MONTHS.map(async (month) => {
+                        const csvUrl = MONTH_CSV_URLS[month];
+                        const response = await fetch(csvUrl);
+
+                        if (!response.ok) {
+                            throw new Error(`Could not load ${month} data`);
+                        }
+
+                        const csvText = await response.text();
+                        // Keep ALL lines (don't filter blanks) so row indices stay stable
+                        const lines = csvText.split('\n');
+
+                        // ── Find the header row dynamically ──
+                        // Look for the row that contains both "Alias" and "Closing"
+                        // (case-insensitive).  This is the column-header row regardless
+                        // of how many title / blank rows sit above it.
+                        let headerIndex = -1;
+                        for (let i = 0; i < lines.length; i++) {
+                            const lower = lines[i].toLowerCase();
+                            if (lower.includes('alias') && lower.includes('closing')) {
+                                headerIndex = i;
+                                break;
+                            }
+                        }
+
+                        if (headerIndex === -1) {
+                            console.warn(`${month}: header row not found`);
+                            return { month, monthData: {} };
+                        }
+
+                        // ── Build a column-name → index map from the header row ──
+                        const headerCols = parseCSVLine(lines[headerIndex]);
+                        const colMap = {};
+                        headerCols.forEach((name, idx) => {
+                            // normalise: lowercase, trim, collapse whitespace
+                            const key = name.toLowerCase().trim().replace(/\s+/g, ' ');
+                            colMap[key] = idx;
+                        });
+
+                        // Resolve column indices by name (with fallback synonyms)
+                        const getColIndex = (names) => {
+                            for (const n of names) {
+                                if (colMap[n] !== undefined) return colMap[n];
+                            }
+                            return -1;
+                        };
+
+                        const idxAlias   = getColIndex(['alias']);
+                        const idxOpening = getColIndex(['opening balance', 'opening']);
+                        const idxTopups  = getColIndex(['top-ups', 'topups', 'top ups']);
+                        const idxInterest= getColIndex(['interest']);
+                        const idxDays    = getColIndex(['days', 'days earning', 'days active']);
+                        const idxClosing = getColIndex(['closing balance', 'closing']);
+
+                        console.log(`${month} colMap:`, colMap);
+
+                        const monthData = {};
+
+                        // ── Data rows start right after the header ──
+                        for (let i = headerIndex + 1; i < lines.length; i++) {
+                            const line = lines[i];
+                            if (!line.trim()) continue; // skip blank lines in the data section
+
+                            const cols = parseCSVLine(line);
+                            const alias = (idxAlias >= 0 && cols[idxAlias])
+                                ? cols[idxAlias].trim().replace(/"/g, '')
+                                : '';
+
+                            if (alias && MEMBERS.includes(alias)) {
+                                const openingBalance = idxOpening >= 0 ? parseNumber(cols[idxOpening]) : 0;
+                                const topups         = idxTopups  >= 0 ? parseNumber(cols[idxTopups])  : 0;
+                                const interest       = idxInterest >= 0 ? parseNumber(cols[idxInterest]) : 0;
+                                const daysActive     = idxDays >= 0 ? (parseInt((cols[idxDays] || '').replace(/[",\s]/g, '')) || 0) : 0;
+                                const closingBalance = idxClosing >= 0 ? parseNumber(cols[idxClosing]) : 0;
+
+                                monthData[alias] = {
+                                    openingBalance,
+                                    topups,
+                                    interest,
+                                    daysActive,
+                                    closingBalance
+                                };
+                            }
+                        }
+
+                        console.log(`${month}: found ${Object.keys(monthData).length} members`);
+                        return { month, monthData };
+                    });
+
+                    const results = await Promise.all(fetchPromises);
+                    results.forEach(({ month, monthData }) => {
+                        parsedData[month] = monthData;
+                    });
+
+                    setData(parsedData);
+                    setFileLastModified(new Date());
+                    setLoading(false);
+                } catch (err) {
+                    console.error('Error loading data:', err);
+                    setError('Unable to load data from Google Sheets. Please refresh the page or contact the admin.');
+                    setLoading(false);
+                }
             };
 
             const getAllMembersData = (month) => {
@@ -1520,33 +1554,6 @@
                                 <div className="header-emoji">💰</div>
                                 <h1>Like-Minded Folks</h1>
                                 <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
-                                {fileLastModified && (
-                                    <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                                        <span className="data-timestamp" style={{ margin: 0 }}>
-                                            Last updated: {fileLastModified.toLocaleString('en-KE', {
-                                                day: '2-digit', month: '2-digit', year: 'numeric',
-                                                hour: '2-digit', minute: '2-digit', hour12: true
-                                            })}
-                                        </span>
-                                        <button
-                                            onClick={loadDataFromGoogleSheets}
-                                            style={{
-                                                background: 'rgba(132, 250, 176, 0.15)',
-                                                border: '1px solid rgba(132, 250, 176, 0.4)',
-                                                color: '#84fab0',
-                                                padding: '4px 10px',
-                                                borderRadius: '14px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.78rem',
-                                                fontWeight: '600',
-                                                fontFamily: 'Outfit, sans-serif',
-                                                transition: 'background 0.2s'
-                                            }}
-                                            onMouseEnter={e => e.target.style.background = 'rgba(132, 250, 176, 0.25)'}
-                                            onMouseLeave={e => e.target.style.background = 'rgba(132, 250, 176, 0.15)'}
-                                        >🔄 Refresh</button>
-                                    </div>
-                                )}
                             </div>
 
                             <div className="month-selector">
