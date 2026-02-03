@@ -376,19 +376,20 @@
         .summary-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 12px 6px;
+            padding: 8px 6px 12px;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            min-height: 70px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            min-height: 80px;
+            align-items: end;
         }
 
         .summary-label {
             font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 6px;
             line-height: 1.2;
+            padding-bottom: 4px;
+            align-self: start;
         }
 
         .summary-value {
@@ -397,6 +398,7 @@
             color: #8fd3f4;
             line-height: 1.2;
             text-align: center;
+            align-self: end;
         }
 
         .members-table-container {
