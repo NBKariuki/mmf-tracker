@@ -466,7 +466,7 @@
         .mobile-menu-toggle {
             display: none;
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
             background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
             color: #0f0c29;
@@ -728,6 +728,12 @@
         .tour-dot.active {
             background: #84fab0;
         }
+
+        /* Motivational message bold text styling */
+        p strong {
+            color: #8fd3f4;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -985,7 +991,8 @@
                 .replace(/{suggestedNextDeposit}/g, `KES ${suggestedNextDeposit.toLocaleString()}`)
                 .replace(/{monthlyIncrease}/g, `KES ${monthlyIncrease.toLocaleString()}`)
                 .replace(/{balanceIncrease}/g, balanceIncrease.toString())
-                .replace(/{percentIncrease}/g, percentIncrease.toString());
+                .replace(/{percentIncrease}/g, percentIncrease.toString())
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Convert **text** to <strong>text</strong>
             
             return { icon: randomMessage.icon, text };
         }
@@ -1756,7 +1763,7 @@
             const chartInstanceRef = React.useRef(null);
 
             React.useEffect(() => {
-                if (!chartRef.current || !selectedAlias || !data || typeof Chart === 'undefined') return;
+                if (!chartRef.current || !selectedAlias || !data) return;
 
                 // Destroy previous chart instance
                 if (chartInstanceRef.current) {
@@ -1896,9 +1903,6 @@
                 totalTopups: 0,
                 totalInterest: 0,
                 currentMonthTopup: 0,
-                currentInterest: 0,
-                previousMonthTopup: 0,
-                previousInterest: 0,
                 closingBalance: 0,
                 daysActive: 0
             };
@@ -1907,15 +1911,8 @@
                 const monthData = data[MONTHS[i]]?.[selectedAlias] || {};
                 memberHistoricalData.totalTopups += monthData.topups || 0;
                 memberHistoricalData.totalInterest += monthData.interest || 0;
-                if (i === monthIndex - 1) {
-                    // Previous month
-                    memberHistoricalData.previousMonthTopup = monthData.topups || 0;
-                    memberHistoricalData.previousInterest = monthData.interest || 0;
-                }
                 if (i === monthIndex) {
-                    // Current month
                     memberHistoricalData.currentMonthTopup = monthData.topups || 0;
-                    memberHistoricalData.currentInterest = monthData.interest || 0;
                     memberHistoricalData.closingBalance = monthData.closingBalance || 0;
                     memberHistoricalData.daysActive = monthData.daysActive || 0;
                 }
@@ -1969,8 +1966,7 @@
                             lineHeight: '1.5',
                             color: 'rgba(255, 255, 255, 0.9)',
                             margin: 0
-                        }}>
-                            {motivationalMessage.text}
+                        }} dangerouslySetInnerHTML={{ __html: motivationalMessage.text }}>
                         </p>
                     </div>
                 </div>
@@ -2164,7 +2160,7 @@
             const chartInstanceRef = React.useRef(null);
 
             React.useEffect(() => {
-                if (!chartRef.current || !data || typeof Chart === 'undefined') return;
+                if (!chartRef.current || !data) return;
 
                 if (chartInstanceRef.current) {
                     chartInstanceRef.current.destroy();
@@ -2342,7 +2338,6 @@
                                                 {member.openingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                             </td>
                                             <td className="number-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
-                                                {member.topups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                                 <span 
                                                     title={dotTitle}
                                                     style={{
@@ -2354,6 +2349,7 @@
                                                         cursor: 'help'
                                                     }}
                                                 ></span>
+                                                {member.topups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                             </td>
                                             <td className="number-col">
                                                 {member.interest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
