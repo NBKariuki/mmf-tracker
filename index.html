@@ -1756,7 +1756,7 @@
             const chartInstanceRef = React.useRef(null);
 
             React.useEffect(() => {
-                if (!chartRef.current || !selectedAlias || !data) return;
+                if (!chartRef.current || !selectedAlias || !data || typeof Chart === 'undefined') return;
 
                 // Destroy previous chart instance
                 if (chartInstanceRef.current) {
@@ -2154,7 +2154,7 @@
             const chartInstanceRef = React.useRef(null);
 
             React.useEffect(() => {
-                if (!chartRef.current || !data) return;
+                if (!chartRef.current || !data || typeof Chart === 'undefined') return;
 
                 if (chartInstanceRef.current) {
                     chartInstanceRef.current.destroy();
@@ -2332,6 +2332,7 @@
                                                 {member.openingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                             </td>
                                             <td className="number-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                                                {member.topups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                                 <span 
                                                     title={dotTitle}
                                                     style={{
@@ -2343,7 +2344,6 @@
                                                         cursor: 'help'
                                                     }}
                                                 ></span>
-                                                {member.topups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
                                             </td>
                                             <td className="number-col">
                                                 {member.interest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
