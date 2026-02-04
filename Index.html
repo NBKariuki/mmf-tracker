@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Like-Minded Folks - MMF Tracker</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23302b63%22/><rect x=%225%22 y=%225%22 width=%2290%22 height=%2290%22 rx=%2215%22 fill=%22none%22 stroke=%22%2384fab0%22 stroke-width=%223%22/><text x=%2250%22 y=%2265%22 font-family=%22Arial,sans-serif%22 font-size=%2236%22 font-weight=%22700%22 fill=%22%2384fab0%22 text-anchor=%22middle%22>LMF</text></svg>">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        /* Your original styles here - unchanged for brevity */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); min-height: 100vh; color: #fff; }
+        /* ... rest of your CSS ... */
+        .disclaimer { color: #ffc107; font-size: 0.9rem; text-align: center; margin: 10px 0; padding: 10px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 
+                        'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 
+                        'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Havana', 'Manilla', 'Scofield', 
+                        'Bogota', 'Emirates', 'Dublin', 'Doha'];
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        // Base64-encoded Google Sheets CSV URLs (obfuscated)
+        const encodedUrls = {
+            'January': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTE4ODE3NjExNTQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==',
+            'February': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExODIwNzc2Mjcmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==',
+            'March': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExNDkyMjYwMjQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==',
+            'April': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTk2MjExMTcwNCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2',
+            'May': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTUxNDQ5Mjc4MiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2',
+            'June': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTU5OTQ2MTg1NyZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2',
+            'July': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTcwMzc5MjUzMCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2',
+            'August': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTIwOTM3MDg5Nzkmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==',
+            'September': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwNzkyMzcwNDMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==',
+            'October': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM2MjM4OTY0MCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2',
+            'November': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM1MDMxNTkyMiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2',
+            'December': 'aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwMTY1NjE3OTgmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg=='
+        };
+
+        const MINIMUM_CONTRIBUTION = 4000;
+        const WARNING_START_DAY = 10;
+        const CACHE_TTL_MS = 86400000; // 24 hours
+        const FALLBACK_DAILY_RATE = 0.155 / 365; // ~15.5% annual fallback
+
+        const MEMBER_PAIRS = {
+            'California': 'Lisbon',
+            'Lisbon': 'California',
+            'Paris': 'Marseille',
+            'Marseille': 'Paris'
+        };
+
+        // Your PARTIAL_CONTRIBUTION_MESSAGES, ARCHETYPE_MESSAGES, etc. unchanged for brevity
+
+        const CURRENT_YEAR = new Date().getFullYear();
+
+        function getCurrentMonth() { return MONTHS[new Date().getMonth()]; }
+
+        const CORRECT_PASSWORD = 'LikeMinded2026';
+        const AUTH_EXPIRY_DAYS = 30;
+
+        function getAuthToken() {
+            try {
+                const raw = localStorage.getItem('mmf_auth');
+                if (!raw) return null;
+                const token = JSON.parse(raw);
+                if (new Date().getTime() > token.expiresAt) {
+                    localStorage.removeItem('mmf_auth');
+                    return null;
+                }
+                return token;
+            } catch {
+                localStorage.removeItem('mmf_auth');
+                return null;
+            }
+        }
+
+        function setAuthToken() {
+            const token = { authenticated: true, expiresAt: new Date().getTime() + (AUTH_EXPIRY_DAYS * 24 * 60 * 60 * 1000) };
+            localStorage.setItem('mmf_auth', JSON.stringify(token));
+        }
+
+        // ... Your calculateMemberArchetype and formatArchetypeMessage functions unchanged ...
+
+        // PasswordScreen and AppWithAuth unchanged, but add tour logic if needed
+
+        function App({ showTour, onTourDone }) {
+            const [data, setData] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+            const [selectedAlias, setSelectedAlias] = useState('');
+            const [view, setView] = useState('member');
+            const [fileLastModified, setFileLastModified] = useState(null);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [tourSidebarActive, setTourSidebarActive] = useState(false);
+
+            useEffect(() => {
+                loadDataFromGoogleSheets();
+            }, []);
+
+            const loadDataFromGoogleSheets = async () => {
+                // Check cache first
+                const cached = localStorage.getItem('mmf_cached_data');
+                if (cached) {
+                    try {
+                        const { cachedData, timestamp } = JSON.parse(cached);
+                        if (Date.now() - timestamp < CACHE_TTL_MS) {
+                            setData(cachedData);
+                            setLoading(false);
+                            setFileLastModified(new Date(timestamp));
+                            return;
+                        }
+                    } catch {}
+                }
+
+                setLoading(true);
+                setError(null);
+
+                try {
+                    const parsedData = {};
+
+                    const fetchPromises = MONTHS.map(async (month) => {
+                        try {
+                            const cacheBuster = new Date().getTime();
+                            const csvUrl = atob(encodedUrls[month]) + '&_=' + cacheBuster;
+                            const response = await fetch(csvUrl);
+                            if (!response.ok) throw new Error(`Failed ${month}`);
+
+                            const csvText = await response.text();
+                            const parsed = Papa.parse(csvText, { skipEmptyLines: true }).data;
+
+                            const monthData = {};
+                            for (let i = 3; i < parsed.length; i++) { // Skip first 3 rows
+                                const cols = parsed[i];
+                                const alias = cols[0]?.trim()?.replace(/"/g, '');
+                                if (alias && MEMBERS.includes(alias)) {
+                                    const parseNumber = (str) => parseFloat(str?.replace(/["',\s]/g, '')) || 0;
+                                    monthData[alias] = {
+                                        openingBalance: parseNumber(cols[1]),
+                                        topups: parseNumber(cols[2]),
+                                        interest: parseNumber(cols[3]),
+                                        daysActive: parseInt(cols[4]?.replace(/[",\s]/g, '')) || 0,
+                                        closingBalance: parseNumber(cols[5])
+                                    };
+                                }
+                            }
+                            return { month, monthData };
+                        } catch (err) {
+                            console.warn(`Error loading ${month}:`, err);
+                            return { month, monthData: {} };
+                        }
+                    });
+
+                    const results = await Promise.all(fetchPromises);
+                    results.forEach(({ month, monthData }) => {
+                        parsedData[month] = monthData;
+                    });
+
+                    setData(parsedData);
+                    const now = new Date();
+                    setFileLastModified(now);
+                    localStorage.setItem('mmf_cached_data', JSON.stringify({ cachedData: parsedData, timestamp: now.getTime() }));
+                    setLoading(false);
+                } catch (err) {
+                    console.error('Load error:', err);
+                    setError('Failed to load data. Check connection or contact admin.');
+                    setLoading(false);
+                }
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('mmf_auth');
+                localStorage.removeItem('mmf_cached_data');
+                window.location.reload();
+            };
+
+            // ... Your getAllMembersData, calculateGroupStats, etc. unchanged ...
+
+            return (
+                <>
+                    <div className="app-layout">
+                        <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`} style={tourSidebarActive ? { zIndex: 10001 } : {}}>
+                            <div className="sidebar-close">
+                                <button onClick={() => setMobileMenuOpen(false)}>✕ Close</button>
+                            </div>
+
+                            {/* Sidebar sections unchanged */}
+
+                            {/* Add logout at bottom */}
+                            <div className="sidebar-section" style={{ marginTop: 'auto' }}>
+                                <button className="sidebar-link" onClick={handleLogout}>
+                                    Log Out
+                                </button>
+                            </div>
+                        </aside>
+
+                        <main className="main-content">
+                            <div className="header">
+                                <div className="header-emoji">💰</div>
+                                <h1>Like-Minded Folks</h1>
+                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
+                                <p className="disclaimer">
+                                    ⚠️ Private group tool — Do NOT share links, screenshots, or data. For members only.
+                                </p>
+                            </div>
+
+                            {/* ... month-selector, view-toggle, etc. unchanged ... */}
+
+                            {view === 'member' && (
+                                <MemberView
+                                    month={selectedMonth}
+                                    selectedAlias={selectedAlias}
+                                    setSelectedAlias={setSelectedAlias}
+                                    data={data}
+                                    stats={calculateGroupStats()}
+                                    fileLastModified={fileLastModified}
+                                    isCurrentMonth={isCurrentMonth(selectedMonth)}
+                                    shouldShowWarnings={shouldShowWarnings()}
+                                />
+                            )}
+
+                            {view === 'all' && (
+                                <AllMembersView
+                                    month={selectedMonth}
+                                    members={getAllMembersData(selectedMonth)}
+                                    fileLastModified={fileLastModified}
+                                    data={data}
+                                />
+                            )}
+                        </main>
+                    </div>
+
+                    {/* Tour and mobile toggle unchanged */}
+                    {showTour && <SiteTour /* props */ />}
+                    <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>☰</button>
+                </>
+            );
+        }
+
+        function MemberProjectionChart({ selectedAlias, data, currentMonth }) {
+            const chartRef = React.useRef(null);
+            const chartInstanceRef = React.useRef(null);
+
+            useEffect(() => {
+                if (!chartRef.current || !selectedAlias || !data) return;
+
+                if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+                const ctx = chartRef.current.getContext('2d');
+                const monthIndex = MONTHS.indexOf(currentMonth);
+
+                const actualBalances = [];
+                const labels = [];
+                let totalTopups = 0;
+                let totalInterest = 0;
+
+                let totalInterestEarned = 0;
+                let totalBalanceDays = 0;
+
+                for (let i = 0; i <= monthIndex; i++) {
+                    const m = MONTHS[i];
+                    const md = data[m]?.[selectedAlias] || {};
+                    actualBalances.push(md.closingBalance || 0);
+                    labels.push(m.slice(0, 3));
+                    totalTopups += md.topups || 0;
+                    totalInterest += md.interest || 0;
+
+                    // Historical yield calc
+                    const avgBal = (md.openingBalance + md.closingBalance) / 2 || 0;
+                    totalInterestEarned += md.interest || 0;
+                    totalBalanceDays += avgBal * (md.daysActive || 30);
+                }
+
+                const avgDailyRate = totalBalanceDays > 0 ? totalInterestEarned / totalBalanceDays : FALLBACK_DAILY_RATE;
+                const avgMonthlyRate = avgDailyRate * 30.44;
+
+                const avgDeposit = monthIndex + 1 > 0 ? totalTopups / (monthIndex + 1) : 0;
+
+                const projectedBalances = [...actualBalances];
+                for (let i = monthIndex + 1; i < 12; i++) {
+                    const lastBalance = projectedBalances[projectedBalances.length - 1];
+                    const projectedNext = lastBalance + avgDeposit + (lastBalance * avgMonthlyRate);
+                    projectedBalances.push(projectedNext);
+                }
+
+                for (let i = labels.length; i < 12; i++) {
+                    labels.push(MONTHS[i].slice(0, 3));
+                }
+
+                chartInstanceRef.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: 'Actual Balance', data: actualBalances, backgroundColor: 'rgba(132, 250, 176, 0.6)', borderColor: '#84fab0', borderWidth: 2, type: 'bar' },
+                            { label: 'Projected', data: projectedBalances, borderColor: '#8fd3f4', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 5], type: 'line', pointRadius: 4, pointBackgroundColor: '#8fd3f4' }
+                        ]
+                    },
+                    options: { /* unchanged */ }
+                });
+
+                // Cleanup
+                return () => { if (chartInstanceRef.current) chartInstanceRef.current.destroy(); };
+            }, [selectedAlias, data, currentMonth]);
+
+            if (!selectedAlias) return null;
+
+            // ... archetype calc and message unchanged ...
+
+            return (
+                <div style={{ marginTop: '20px' }}>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '20px', marginBottom: '15px' }}>
+                        <h3 style={{ fontSize: '1.1rem', color: '#84fab0', marginBottom: '15px', textAlign: 'center' }}>📈 Your Growth Trajectory</h3>
+                        <div style={{ height: '250px', position: 'relative' }}>
+                            <canvas ref={chartRef}></canvas>
+                        </div>
+                        <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginTop: '10px' }}>
+                            Projection uses historical avg yield (~{(avgMonthlyRate * 12 * 100).toFixed(1)}% annual equiv). Actual varies.
+                        </p>
+                    </div>
+                    {/* motivational message */}
+                </div>
+            );
+        }
+
+        function GroupBalanceChart({ data, currentMonth }) {
+            const chartRef = React.useRef(null);
+            const chartInstanceRef = React.useRef(null);
+
+            useEffect(() => {
+                if (!chartRef.current || !data) return;
+
+                if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+                const ctx = chartRef.current.getContext('2d');
+                const monthIndex = MONTHS.indexOf(currentMonth);
+
+                const actualBalances = [];
+                const labels = MONTHS.map(m => m.slice(0, 3));
+
+                let totalInterestEarned = 0;
+                let totalBalanceDays = 0;
+                let totalContributions = 0;
+
+                for (let i = 0; i <= monthIndex; i++) {
+                    const m = MONTHS[i];
+                    let monthTotalBalance = 0;
+                    let monthInterest = 0;
+                    let monthBalanceDays = 0;
+
+                    MEMBERS.forEach(alias => {
+                        const md = data[m]?.[alias] || {};
+                        monthTotalBalance += md.closingBalance || 0;
+                        monthInterest += md.interest || 0;
+                        const avgBal = (md.openingBalance + md.closingBalance) / 2 || 0;
+                        monthBalanceDays += avgBal * (md.daysActive || 30);
+                        totalContributions += md.topups || 0;
+                    });
+
+                    actualBalances.push(monthTotalBalance);
+                    totalInterestEarned += monthInterest;
+                    totalBalanceDays += monthBalanceDays;
+                }
+
+                const avgDailyRate = totalBalanceDays > 0 ? totalInterestEarned / totalBalanceDays : FALLBACK_DAILY_RATE;
+                const avgMonthlyRate = avgDailyRate * 30.44;
+
+                const monthsElapsed = monthIndex + 1;
+                const avgMonthlyContribution = monthsElapsed > 0 ? totalContributions / monthsElapsed : 0;
+
+                const projectedBalances = [];
+                for (let i = 0; i < 12; i++) {
+                    if (i < actualBalances.length) {
+                        projectedBalances.push(null);
+                    } else {
+                        const lastVal = projectedBalances[projectedBalances.length - 1] || actualBalances[actualBalances.length - 1];
+                        projectedBalances.push(lastVal + avgMonthlyContribution + (lastVal * avgMonthlyRate));
+                    }
+                }
+
+                chartInstanceRef.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            { type: 'bar', label: 'Actual Balance', data: actualBalances.map((v, i) => i < actualBalances.length ? v : null), backgroundColor: 'rgba(143, 211, 244, 0.7)', borderColor: '#8fd3f4', borderWidth: 1 },
+                            { type: 'line', label: 'Projected', data: projectedBalances, borderColor: '#84fab0', borderWidth: 2, borderDash: [5, 5], fill: false, pointRadius: 3 }
+                        ]
+                    },
+                    options: { /* unchanged */ }
+                });
+
+                return () => { if (chartInstanceRef.current) chartInstanceRef.current.destroy(); };
+            }, [data, currentMonth]);
+
+            // ... rest of group chart with note ...
+            const avgDailyRate = /* compute similarly or pass from above */;
+            const avgMonthlyRate = avgDailyRate * 30.44;
+
+            return (
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '1.2rem', color: '#84fab0', marginBottom: '10px', textAlign: 'center' }}>📊 Group Balance Growth</h3>
+                    <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.7)', textAlign: 'center', marginBottom: '15px', fontStyle: 'italic' }}>
+                        Projection uses historical avg yield (~{(avgMonthlyRate * 12 * 100).toFixed(1)}% annual equiv). Actual varies.
+                    </p>
+                    <div style={{ height: '280px', position: 'relative' }}>
+                        <canvas ref={chartRef}></canvas>
+                    </div>
+                </div>
+            );
+        }
+
+        // ... MemberView, AllMembersView unchanged except for chart components ...
+
+        ReactDOM.render(<AppWithAuth />, document.getElementById('root'));
+    </script>
+</body>
+</html>
