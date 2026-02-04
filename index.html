@@ -8,7 +8,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -728,104 +728,6 @@
         .tour-dot.active {
             background: #84fab0;
         }
-
-        /* CHART CONTAINERS */
-        .chart-container {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(132, 250, 176, 0.2);
-            border-radius: 16px;
-            padding: 20px 15px;
-            margin: 0 0 25px 0;
-        }
-
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #84fab0;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 300px;
-            max-width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .chart-wrapper {
-                height: 250px;
-            }
-            .chart-container {
-                padding: 15px 10px;
-            }
-        }
-
-        /* STATUS BADGES */
-        .status-badge {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        .status-exceeding { 
-            background: #84fab0; 
-            box-shadow: 0 0 8px rgba(132, 250, 176, 0.5); 
-        }
-        .status-partial { 
-            background: #ffc107; 
-            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5); 
-        }
-        .status-missing { 
-            background: #ff6b6b; 
-            box-shadow: 0 0 8px rgba(255, 107, 107, 0.5); 
-        }
-
-        /* ARCHETYPE MESSAGE (Footer below chart) */
-        .archetype-message {
-            background: linear-gradient(135deg, rgba(132, 250, 176, 0.08) 0%, rgba(143, 211, 244, 0.08) 100%);
-            border: 1px solid rgba(132, 250, 176, 0.25);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 25px 0 0 0;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .archetype-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            font-weight: 700;
-            color: #84fab0;
-            font-size: 1rem;
-        }
-
-        .archetype-icon {
-            font-size: 1.6rem;
-        }
-
-        .archetype-message strong {
-            color: #8fd3f4;
-            font-weight: 700;
-        }
-
-        .archetype-message em {
-            color: rgba(255, 255, 255, 0.7);
-            font-style: italic;
-        }
-
-        @media (max-width: 768px) {
-            .archetype-message {
-                font-size: 0.85rem;
-                padding: 12px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -858,104 +760,6 @@
         };
         
         const MINIMUM_CONTRIBUTION = 4000;
-        const WARNING_START_DAY = 10;
-        
-        // ═══════════════════════════════════════════════════════════════
-        // BEHAVIORAL MESSAGING ENGINE
-        // ═══════════════════════════════════════════════════════════════
-        
-        // Calculate member's historical pattern and December projection
-        function calculateMemberProjection(alias, allMonthsData, currentMonth) {
-            const currentMonthIndex = MONTHS.indexOf(currentMonth);
-            const monthsRemaining = 11 - currentMonthIndex;
-            
-            const monthlyContributions = [];
-            let currentBalance = 0;
-            
-            for (let i = 0; i <= currentMonthIndex; i++) {
-                const monthName = MONTHS[i];
-                const monthMemberData = allMonthsData[monthName]?.[alias];
-                if (monthMemberData) {
-                    monthlyContributions.push(monthMemberData.topups);
-                    currentBalance = monthMemberData.closingBalance;
-                }
-            }
-            
-            const avgMonthlyTopup = monthlyContributions.length > 0
-                ? monthlyContributions.reduce((sum, val) => sum + val, 0) / monthlyContributions.length
-                : 0;
-            
-            const projectedTopups = avgMonthlyTopup * monthsRemaining;
-            const futureBalance = currentBalance + projectedTopups;
-            const avgBalanceForInterest = (currentBalance + futureBalance) / 2;
-            const projectedInterest = avgBalanceForInterest * 0.0058 * monthsRemaining;
-            
-            return {
-                decemberTotal: futureBalance + projectedInterest,
-                projectedInterest: projectedInterest,
-                avgMonthlyTopup: avgMonthlyTopup,
-                monthlyContributions: monthlyContributions,
-                currentBalance: currentBalance
-            };
-        }
-        
-        // Classify member archetype
-        function classifyMember(projection, currentMemberData, groupStats) {
-            const { avgMonthlyTopup, monthlyContributions } = projection;
-            
-            const recentMonths = monthlyContributions.slice(-3);
-            const isIncreasing = recentMonths.length >= 3 && 
-                                recentMonths[2] > recentMonths[1] && 
-                                recentMonths[1] > recentMonths[0];
-            const hasZeros = monthlyContributions.some(c => c === 0);
-            const variance = monthlyContributions.length > 0 && 
-                           Math.max(...monthlyContributions) / Math.min(...monthlyContributions.filter(c => c > 0)) > 2;
-            
-            if (monthlyContributions.slice(-2).every(c => c === 0)) return 'ghost';
-            if (avgMonthlyTopup >= 5000 && currentMemberData.interest >= groupStats.avgInterest * 1.2) return 'overachiever';
-            if (isIncreasing && avgMonthlyTopup >= 3000) return 'late_bloomer';
-            if (variance || hasZeros) return 'erratic';
-            if (currentMemberData.interest > groupStats.avgInterest && avgMonthlyTopup >= 4000 && avgMonthlyTopup < 5000) return 'optimizer';
-            if (avgMonthlyTopup >= 3800 && avgMonthlyTopup <= 4500) return 'consistent';
-            return 'consistent';
-        }
-        
-        // Generate motivational message
-        function generateArchetypeMessage(archetype, projection, currentMemberData, groupStats, currentMonth) {
-            const { decemberTotal, projectedInterest, avgMonthlyTopup, monthlyContributions, currentBalance } = projection;
-            const currentMonthIndex = MONTHS.indexOf(currentMonth);
-            const monthsRemaining = 11 - currentMonthIndex;
-            
-            const messages = {
-                overachiever: [
-                    `<strong>Elite Performer</strong><br/>You're in the top 15% of contributors. Your consistent ${Math.round(avgMonthlyTopup).toLocaleString()} KES monthly deposits are building serious momentum. Keep this pace and you'll close December at <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong>.<br/><br/>💡 <em>Power move:</em> Depositing 5 days earlier each month could add ~${Math.round(projectedInterest * 0.15).toLocaleString()} KES more in interest by year-end.`,
-                    `<strong>Setting the Standard</strong><br/>Your ${Math.round(avgMonthlyTopup).toLocaleString()} KES average puts you ahead of 85% of the group. December projection: <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong>.<br/><br/>🎯 <em>Next level:</em> Just ${Math.round(avgMonthlyTopup * 0.2).toLocaleString()} KES more monthly would push you past the 100k mark. You're already playing the game well—now master it.`
-                ],
-                consistent: [
-                    `<strong>Steady Climber</strong><br/>You've maintained ${Math.round(avgMonthlyTopup).toLocaleString()} KES monthly. That's discipline! Your December projection: <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong> (including ${Math.round(projectedInterest).toLocaleString()} KES interest).<br/><br/>💭 <em>What if:</em> Just 500 KES more monthly → December total: ${Math.round(decemberTotal + (500 * monthsRemaining * 1.03)).toLocaleString()} KES. The math is fun, right? 😊`,
-                    `<strong>On Track</strong><br/>Your ${Math.round(avgMonthlyTopup).toLocaleString()} KES monthly rhythm is working. You're on pace for <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong> by December.<br/><br/>🌱 ${Math.round((groupStats.membersAboveMin / groupStats.totalMembers) * 100)}% of members are at or above the minimum. Small tweaks = big gains: depositing 7 days earlier adds ~${Math.round(projectedInterest * 0.12).toLocaleString()} KES more.`
-                ],
-                erratic: [
-                    `<strong>Every Step Counts</strong><br/>Your contributions have varied (${Math.round(Math.min(...monthlyContributions)).toLocaleString()} - ${Math.round(Math.max(...monthlyContributions)).toLocaleString()} KES). That's real life. Your December trajectory: <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong>.<br/><br/>💪 ${Math.round((groupStats.membersWithPartial / groupStats.totalMembers) * 100)}% of the group has had a partial month. You're not alone. Even hitting 4k in ${Math.ceil(monthsRemaining * 0.7)} of the next ${monthsRemaining} months gets you to ${Math.round(currentBalance + (4000 * Math.ceil(monthsRemaining * 0.7)) * 1.04).toLocaleString()} KES.`,
-                    `<strong>Building Momentum</strong><br/>Life happens—your ${Math.round(avgMonthlyTopup).toLocaleString()} KES average shows you're showing up. December projection: <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong>.<br/><br/>📈 <em>The group needs consistent members more than perfect members.</em> Even 100 KES in tough months keeps interest flowing.`
-                ],
-                late_bloomer: [
-                    `<strong>Momentum Alert!</strong><br/>Your contributions are accelerating: ${monthlyContributions.slice(-3).map(c => Math.round(c).toLocaleString()).join(' → ')} KES. That's a growth mindset in action!<br/><br/>If you keep this curve, December total: <strong>${Math.round(decemberTotal * 1.1).toLocaleString()} KES</strong>. You went from struggling to crushing it. Imagine what ${monthsRemaining} more months looks like. 💪<br/><br/>🎯 <em>Next milestone:</em> ${Math.round(avgMonthlyTopup * 1.2).toLocaleString()} KES next month (you're capable—the math proves it).`
-                ],
-                ghost: [
-                    `<strong>We Miss You</strong><br/>You haven't deposited in recent months. Current balance: ${Math.round(currentBalance).toLocaleString()} KES (no interest accrued).<br/><br/>Real talk: Are you out, or just stuck? If stuck, even 500 KES restarts the interest clock. The group's averaging ${Math.round(groupStats.totalBalance / groupStats.totalMembers).toLocaleString()} KES per member—don't get left behind.<br/><br/>⏰ <em>December withdrawal window:</em> ${monthsRemaining} months away. Your money's safe, but it's not growing.`
-                ],
-                optimizer: [
-                    `<strong>Meta-Game Master</strong><br/>Your ${Math.round(avgMonthlyTopup).toLocaleString()} KES deposits are strategically timed. Interest efficiency: top 10%.<br/><br/>December projection: <strong>${Math.round(decemberTotal).toLocaleString()} KES</strong> (${Math.round(projectedInterest).toLocaleString()} KES interest with only ${Math.round(avgMonthlyTopup * monthsRemaining).toLocaleString()} KES in deposits).<br/><br/>🎯 Challenge: Can you hit ${Math.round(avgMonthlyTopup * 1.15).toLocaleString()} KES by the 1st next month? You've mastered timing—now master scale.`
-                ]
-            };
-            
-            const pool = messages[archetype] || messages.consistent;
-            return pool[Math.floor(Math.random() * pool.length)];
-        }
-        
-        // ═══════════════════════════════════════════════════════════════
-        
         const WARNING_START_DAY = 10; // Warnings show from 10th onwards
         
         // Member pairs who contribute together
@@ -989,6 +793,234 @@
         const CORRECT_PASSWORD = 'LikeMinded2026';
         const AUTH_EXPIRY_DAYS = 30;
 
+        // ARCHETYPE MESSAGING SYSTEM
+        const ARCHETYPE_MESSAGES = {
+            OVERACHIEVER: [
+                { icon: '🏆', text: "You're in the top 3! At this pace, you're on track for **{projected}** by December. Your early deposits are earning you way more interest than late contributors." },
+                { icon: '💎', text: "Star performer! You've earned **{interest}** in interest so far — that's **{interestAboveAvg}%** more than the group average. Keep this up!" },
+                { icon: '🚀', text: "Your balance is growing faster than **{percentBeaten}%** of the group. December projection: **{projected}**. You're building serious wealth." },
+                { icon: '⭐', text: "Early bird champion! Depositing early like you do could mean an extra **KES 200-300** in interest by December. That's free money for good timing." },
+                { icon: '🔥', text: "On fire! You're projected to hit **{projected}** by December. Just imagine if you bumped it up slightly — **{stretchGoal}** is totally within reach." },
+                { icon: '💪', text: "You're carrying **{shareOfTotal}%** of the group's balance. That's leadership. Keep going and you'll break six figures soon." },
+                { icon: '🎯', text: "Bullseye! Your consistency + early deposits = **{projected}** by December. Add just **KES 2,000/month** and that becomes **{stretchGoal}**." },
+                { icon: '👑', text: "Top tier! You've contributed **{totalTopups}** so far. At this rate, December you will have **{projected}**. That's a serious emergency fund." },
+                { icon: '✨', text: "Shining bright! Your interest earnings (**{interest}**) are in the top 10%. Early deposits pay off — literally." },
+                { icon: '🌟', text: "Group MVP! You're on track for **{projected}** by year-end. Your contributions are lifting everyone's interest. Thank you for leading by example." }
+            ],
+            STEADY_CLIMBER: [
+                { icon: '🌱', text: "Solid progress! You're projected to hit **{projected}** by December. Just **KES 1,000 more per month** pushes that to **{stretchGoal}**. Worth it?" },
+                { icon: '💪', text: "You're beating **{percentBeaten}%** of the group. Consistent wins! If you deposited just **3 days earlier** each month, you'd earn **KES 200+ more interest** by December." },
+                { icon: '🎯', text: "You've contributed **{totalTopups}** so far. December you = **{projected}** richer. What if December you had **{stretchGoal}**? Just **{monthlyIncrease}** more per month." },
+                { icon: '📈', text: "Steady climb! Your average deposit is **{avgDeposit}** per month. Keep that up and you'll hit **{projected}** by December with **{projectedInterest}** in interest." },
+                { icon: '🌟', text: "Nice consistency! You're in the middle of the pack, but moving up. Add **KES 2,000/month** and you jump into the top 30%." },
+                { icon: '🚶', text: "One step at a time! You're on track for **{projected}** by December. That's **{monthsLeft}** months of steady contributions away. You've got this." },
+                { icon: '💚', text: "Green light! You're hitting the minimum every month. That's **{projectedInterest}** in free interest by December. Imagine if you went slightly above minimum..." },
+                { icon: '⏰', text: "Timing tip: You usually deposit mid-month. Moving that to the **1st-5th** could earn you **KES 150-250 more interest** by year-end. Easy win!" },
+                { icon: '🔄', text: "Consistency is key! You're **{totalTopups}** in, **{projected}** projected. Want to hit **{stretchGoal}**? Just bump each deposit by **{monthlyIncrease}**." },
+                { icon: '🎊', text: "You're doing great! **{percentBeaten}%** of members are behind you. Keep going and you'll crack **{projected}** by December. Momentum matters!" }
+            ],
+            LATE_BLOOMER: [
+                { icon: '🔥', text: "Look at you go! You went from **{previousMonthTopup}** last month to **{currentMonthTopup}** this month. That's growth! Keep this momentum and you'll hit **{projected}** by December." },
+                { icon: '🌅', text: "Late bloomer alert! You're gaining speed. If you maintain **{avgDeposit}** per month, you'll close the year at **{projected}**. Not bad for a late start!" },
+                { icon: '💪', text: "You're proving it's never too late! Your balance jumped **{balanceIncrease}%** this month. December projection: **{projected}**. Add **{monthlyIncrease}** more per month and that's **{stretchGoal}**." },
+                { icon: '🚀', text: "Liftoff! You started slow but you're picking up speed. **{percentBeaten}%** of members started like you — you're not behind, you're just hitting your stride." },
+                { icon: '🌟', text: "Your interest went from **{previousInterest}** to **{currentInterest}** this month. That's what consistency does. Imagine **{projectedInterest}** by December if you keep going!" },
+                { icon: '📈', text: "Upward trajectory! Last month: **{previousMonthTopup}**. This month: **{currentMonthTopup}**. Next month? Hit **{suggestedNextDeposit}** and you're on a roll." },
+                { icon: '🎯', text: "You're catching up fast! You've contributed **{totalTopups}** total. Keep this pace and you'll land at **{projected}** by December. That's real money!" },
+                { icon: '⚡', text: "Energy shift! You're depositing **{percentIncrease}%** more than last month. If this trend continues, you'll blow past your projection and hit **{stretchGoal}**." },
+                { icon: '🌊', text: "Riding the wave! You started small but you're gaining momentum. **{monthsLeft}** months at **{avgDeposit}** each = **{projected}** by year-end. Surf's up!" },
+                { icon: '🎉', text: "Progress party! You've more than doubled your deposit this month. Keep it up and December you will be sitting pretty at **{projected}**. You've got this!" }
+            ],
+            PARTIAL_CONTRIBUTOR: [
+                { icon: '🎯', text: "You've put in **{currentMonthTopup}** this month. You're just **{gapToMinimum}** away from qualifying for interest. That's **{weeklyTarget}** per week — totally doable!" },
+                { icon: '💚', text: "Good news: **{similarMembers}** members started at your level and hit the minimum by month-end. You're in good company. Just **{gapToMinimum}** more and you're earning!" },
+                { icon: '💰', text: "You've deposited **{totalTopups}** total. That's real money! But you've missed **{missedInterest}** in interest so far. Hit **{minimum}** this month and start earning." },
+                { icon: '🚪', text: "You're **{percentToMinimum}%** of the way to the minimum. Don't stop now! **{gapToMinimum}** more and you unlock interest. Even small amounts compound." },
+                { icon: '⏰', text: "Time check: You have **{daysLeft}** days left in the month. **{gapToMinimum}** spread over **{daysLeft}** days = just **{dailyTarget}** per day. Doable!" },
+                { icon: '🌱', text: "Every shilling counts! Your **{currentMonthTopup}** is a start. Add **{gapToMinimum}** more and you'll earn interest this month. Don't leave free money on the table." },
+                { icon: '🤝', text: "You're not alone — **{partialCount}** members are in the same boat. But **{qualifiedCount}** already hit the minimum. Join them! Just **{gapToMinimum}** to go." },
+                { icon: '📊', text: "You've deposited **{percentToMinimum}%** of the minimum. So close! Finish strong with **{gapToMinimum}** more and December you will thank you." },
+                { icon: '💪', text: "You're **{gapToMinimum}** away from interest. That's one good week of saving. Hit it and you'll start earning on **{currentBalance}**. Worth it!" },
+                { icon: '🎁', text: "Gift yourself interest! You're at **{currentMonthTopup}**. Add **{gapToMinimum}** and you qualify. That could mean **{potentialInterest}** more by December." }
+            ],
+            GHOST: [
+                { icon: '👋', text: "You're not alone — **{ghostCount}** members haven't deposited yet. But **{activeCount}** have. Even at **{minimum}** per month, they're on track for **{avgProjected}** by December." },
+                { icon: '⏰', text: "It's not too late! Start with just **{minimum}** this month. By December, that becomes **{firstMonthProjection}** plus interest. Better late than never!" },
+                { icon: '💰', text: "The group has grown **{groupTotal}** since January. That could be your money too. Start today with **{minimum}** and you're in the game." },
+                { icon: '🚀', text: "Fun fact: The member with the smallest balance (**{smallestBalance}**) will still have **{smallestProjection}** by December. You could be that person. Start now!" },
+                { icon: '📅', text: "Every month you wait costs you **{monthlyCost}** in growth. {currentMonth} is here. Deposit **{minimum}** now and December you will thank today you." },
+                { icon: '🌱', text: "Small starts matter! Even **KES 1,000** today grows by December. And once you're in, the momentum builds. Take the first step." },
+                { icon: '🤝', text: "The group is saving together. **{activePercent}%** of members are contributing. You can join them anytime. **{minimum}** opens the door." },
+                { icon: '💪', text: "No judgment, just math: **{minimum}** per month for **{monthsLeft}** months = **{lateStartProjection}** by December. Still worth it!" },
+                { icon: '🎯', text: "Your seat is still warm! Deposit **{minimum}** this month and you're back in. Even starting late, you'll have **{lateStartProjection}** by year-end." },
+                { icon: '✨', text: "The best time to start was January. The second best time is today. **{minimum}** gets you in the game. December you is waiting." }
+            ],
+            EARLY_BIRD: [
+                { icon: '🐦', text: "Early bird gets the interest! Your deposit on the **{depositDay}** is earning **KES {earlyBirdBonus}** more than late-month deposits. By December: **{bonusProjection}** extra!" },
+                { icon: '⏰', text: "Perfect timing! You're earning **{percentMoreInterest}%** more interest than the average member just by depositing early. That's free money for good habits." },
+                { icon: '💰', text: "Time is money! If you keep depositing on the **1st-3rd** every month, you'll earn **~KES {yearlyBonus}** more in interest by December. That's dinner out!" },
+                { icon: '🎯', text: "Nailed it! Your early deposits mean more days earning. You're on track for **{projected}** by December with **{projectedInterest}** in interest." },
+                { icon: '🌅', text: "First light advantage! While others wait, your money's already working. December projection: **{projected}**. Your early habits are paying off — literally." },
+                { icon: '📈', text: "Smart move! Depositing early gives you **{extraDays}** more earning days per month. That compounds to **{bonusProjection}** extra by year-end." },
+                { icon: '⭐', text: "Star student! You're earning **{percentMoreInterest}%** above average just from timing. Keep it up and you'll have **{projected}** by December." },
+                { icon: '🔥', text: "Hot start! Your early deposits are outearning late deposits by **{monthlyBonus}** per month. Over the year, that's **{yearlyBonus}** in free interest." },
+                { icon: '💎', text: "Premium timing! You're maximizing interest by depositing early. December you will have **{projected}** thanks to your discipline. Well done!" },
+                { icon: '🏆', text: "Timing champion! Depositing on day **{depositDay}** vs day 20 = **{bonusProjection}** more interest by December. You're playing the game right." }
+            ],
+            BIG_DEPOSITOR: [
+                { icon: '🐋', text: "Whale alert! Your **{currentBalance}** is the group's backbone. At this pace, you're looking at **{projected}** by December. That's serious wealth-building." },
+                { icon: '💎', text: "Your interest this month: **{currentInterest}**. Sounds small? Multiply by 11 months = **{projectedInterest}** by December. That's a free phone upgrade!" },
+                { icon: '🏛️', text: "You're carrying **{shareOfTotal}%** of the group's balance. Your contributions lift everyone's average. Keep going and you'll hit seven figures soon." },
+                { icon: '🎯', text: "Big moves! You've deposited **{totalTopups}** so far. December projection: **{projected}**. Add just **{monthlyIncrease}** more and that's **{stretchGoal}**." },
+                { icon: '👑', text: "King/Queen of the group! Your **{avgDeposit}** per month is **{percentAboveAvg}%** above average. December you: **{projected}**. Respect!" },
+                { icon: '🚀', text: "To the moon! At **{avgDeposit}** per month, you're on track for **{projected}** by December. That's a down payment, an emergency fund, or a big win." },
+                { icon: '💰', text: "Money moves! You're building **{projected}** by year-end. Your early, large deposits mean you're earning **{percentMoreInterest}%** more interest than small depositors." },
+                { icon: '🔥', text: "On fire! You've contributed **{shareOfTotal}%** of the group's total. December projection: **{projected}**. Keep this energy!" },
+                { icon: '🌟', text: "Star power! Your **{totalTopups}** in contributions are setting the pace. You're projected to hit **{projected}** by December. Leadership in action." },
+                { icon: '⚡', text: "Power player! You're depositing **{percentAboveMinimum}%** above the minimum. That discipline will give you **{projected}** by December. Legendary!" }
+            ]
+        };
+
+        // PROJECTION & ARCHETYPE HELPER FUNCTIONS
+        function getMemberHistory(data, alias) {
+            const currentMonthIndex = MONTHS.indexOf(getCurrentMonth());
+            return MONTHS.slice(0, currentMonthIndex + 1).map(month => ({
+                month,
+                balance: data[month]?.[alias]?.closingBalance || 0,
+                topups: data[month]?.[alias]?.topups || 0,
+                interest: data[month]?.[alias]?.interest || 0,
+                daysActive: data[month]?.[alias]?.daysActive || 0
+            }));
+        }
+
+        function calculateProjection(history, currentBalance) {
+            const nonZeroMonths = history.filter(m => m.topups > 0);
+            if (nonZeroMonths.length === 0) return { projected: 0, avgDeposit: 0, estimatedInterest: 0 };
+            
+            const totalTopups = history.reduce((sum, m) => sum + m.topups, 0);
+            const avgDeposit = totalTopups / nonZeroMonths.length;
+            
+            const monthsRemaining = 12 - history.length;
+            const estimatedFutureTopups = avgDeposit * monthsRemaining;
+            const estimatedInterestRate = 0.0015;
+            const estimatedInterest = (currentBalance + estimatedFutureTopups) * estimatedInterestRate * monthsRemaining;
+            
+            const projected = currentBalance + estimatedFutureTopups + estimatedInterest;
+            
+            return { projected, avgDeposit, estimatedInterest };
+        }
+
+        function detectArchetype(history, currentBalance, allMembersData) {
+            const totalTopups = history.reduce((sum, m) => sum + m.topups, 0);
+            if (totalTopups === 0) return 'GHOST';
+            
+            const currentMonth = history[history.length - 1];
+            if (currentMonth.topups > 0 && currentMonth.topups < MINIMUM_CONTRIBUTION) return 'PARTIAL_CONTRIBUTOR';
+            
+            const sortedMembers = [...allMembersData].sort((a, b) => b.closingBalance - a.closingBalance);
+            const rank = sortedMembers.findIndex(m => m.closingBalance <= currentBalance) + 1;
+            if (rank <= 3 && currentBalance > 10000) return 'OVERACHIEVER';
+            
+            const avgDeposit = totalTopups / history.filter(m => m.topups > 0).length;
+            if (avgDeposit >= 10000) return 'BIG_DEPOSITOR';
+            if (currentMonth.daysActive >= 25) return 'EARLY_BIRD';
+            
+            const previousMonth = history.length > 1 ? history[history.length - 2] : null;
+            if (previousMonth && currentMonth.topups > previousMonth.topups * 1.5) return 'LATE_BLOOMER';
+            
+            return 'STEADY_CLIMBER';
+        }
+
+        function formatArchetypeMessage(archetype, stats) {
+            const messages = ARCHETYPE_MESSAGES[archetype] || ARCHETYPE_MESSAGES.STEADY_CLIMBER;
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            
+            let text = randomMsg.text;
+            Object.keys(stats).forEach(key => {
+                const placeholder = `{${key}}`;
+                text = text.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), stats[key]);
+            });
+            
+            return { icon: randomMsg.icon, text };
+        }
+
+        // MEMBER PROJECTION CHART COMPONENT
+        function MemberProjectionChart({ history, projection, archetype, stats }) {
+            const chartRef = React.useRef(null);
+            const canvasRef = React.useRef(null);
+            
+            React.useEffect(() => {
+                if (!canvasRef.current || history.length === 0) return;
+                
+                if (chartRef.current) chartRef.current.destroy();
+                
+                const ctx = canvasRef.current.getContext('2d');
+                const labels = MONTHS.map(m => m.slice(0, 3));
+                
+                const actualData = MONTHS.map((m, idx) => idx < history.length ? history[idx].balance : null);
+                
+                const projectedData = MONTHS.map((m, idx) => {
+                    if (idx < history.length - 1) return null;
+                    if (idx === history.length - 1) return history[idx].balance;
+                    const monthsFromNow = idx - history.length + 1;
+                    const increment = (projection.projected - history[history.length - 1].balance) / (12 - history.length);
+                    return history[history.length - 1].balance + (increment * monthsFromNow);
+                });
+                
+                chartRef.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
+                            type: 'bar',
+                            label: 'Actual',
+                            data: actualData,
+                            backgroundColor: 'rgba(143, 211, 244, 0.7)',
+                            borderColor: '#8fd3f4',
+                            borderWidth: 1
+                        }, {
+                            type: 'line',
+                            label: 'Projected',
+                            data: projectedData,
+                            borderColor: '#84fab0',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            pointRadius: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { color: '#fff', font: { size: 10 } } },
+                            tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': KES ' + (ctx.parsed.y || 0).toLocaleString() } }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 9 } }, grid: { display: false } }
+                        }
+                    }
+                });
+                
+                return () => { if (chartRef.current) chartRef.current.destroy(); };
+            }, [history, projection]);
+            
+            const message = formatArchetypeMessage(archetype, stats);
+            
+            return (
+                <div style={{ marginTop: '20px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px' }}>
+                    <div style={{ height: '220px', marginBottom: '14px' }}>
+                        <canvas ref={canvasRef}></canvas>
+                    </div>
+                    <div style={{ background: 'rgba(132,250,176,0.1)', border: '1px solid rgba(132,250,176,0.3)', borderRadius: '10px', padding: '12px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <div style={{ fontSize: '1.6rem' }}>{message.icon}</div>
+                        <div style={{ fontSize: '0.82rem', lineHeight: '1.4', color: 'rgba(255,255,255,0.9)' }}>{message.text}</div>
+                    </div>
+                </div>
+            );
+        }
+
         function getAuthToken() {
             try {
                 const raw = localStorage.getItem('mmf_auth');
@@ -1012,6 +1044,61 @@
                 expiresAt: new Date().getTime() + (AUTH_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
             };
             localStorage.setItem('mmf_auth', JSON.stringify(token));
+        }
+
+        // ARCHETYPE CALCULATION & MESSAGE FORMATTING
+        function calculateMemberArchetype(memberData, allMembersData, currentMonth) {
+            const { totalTopups, currentMonthTopup, totalInterest, closingBalance, daysActive } = memberData;
+            const monthIndex = MONTHS.indexOf(currentMonth);
+            const monthsElapsed = monthIndex + 1;
+            const monthsRemaining = 12 - monthsElapsed;
+            
+            // Calculate rank
+            const sortedMembers = allMembersData.sort((a, b) => b.closingBalance - a.closingBalance);
+            const rank = sortedMembers.findIndex(m => m.closingBalance === closingBalance) + 1;
+            const percentBeaten = Math.round(((sortedMembers.length - rank) / sortedMembers.length) * 100);
+            
+            // Determine archetype
+            if (totalTopups === 0) return 'GHOST';
+            if (currentMonthTopup > 0 && currentMonthTopup < MINIMUM_CONTRIBUTION) return 'PARTIAL_CONTRIBUTOR';
+            if (rank <= 3) return 'OVERACHIEVER';
+            if (totalTopups / monthsElapsed >= 10000) return 'BIG_DEPOSITOR';
+            if (daysActive >= 25 && monthsElapsed > 0) return 'EARLY_BIRD';
+            
+            // Check for late bloomer (upward trend)
+            if (monthIndex > 0) {
+                const prevMonthData = memberData.previousMonth || {};
+                if (currentMonthTopup > (prevMonthData.topups || 0) * 1.5) return 'LATE_BLOOMER';
+            }
+            
+            return 'STEADY_CLIMBER';
+        }
+
+        function formatArchetypeMessage(archetype, memberData, allMembersData, currentMonth) {
+            const messages = ARCHETYPE_MESSAGES[archetype] || ARCHETYPE_MESSAGES.STEADY_CLIMBER;
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            const monthIndex = MONTHS.indexOf(currentMonth);
+            const monthsElapsed = monthIndex + 1;
+            const monthsRemaining = 12 - monthsElapsed;
+            const avgDeposit = monthsElapsed > 0 ? memberData.totalTopups / monthsElapsed : 0;
+            const projected = memberData.closingBalance + (avgDeposit * monthsRemaining);
+            const stretchGoal = memberData.closingBalance + ((avgDeposit * 1.5) * monthsRemaining);
+            
+            // Replace placeholders
+            let text = randomMessage.text
+                .replace('{projected}', `KES ${Math.round(projected).toLocaleString()}`)
+                .replace('{stretchGoal}', `KES ${Math.round(stretchGoal).toLocaleString()}`)
+                .replace('{totalTopups}', `KES ${memberData.totalTopups.toLocaleString()}`)
+                .replace('{currentMonthTopup}', `KES ${memberData.currentMonthTopup.toLocaleString()}`)
+                .replace('{interest}', `KES ${memberData.totalInterest.toLocaleString()}`)
+                .replace('{avgDeposit}', `KES ${Math.round(avgDeposit).toLocaleString()}`)
+                .replace('{monthsLeft}', monthsRemaining)
+                .replace('{minimum}', `KES ${MINIMUM_CONTRIBUTION.toLocaleString()}`)
+                .replace('{gapToMinimum}', `KES ${(MINIMUM_CONTRIBUTION - memberData.currentMonthTopup).toLocaleString()}`)
+                .replace('{currentBalance}', `KES ${memberData.closingBalance.toLocaleString()}`);
+            
+            return { icon: randomMessage.icon, text };
         }
 
         // Password Screen Component
@@ -1371,15 +1458,93 @@
                 loadDataFromGoogleSheets();
             }, []);
 
-            // CSV parser that handles quoted fields and strips \r
+            const loadDataFromGoogleSheets = async () => {
+                try {
+                    setLoading(true);
+                    setError(null);
+                    
+                    const parsedData = {};
+                    
+                    // Fetch all 12 months in parallel
+                    const fetchPromises = MONTHS.map(async (month) => {
+                        const csvUrl = MONTH_CSV_URLS[month];
+                        const cacheBuster = new Date().getTime();
+                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`);
+                        
+                        if (!response.ok) {
+                            throw new Error(`Could not load ${month} data`);
+                        }
+                        
+                        const csvText = await response.text();
+                        const lines = csvText.split('\n').filter(line => line.trim());
+                        
+                        const monthData = {};
+                        
+                        // Skip first 3 rows (title, blank, headers) — data starts at row 4 (index 3)
+                        for (let i = 3; i < lines.length; i++) {
+                            const cols = parseCSVLine(lines[i]);
+                            const alias = cols[0]?.trim().replace(/"/g, '');
+                            
+                            if (alias && MEMBERS.includes(alias)) {
+                                // Helper function to parse numbers (removes commas, quotes, etc.)
+                                const parseNumber = (str) => {
+                                    if (!str) return 0;
+                                    // Remove quotes, commas, and whitespace, then parse
+                                    const cleaned = str.replace(/["',\s]/g, '');
+                                    return parseFloat(cleaned) || 0;
+                                };
+                                
+                                const openingBalance = parseNumber(cols[1]);
+                                const topups = parseNumber(cols[2]);
+                                const interest = parseNumber(cols[3]);
+                                const daysActive = parseInt(cols[4]?.replace(/[",\s]/g, '')) || 0;
+                                const closingBalance = parseNumber(cols[5]);
+                                
+                                monthData[alias] = {
+                                    openingBalance,
+                                    topups,
+                                    interest,
+                                    daysActive,
+                                    closingBalance
+                                };
+                                
+                                // Debug log for first member only
+                                if (Object.keys(monthData).length === 1) {
+                                    console.log(`${month} - First member (${alias}):`, {
+                                        raw: cols.slice(1, 6),
+                                        parsed: { openingBalance, topups, interest, daysActive, closingBalance }
+                                    });
+                                }
+                            }
+                        }
+                        
+                        return { month, monthData };
+                    });
+                    
+                    const results = await Promise.all(fetchPromises);
+                    results.forEach(({ month, monthData }) => {
+                        parsedData[month] = monthData;
+                    });
+                    
+                    setData(parsedData);
+                    setFileLastModified(new Date()); // Current timestamp since Google Sheets doesn't send Last-Modified
+                    setLoading(false);
+                } catch (err) {
+                    console.error('Error loading data:', err);
+                    setError('Unable to load data from Google Sheets. Please refresh the page or contact the admin.');
+                    setLoading(false);
+                }
+            };
+
+            // Simple CSV parser that handles quoted fields
             const parseCSVLine = (line) => {
                 const result = [];
                 let current = '';
                 let inQuotes = false;
-                // strip any trailing \r so it doesn't pollute the last column
-                const clean = line.replace(/\r$/, '');
-                for (let i = 0; i < clean.length; i++) {
-                    const char = clean[i];
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
                     if (char === '"') {
                         inQuotes = !inQuotes;
                     } else if (char === ',' && !inQuotes) {
@@ -1391,125 +1556,6 @@
                 }
                 result.push(current);
                 return result;
-            };
-
-            // Parse a numeric cell value (handles quotes, commas, whitespace)
-            const parseNumber = (str) => {
-                if (!str) return 0;
-                const cleaned = str.replace(/["',\s]/g, '');
-                return parseFloat(cleaned) || 0;
-            };
-
-            const loadDataFromGoogleSheets = async () => {
-                try {
-                    setLoading(true);
-                    setError(null);
-
-                    const parsedData = {};
-
-                    // Fetch all 12 months in parallel
-                    const fetchPromises = MONTHS.map(async (month) => {
-                        const csvUrl = MONTH_CSV_URLS[month];
-                        const response = await fetch(csvUrl);
-
-                        if (!response.ok) {
-                            throw new Error(`Could not load ${month} data`);
-                        }
-
-                        const csvText = await response.text();
-                        // Keep ALL lines (don't filter blanks) so row indices stay stable
-                        const lines = csvText.split('\n');
-
-                        // ── Find the header row dynamically ──
-                        // Look for the row that contains both "Alias" and "Closing"
-                        // (case-insensitive).  This is the column-header row regardless
-                        // of how many title / blank rows sit above it.
-                        let headerIndex = -1;
-                        for (let i = 0; i < lines.length; i++) {
-                            const lower = lines[i].toLowerCase();
-                            if (lower.includes('alias') && lower.includes('closing')) {
-                                headerIndex = i;
-                                break;
-                            }
-                        }
-
-                        if (headerIndex === -1) {
-                            console.warn(`${month}: header row not found`);
-                            return { month, monthData: {} };
-                        }
-
-                        // ── Build a column-name → index map from the header row ──
-                        const headerCols = parseCSVLine(lines[headerIndex]);
-                        const colMap = {};
-                        headerCols.forEach((name, idx) => {
-                            // normalise: lowercase, trim, collapse whitespace
-                            const key = name.toLowerCase().trim().replace(/\s+/g, ' ');
-                            colMap[key] = idx;
-                        });
-
-                        // Resolve column indices by name (with fallback synonyms)
-                        const getColIndex = (names) => {
-                            for (const n of names) {
-                                if (colMap[n] !== undefined) return colMap[n];
-                            }
-                            return -1;
-                        };
-
-                        const idxAlias   = getColIndex(['alias']);
-                        const idxOpening = getColIndex(['opening balance', 'opening']);
-                        const idxTopups  = getColIndex(['top-ups', 'topups', 'top ups']);
-                        const idxInterest= getColIndex(['interest']);
-                        const idxDays    = getColIndex(['days', 'days earning', 'days active']);
-                        const idxClosing = getColIndex(['closing balance', 'closing']);
-
-                        console.log(`${month} colMap:`, colMap);
-
-                        const monthData = {};
-
-                        // ── Data rows start right after the header ──
-                        for (let i = headerIndex + 1; i < lines.length; i++) {
-                            const line = lines[i];
-                            if (!line.trim()) continue; // skip blank lines in the data section
-
-                            const cols = parseCSVLine(line);
-                            const alias = (idxAlias >= 0 && cols[idxAlias])
-                                ? cols[idxAlias].trim().replace(/"/g, '')
-                                : '';
-
-                            if (alias && MEMBERS.includes(alias)) {
-                                const openingBalance = idxOpening >= 0 ? parseNumber(cols[idxOpening]) : 0;
-                                const topups         = idxTopups  >= 0 ? parseNumber(cols[idxTopups])  : 0;
-                                const interest       = idxInterest >= 0 ? parseNumber(cols[idxInterest]) : 0;
-                                const daysActive     = idxDays >= 0 ? (parseInt((cols[idxDays] || '').replace(/[",\s]/g, '')) || 0) : 0;
-                                const closingBalance = idxClosing >= 0 ? parseNumber(cols[idxClosing]) : 0;
-
-                                monthData[alias] = {
-                                    openingBalance,
-                                    topups,
-                                    interest,
-                                    daysActive,
-                                    closingBalance
-                                };
-                            }
-                        }
-
-                        console.log(`${month}: found ${Object.keys(monthData).length} members`);
-                        return { month, monthData };
-                    });
-
-                    const results = await Promise.all(fetchPromises);
-                    results.forEach(({ month, monthData }) => {
-                        parsedData[month] = monthData;
-                    });
-
-                    setData(parsedData);
-                    setFileLastModified(new Date());
-                    setLoading(false);
-                } catch (err) {
-                    console.error('Error loading data:', err);
-                    setError('Unable to load data from Google Sheets. Please refresh the page or contact the admin.');
-                    setLoading(false);
-                }
             };
 
             const getAllMembersData = (month) => {
@@ -1786,7 +1832,6 @@
                                     selectedAlias={selectedAlias}
                                     setSelectedAlias={setSelectedAlias}
                                     data={data}
-                                    allMonthsData={data}
                                     stats={stats}
                                     fileLastModified={fileLastModified}
                                     isCurrentMonth={isCurrentMonth(selectedMonth)}
@@ -1799,7 +1844,7 @@
                                     month={selectedMonth}
                                     members={getAllMembersData(selectedMonth)}
                                     fileLastModified={fileLastModified}
-                                    allMonthsData={data}
+                                    data={data}
                                 />
                             )}
                         </main>
@@ -1816,10 +1861,224 @@
             );
         }
 
-        function MemberView({ month, selectedAlias, setSelectedAlias, data, allMonthsData, stats, fileLastModified, isCurrentMonth, shouldShowWarnings }) {
+        // MEMBER PROJECTION CHART COMPONENT
+        function MemberProjectionChart({ selectedAlias, data, currentMonth }) {
             const chartRef = React.useRef(null);
             const chartInstanceRef = React.useRef(null);
-            
+
+            React.useEffect(() => {
+                if (!chartRef.current || !selectedAlias || !data) return;
+
+                // Destroy previous chart instance
+                if (chartInstanceRef.current) {
+                    chartInstanceRef.current.destroy();
+                }
+
+                const ctx = chartRef.current.getContext('2d');
+                const monthIndex = MONTHS.indexOf(currentMonth);
+                
+                // Gather historical data
+                const actualBalances = [];
+                const labels = [];
+                let totalTopups = 0;
+                let totalInterest = 0;
+                
+                for (let i = 0; i <= monthIndex; i++) {
+                    const monthName = MONTHS[i];
+                    const monthData = data[monthName]?.[selectedAlias] || {
+                        closingBalance: 0,
+                        topups: 0,
+                        interest: 0
+                    };
+                    actualBalances.push(monthData.closingBalance);
+                    labels.push(monthName.slice(0, 3));
+                    totalTopups += monthData.topups;
+                    totalInterest += monthData.interest;
+                }
+                
+                // Calculate projection
+                const monthsElapsed = monthIndex + 1;
+                const avgMonthlyDeposit = monthsElapsed > 0 ? totalTopups / monthsElapsed : 0;
+                const projectedBalances = [...actualBalances];
+                
+                for (let i = monthIndex + 1; i < 12; i++) {
+                    const lastBalance = projectedBalances[projectedBalances.length - 1];
+                    const projectedNext = lastBalance + avgMonthlyDeposit + (avgMonthlyDeposit * 0.006); // rough interest estimate
+                    projectedBalances.push(projectedNext);
+                    if (i <= monthIndex) {
+                        labels.push(MONTHS[i].slice(0, 3));
+                    }
+                }
+                
+                // Complete labels for all 12 months
+                for (let i = labels.length; i < 12; i++) {
+                    labels.push(MONTHS[i].slice(0, 3));
+                }
+
+                chartInstanceRef.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Actual Balance',
+                                data: actualBalances,
+                                backgroundColor: 'rgba(132, 250, 176, 0.6)',
+                                borderColor: '#84fab0',
+                                borderWidth: 2,
+                                type: 'bar',
+                                order: 2
+                            },
+                            {
+                                label: 'Projected',
+                                data: projectedBalances,
+                                borderColor: '#8fd3f4',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                type: 'line',
+                                pointRadius: 4,
+                                pointBackgroundColor: '#8fd3f4',
+                                order: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    font: { size: 11, family: 'Outfit' }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 30, 58, 0.95)',
+                                titleColor: '#84fab0',
+                                bodyColor: '#fff',
+                                borderColor: '#84fab0',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: (context) => {
+                                        return `${context.dataset.label}: KES ${Math.round(context.parsed.y).toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: { size: 10 },
+                                    callback: (value) => 'KES ' + (value / 1000).toFixed(0) + 'k'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: { size: 10 }
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartInstanceRef.current) {
+                        chartInstanceRef.current.destroy();
+                    }
+                };
+            }, [selectedAlias, data, currentMonth]);
+
+            if (!selectedAlias) return null;
+
+            // Calculate archetype message
+            const monthIndex = MONTHS.indexOf(currentMonth);
+            const memberHistoricalData = {
+                totalTopups: 0,
+                totalInterest: 0,
+                currentMonthTopup: 0,
+                closingBalance: 0,
+                daysActive: 0
+            };
+
+            for (let i = 0; i <= monthIndex; i++) {
+                const monthData = data[MONTHS[i]]?.[selectedAlias] || {};
+                memberHistoricalData.totalTopups += monthData.topups || 0;
+                memberHistoricalData.totalInterest += monthData.interest || 0;
+                if (i === monthIndex) {
+                    memberHistoricalData.currentMonthTopup = monthData.topups || 0;
+                    memberHistoricalData.closingBalance = monthData.closingBalance || 0;
+                    memberHistoricalData.daysActive = monthData.daysActive || 0;
+                }
+            }
+
+            const allMembersData = MEMBERS.map(alias => {
+                let totalForMember = 0;
+                for (let i = 0; i <= monthIndex; i++) {
+                    totalForMember += data[MONTHS[i]]?.[alias]?.closingBalance || 0;
+                }
+                return { alias, closingBalance: data[currentMonth]?.[alias]?.closingBalance || 0 };
+            });
+
+            const archetype = calculateMemberArchetype(memberHistoricalData, allMembersData, currentMonth);
+            const motivationalMessage = formatArchetypeMessage(archetype, memberHistoricalData, allMembersData, currentMonth);
+
+            return (
+                <div style={{ marginTop: '20px' }}>
+                    <div style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '15px'
+                    }}>
+                        <h3 style={{
+                            fontSize: '1.1rem',
+                            color: '#84fab0',
+                            marginBottom: '15px',
+                            textAlign: 'center'
+                        }}>
+                            📈 Your Growth Trajectory
+                        </h3>
+                        <div style={{ height: '250px', position: 'relative' }}>
+                            <canvas ref={chartRef}></canvas>
+                        </div>
+                    </div>
+                    
+                    {/* Motivational Message */}
+                    <div style={{
+                        background: 'linear-gradient(135deg, rgba(132, 250, 176, 0.15), rgba(143, 211, 244, 0.15))',
+                        border: '1px solid rgba(132, 250, 176, 0.3)',
+                        borderRadius: '12px',
+                        padding: '16px 18px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '12px'
+                    }}>
+                        <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>{motivationalMessage.icon}</span>
+                        <p style={{
+                            fontSize: '0.9rem',
+                            lineHeight: '1.5',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            margin: 0
+                        }}>
+                            {motivationalMessage.text}
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        function MemberView({ month, selectedAlias, setSelectedAlias, data, stats, fileLastModified, isCurrentMonth, shouldShowWarnings }) {
             const memberData = data[month]?.[selectedAlias] || {
                 openingBalance: 0,
                 topups: 0,
@@ -1866,176 +2125,6 @@
                     }
                 }
             }
-
-            // Build mixed bar/line chart (bars = contributions, line = balance trend with December projection)
-            React.useEffect(() => {
-                if (!chartRef.current || !selectedAlias || !allMonthsData || !window.Chart) return;
-                
-                if (chartInstanceRef.current) {
-                    chartInstanceRef.current.destroy();
-                }
-                
-                const currentMonthIndex = MONTHS.indexOf(month);
-                const labels = [];
-                const contributionData = [];
-                const balanceData = [];
-                
-                // Collect actual data up to current month
-                for (let i = 0; i <= currentMonthIndex; i++) {
-                    const monthName = MONTHS[i];
-                    labels.push(monthName.slice(0, 3));
-                    const monthMemberData = allMonthsData[monthName]?.[selectedAlias];
-                    if (monthMemberData) {
-                        contributionData.push(monthMemberData.topups);
-                        balanceData.push(monthMemberData.closingBalance);
-                    } else {
-                        contributionData.push(0);
-                        balanceData.push(balanceData[balanceData.length - 1] || 0);
-                    }
-                }
-                
-                // Project to December
-                const projection = calculateMemberProjection(selectedAlias, allMonthsData, month);
-                const monthsToProject = 11 - currentMonthIndex;
-                
-                for (let i = 1; i <= monthsToProject; i++) {
-                    labels.push(MONTHS[currentMonthIndex + i].slice(0, 3));
-                    contributionData.push(null); // No contribution bars for future
-                    const projectedBalance = balanceData[balanceData.length - 1] + (projection.avgMonthlyTopup * i) + ((projection.avgMonthlyTopup * i) * 0.0058);
-                    balanceData.push(projectedBalance);
-                }
-                
-                const ctx = chartRef.current.getContext('2d');
-                chartInstanceRef.current = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                type: 'bar',
-                                label: 'Contributions',
-                                data: contributionData,
-                                backgroundColor: 'rgba(132, 250, 176, 0.7)',
-                                borderColor: '#84fab0',
-                                borderWidth: 1,
-                                borderRadius: 6,
-                                yAxisID: 'y'
-                            },
-                            {
-                                type: 'line',
-                                label: 'Balance Trend',
-                                data: balanceData.map((val, idx) => idx <= currentMonthIndex ? val : null),
-                                borderColor: '#8fd3f4',
-                                backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointRadius: 4,
-                                pointBackgroundColor: '#8fd3f4',
-                                pointBorderColor: '#0f0c29',
-                                pointBorderWidth: 2,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                type: 'line',
-                                label: 'December Projection',
-                                data: balanceData.map((val, idx) => idx > currentMonthIndex ? val : null),
-                                borderColor: 'rgba(143, 211, 244, 0.5)',
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                tension: 0.4,
-                                pointRadius: function(context) {
-                                    return context.dataIndex === balanceData.length - 1 ? 6 : 3;
-                                },
-                                pointBackgroundColor: 'rgba(143, 211, 244, 0.7)',
-                                pointBorderColor: '#0f0c29',
-                                pointBorderWidth: 1,
-                                yAxisID: 'y1'
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    font: { family: 'Outfit', size: 11 },
-                                    padding: 12,
-                                    usePointStyle: true,
-                                    boxWidth: 8
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                                titleColor: '#84fab0',
-                                bodyColor: '#fff',
-                                borderColor: '#84fab0',
-                                borderWidth: 1,
-                                padding: 10,
-                                displayColors: true,
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) label += ': ';
-                                        if (context.parsed.y !== null) {
-                                            label += 'KES ' + context.parsed.y.toLocaleString('en-KE', { maximumFractionDigits: 0 });
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                title: { display: false },
-                                ticks: {
-                                    color: 'rgba(132, 250, 176, 0.7)',
-                                    font: { family: 'JetBrains Mono', size: 9 },
-                                    callback: function(value) {
-                                        return 'KES ' + (value / 1000).toFixed(0) + 'k';
-                                    }
-                                },
-                                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                title: { display: false },
-                                ticks: {
-                                    color: 'rgba(143, 211, 244, 0.7)',
-                                    font: { family: 'JetBrains Mono', size: 9 },
-                                    callback: function(value) {
-                                        return 'KES ' + (value / 1000).toFixed(0) + 'k';
-                                    }
-                                },
-                                grid: { drawOnChartArea: false, drawBorder: false }
-                            },
-                            x: {
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.6)',
-                                    font: { family: 'Outfit', size: 10 }
-                                },
-                                grid: { display: false }
-                            }
-                        }
-                    }
-                });
-                
-                return () => {
-                    if (chartInstanceRef.current) {
-                        chartInstanceRef.current.destroy();
-                    }
-                };
-            }, [month, selectedAlias, allMonthsData]);
 
             return (
                 <div className="member-view">
@@ -2128,162 +2217,75 @@
                                     </div>
                                 </div>
                             )}
-                            
-                            {/* MEMBER PROGRESS CHART */}
-                            {allMonthsData && (
-                                <div className="chart-container">
-                                    <div className="chart-title">
-                                        📊 Your Progress (Jan → Dec Projection)
-                                    </div>
-                                    <div className="chart-wrapper">
-                                        <canvas ref={chartRef}></canvas>
-                                    </div>
-                                    
-                                    {/* ARCHETYPE MESSAGE FOOTER */}
-                                    {(() => {
-                                        try {
-                                            const projection = calculateMemberProjection(selectedAlias, allMonthsData, month);
-                                            const groupAvgInterest = stats ? stats.monthInterest / MEMBERS.length : 0;
-                                            const groupStats = {
-                                                avgInterest: groupAvgInterest,
-                                                totalMembers: MEMBERS.length,
-                                                membersAboveMin: stats ? Math.round(stats.monthTopups / MINIMUM_CONTRIBUTION) : 0,
-                                                membersWithPartial: Math.round(MEMBERS.length * 0.4),
-                                                membersActive: Math.round(MEMBERS.length * 0.75),
-                                                totalBalance: stats ? stats.monthTopups : 0
-                                            };
-                                            const archetype = classifyMember(projection, memberData, groupStats);
-                                            const message = generateArchetypeMessage(archetype, projection, memberData, groupStats, month);
-                                            
-                                            const icons = {
-                                                overachiever: '🏆',
-                                                late_bloomer: '🚀',
-                                                optimizer: '🎯',
-                                                ghost: '👻',
-                                                erratic: '🌱',
-                                                consistent: '✅'
-                                            };
-                                            
-                                            return (
-                                                <div className="archetype-message">
-                                                    <div className="archetype-header">
-                                                        <span className="archetype-icon">{icons[archetype] || '📊'}</span>
-                                                        <span>December Projection: KES {Math.round(projection.decemberTotal).toLocaleString()}</span>
-                                                    </div>
-                                                    <div dangerouslySetInnerHTML={{ __html: message }} />
-                                                </div>
-                                            );
-                                        } catch (error) {
-                                            console.error('Archetype message error:', error);
-                                            return null;
-                                        }
-                                    })()}
-                                </div>
-                            )}
                         </>
                     )}
 
-                    {/* HORIZONTAL GROUP SUMMARY AT BOTTOM */}
-                    {stats && (
-                        <div className="group-summary">
-                            <div className="group-summary-title">📊 Group Summary - {month}</div>
-                            <div className="group-summary-grid">
-                                <div className="summary-item">
-                                    <div className="summary-label">Total Contributions<br/>(Jan-{month})</div>
-                                    <div className="summary-value">
-                                        KES {stats.cumulativeContributions.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                    </div>
-                                </div>
-                                <div className="summary-item">
-                                    <div className="summary-label">{month} Top-ups</div>
-                                    <div className="summary-value">
-                                        KES {stats.monthTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                    </div>
-                                </div>
-                                <div className="summary-item">
-                                    <div className="summary-label">{month} Interest</div>
-                                    <div className="summary-value">
-                                        KES {stats.monthInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    {/* PERSONALIZED PROJECTION CHART */}
+                    <MemberProjectionChart 
+                        selectedAlias={selectedAlias}
+                        data={data}
+                        currentMonth={month}
+                    />
                 </div>
             );
         }
 
-        function AllMembersView({ month, members, fileLastModified, allMonthsData }) {
+        // GROUP BALANCE CHART COMPONENT
+        function GroupBalanceChart({ data, currentMonth }) {
             const chartRef = React.useRef(null);
             const chartInstanceRef = React.useRef(null);
-            const currentMonthIndex = MONTHS.indexOf(month);
-            
-            const totalOpening = members.reduce((sum, m) => sum + m.openingBalance, 0);
-            const totalTopups = members.reduce((sum, m) => sum + m.topups, 0);
-            const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
-            const totalClosing = members.reduce((sum, m) => sum + m.closingBalance, 0);
 
-            // Get contribution status
-            const getContributionStatus = (topups) => {
-                if (topups >= MINIMUM_CONTRIBUTION) return 'exceeding';
-                if (topups >= 1000) return 'partial';
-                return 'missing';
-            };
-
-            // Build simple line chart for group balance
             React.useEffect(() => {
-                if (!chartRef.current || !allMonthsData || !window.Chart) return;
-                
+                if (!chartRef.current || !data) return;
+
                 if (chartInstanceRef.current) {
                     chartInstanceRef.current.destroy();
                 }
-                
-                const labels = [];
-                const balanceData = [];
-                const interestData = [];
-                const projectedData = [];
-                
-                let cumulativeBalance = 0;
-                let cumulativeInterest = 0;
-                
-                // Collect actual data up to current month
-                for (let i = 0; i <= currentMonthIndex; i++) {
-                    labels.push(MONTHS[i].slice(0, 3));
-                    const monthData = allMonthsData[MONTHS[i]];
-                    if (monthData) {
-                        const monthTotal = Object.values(monthData).reduce((sum, m) => sum + m.closingBalance, 0);
-                        const monthInterest = Object.values(monthData).reduce((sum, m) => sum + m.interest, 0);
-                        balanceData.push(monthTotal);
-                        interestData.push(cumulativeInterest + monthInterest);
-                        cumulativeBalance = monthTotal;
-                        cumulativeInterest += monthInterest;
-                    } else {
-                        balanceData.push(cumulativeBalance);
-                        interestData.push(cumulativeInterest);
-                    }
-                }
-                
-                // Project to December
-                const avgMonthlyGrowth = balanceData.length > 1
-                    ? (balanceData[balanceData.length - 1] - balanceData[0]) / balanceData.length
-                    : 0;
-                
-                const monthsToProject = 11 - currentMonthIndex;
-                for (let i = 1; i <= monthsToProject; i++) {
-                    labels.push(MONTHS[currentMonthIndex + i].slice(0, 3));
-                    const projectedValue = cumulativeBalance + (avgMonthlyGrowth * i);
-                    projectedData.push(projectedValue);
-                }
-                
-                // Pad arrays
-                while (projectedData.length < labels.length) {
-                    projectedData.unshift(null);
-                }
-                while (interestData.length < labels.length) {
-                    interestData.push(null);
-                }
-                
+
                 const ctx = chartRef.current.getContext('2d');
+                const monthIndex = MONTHS.indexOf(currentMonth);
+                
+                const actualBalances = [];
+                const actualInterest = [];
+                const labels = [];
+                
+                // Gather actual data
+                for (let i = 0; i <= monthIndex; i++) {
+                    const monthName = MONTHS[i];
+                    let monthTotalBalance = 0;
+                    let monthTotalInterest = 0;
+                    
+                    MEMBERS.forEach(alias => {
+                        const memberData = data[monthName]?.[alias] || {};
+                        monthTotalBalance += memberData.closingBalance || 0;
+                        monthTotalInterest += memberData.interest || 0;
+                    });
+                    
+                    actualBalances.push(monthTotalBalance);
+                    actualInterest.push(monthTotalInterest);
+                    labels.push(monthName.slice(0, 3));
+                }
+                
+                // Calculate projection
+                const monthsElapsed = monthIndex + 1;
+                let totalContributions = 0;
+                
+                for (let i = 0; i <= monthIndex; i++) {
+                    MEMBERS.forEach(alias => {
+                        totalContributions += data[MONTHS[i]]?.[alias]?.topups || 0;
+                    });
+                }
+                
+                const avgMonthlyContribution = monthsElapsed > 0 ? totalContributions / monthsElapsed : 0;
+                const projectedBalances = [...actualBalances];
+                
+                for (let i = monthIndex + 1; i < 12; i++) {
+                    const lastBalance = projectedBalances[projectedBalances.length - 1];
+                    const projectedNext = lastBalance + avgMonthlyContribution + (avgMonthlyContribution * 0.006);
+                    projectedBalances.push(projectedNext);
+                    labels.push(MONTHS[i].slice(0, 3));
+                }
+
                 chartInstanceRef.current = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -2291,108 +2293,138 @@
                         datasets: [
                             {
                                 label: 'Total Balance',
-                                data: balanceData.concat(Array(monthsToProject).fill(null)),
+                                data: actualBalances.concat(Array(12 - actualBalances.length).fill(null)).map((val, idx) => 
+                                    idx < actualBalances.length ? val : projectedBalances[idx]
+                                ),
                                 borderColor: '#84fab0',
-                                backgroundColor: 'rgba(132, 250, 176, 0.1)',
+                                backgroundColor: 'transparent',
                                 borderWidth: 3,
-                                fill: true,
-                                tension: 0.4,
                                 pointRadius: 5,
                                 pointBackgroundColor: '#84fab0',
-                                pointBorderColor: '#0f0c29',
-                                pointBorderWidth: 2
+                                segment: {
+                                    borderDash: ctx => ctx.p0DataIndex >= monthIndex ? [5, 5] : undefined
+                                }
                             },
                             {
-                                label: 'Cumulative Interest',
-                                data: interestData,
-                                borderColor: 'rgba(255, 193, 7, 0.6)',
-                                backgroundColor: 'transparent',
+                                label: 'Total Interest',
+                                data: actualInterest,
+                                borderColor: '#8fd3f4',
+                                backgroundColor: 'rgba(143, 211, 244, 0.1)',
                                 borderWidth: 2,
-                                fill: false,
-                                tension: 0.4,
                                 pointRadius: 3,
-                                pointBackgroundColor: 'rgba(255, 193, 7, 0.6)',
-                                pointBorderColor: '#0f0c29',
-                                pointBorderWidth: 1
-                            },
-                            {
-                                label: 'Projected',
-                                data: projectedData,
-                                borderColor: 'rgba(132, 250, 176, 0.4)',
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                fill: false,
-                                tension: 0.4,
-                                pointRadius: function(context) {
-                                    return context.dataIndex === projectedData.length - 1 ? 6 : 3;
-                                },
-                                pointBackgroundColor: 'rgba(132, 250, 176, 0.5)',
-                                pointBorderColor: '#0f0c29',
-                                pointBorderWidth: 1
+                                pointBackgroundColor: '#8fd3f4',
+                                fill: true
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
                         plugins: {
                             legend: {
                                 display: true,
-                                position: 'top',
                                 labels: {
                                     color: 'rgba(255, 255, 255, 0.8)',
-                                    font: { family: 'Outfit', size: 11 },
-                                    padding: 12,
-                                    usePointStyle: true,
-                                    boxWidth: 8
+                                    font: { size: 12, family: 'Outfit' }
                                 }
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                                backgroundColor: 'rgba(30, 30, 58, 0.95)',
                                 titleColor: '#84fab0',
                                 bodyColor: '#fff',
                                 borderColor: '#84fab0',
                                 borderWidth: 1,
-                                padding: 10,
-                                displayColors: true,
                                 callbacks: {
-                                    label: function(context) {
-                                        return context.dataset.label + ': KES ' + context.parsed.y.toLocaleString('en-KE', { maximumFractionDigits: 0 });
+                                    label: (context) => {
+                                        return `${context.dataset.label}: KES ${Math.round(context.parsed.y).toLocaleString()}`;
                                     }
                                 }
                             }
                         },
                         scales: {
                             y: {
-                                beginAtZero: false,
+                                beginAtZero: true,
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.6)',
-                                    font: { family: 'JetBrains Mono', size: 9 },
-                                    callback: function(value) {
-                                        return 'KES ' + (value / 1000).toFixed(0) + 'k';
-                                    }
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: { size: 11 },
+                                    callback: (value) => 'KES ' + (value / 1000).toFixed(0) + 'k'
                                 },
-                                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
                             },
                             x: {
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.6)',
-                                    font: { family: 'Outfit', size: 10 }
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: { size: 11 }
                                 },
-                                grid: { display: false }
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                }
                             }
                         }
                     }
                 });
-                
+
                 return () => {
                     if (chartInstanceRef.current) {
                         chartInstanceRef.current.destroy();
                     }
                 };
-            }, [month, allMonthsData]);
+            }, [data, currentMonth]);
+
+            const monthIndex = MONTHS.indexOf(currentMonth);
+            const monthsElapsed = monthIndex + 1;
+            let totalContributions = 0;
+            
+            for (let i = 0; i <= monthIndex; i++) {
+                MEMBERS.forEach(alias => {
+                    totalContributions += data[MONTHS[i]]?.[alias]?.topups || 0;
+                });
+            }
+            
+            const avgMonthlyContribution = monthsElapsed > 0 ? totalContributions / monthsElapsed : 0;
+            const currentBalance = MEMBERS.reduce((sum, alias) => {
+                return sum + (data[currentMonth]?.[alias]?.closingBalance || 0);
+            }, 0);
+            const projectedDecBalance = currentBalance + (avgMonthlyContribution * (12 - monthsElapsed)) + (avgMonthlyContribution * (12 - monthsElapsed) * 0.006);
+
+            return (
+                <div style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    marginBottom: '20px'
+                }}>
+                    <h3 style={{
+                        fontSize: '1.2rem',
+                        color: '#84fab0',
+                        marginBottom: '10px',
+                        textAlign: 'center'
+                    }}>
+                        📊 Group Balance Growth
+                    </h3>
+                    <p style={{
+                        fontSize: '0.85rem',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        textAlign: 'center',
+                        marginBottom: '15px',
+                        fontStyle: 'italic'
+                    }}>
+                        At KES {Math.round(avgMonthlyContribution).toLocaleString()} avg/month → projected KES {Math.round(projectedDecBalance).toLocaleString()} by December
+                    </p>
+                    <div style={{ height: '280px', position: 'relative' }}>
+                        <canvas ref={chartRef}></canvas>
+                    </div>
+                </div>
+            );
+        }
+
+        function AllMembersView({ month, members, fileLastModified, data }) {
+            const totalOpening = members.reduce((sum, m) => sum + m.openingBalance, 0);
+            const totalTopups = members.reduce((sum, m) => sum + m.topups, 0);
+            const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
+            const totalClosing = members.reduce((sum, m) => sum + m.closingBalance, 0);
 
             return (
                 <div>
@@ -2400,21 +2432,12 @@
                         All Members - {month} {CURRENT_YEAR}
                     </h2>
 
-                    {/* Group Balance Chart */}
-                    <div className="chart-container">
-                        <div className="chart-title">
-                            📈 Group Balance Growth (Jan → Dec Projection)
-                        </div>
-                        <div className="chart-wrapper">
-                            <canvas ref={chartRef}></canvas>
-                        </div>
-                    </div>
+                    <GroupBalanceChart data={data} currentMonth={month} />
 
                     <div className="members-table-container">
                         <table className="members-table">
                             <thead>
                                 <tr>
-                                    <th style={{ width: '40px', textAlign: 'center' }}>●</th>
                                     <th>Alias</th>
                                     <th className="number-col">Opening</th>
                                     <th className="number-col">Top-ups</th>
@@ -2424,15 +2447,11 @@
                             </thead>
                             <tbody>
                                 {members.map(member => {
-                                    const status = getContributionStatus(member.topups);
+                                    const rowBgColor = member.topups >= MINIMUM_CONTRIBUTION ? 'rgba(132, 250, 176, 0.15)' :
+                                                       member.topups > 0 ? 'rgba(255, 152, 0, 0.15)' :
+                                                       'rgba(255, 100, 100, 0.15)';
                                     return (
-                                        <tr key={member.alias}>
-                                            <td style={{ textAlign: 'center', padding: '8px' }}>
-                                                <span className={`status-badge status-${status}`}
-                                                      title={status === 'exceeding' ? 'Met minimum' : 
-                                                             status === 'partial' ? 'Partial contribution' : 
-                                                             'No contribution'}></span>
-                                            </td>
+                                        <tr key={member.alias} style={{ background: rowBgColor }}>
                                             <td className="alias-col">{member.alias}</td>
                                             <td className="number-col">
                                                 {member.openingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
@@ -2450,7 +2469,6 @@
                                     );
                                 })}
                                 <tr className="total-row">
-                                    <td></td>
                                     <td style={{ color: '#84fab0' }}>TOTALS</td>
                                     <td className="number-col">{totalOpening.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
                                     <td className="number-col">{totalTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
@@ -2459,19 +2477,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        
-                        <div style={{ 
-                            marginTop: '12px', 
-                            textAlign: 'center', 
-                            fontSize: '0.8rem', 
-                            color: 'rgba(255, 255, 255, 0.6)' 
-                        }}>
-                            <span className="status-badge status-exceeding"></span> Met minimum (≥4k)
-                            <span style={{ margin: '0 12px' }}></span>
-                            <span className="status-badge status-partial"></span> Partial (1k-3.9k)
-                            <span style={{ margin: '0 12px' }}></span>
-                            <span className="status-badge status-missing"></span> No contribution
-                        </div>
                     </div>
 
                     {fileLastModified && (
