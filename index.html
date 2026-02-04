@@ -1896,6 +1896,9 @@
                 totalTopups: 0,
                 totalInterest: 0,
                 currentMonthTopup: 0,
+                currentInterest: 0,
+                previousMonthTopup: 0,
+                previousInterest: 0,
                 closingBalance: 0,
                 daysActive: 0
             };
@@ -1904,8 +1907,15 @@
                 const monthData = data[MONTHS[i]]?.[selectedAlias] || {};
                 memberHistoricalData.totalTopups += monthData.topups || 0;
                 memberHistoricalData.totalInterest += monthData.interest || 0;
+                if (i === monthIndex - 1) {
+                    // Previous month
+                    memberHistoricalData.previousMonthTopup = monthData.topups || 0;
+                    memberHistoricalData.previousInterest = monthData.interest || 0;
+                }
                 if (i === monthIndex) {
+                    // Current month
                     memberHistoricalData.currentMonthTopup = monthData.topups || 0;
+                    memberHistoricalData.currentInterest = monthData.interest || 0;
                     memberHistoricalData.closingBalance = monthData.closingBalance || 0;
                     memberHistoricalData.daysActive = monthData.daysActive || 0;
                 }
