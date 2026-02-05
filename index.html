@@ -3,13 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Like-Minded Folks - MMF Tracker</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23302b63%22/><rect x=%225%22 y=%225%22 width=%2290%22 height=%2290%22 rx=%2215%22 fill=%22none%22 stroke=%22%2384fab0%22 stroke-width=%223%22/><text x=%2250%22 y=%2265%22 font-family=%22Arial,sans-serif%22 font-size=%2236%22 font-weight=%22700%22 fill=%22%2384fab0%22 text-anchor=%22middle%22>LMF</text></svg>">
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <title>LMF - Weekly Contributions Tracker</title>
     <style>
         * {
             margin: 0;
@@ -18,2351 +12,361 @@
         }
 
         body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             min-height: 100vh;
-            color: #fff;
-        }
-
-        .app-layout {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        /* LEFT SIDEBAR */
-        .sidebar {
-            width: 280px;
-            flex-shrink: 0;
-        }
-
-        .sidebar-section {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .sidebar-section h3 {
-            color: #84fab0;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sidebar-link {
-            display: block;
-            padding: 12px 16px;
-            background: rgba(132, 250, 176, 0.1);
-            border: 1px solid rgba(132, 250, 176, 0.3);
-            border-radius: 10px;
-            color: #84fab0;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(132, 250, 176, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .deposit-method {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-
-        .deposit-method:last-child {
-            margin-bottom: 0;
-        }
-
-        .deposit-title {
-            color: #8fd3f4;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .deposit-info {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem;
-            line-height: 1.6;
-        }
-
-        .deposit-info strong {
-            color: #fff;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .rules-list {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem;
-            line-height: 1.6;
-        }
-
-        .rules-list li {
-            margin-bottom: 8px;
-            padding-left: 5px;
-        }
-
-        .rules-link {
-            display: inline-block;
-            margin-top: 12px;
-            color: #8fd3f4;
-            font-size: 0.85rem;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .rules-link:hover {
-            text-decoration: underline;
-        }
-
-        /* MAIN CONTENT */
-        .main-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .header {
-            text-align: center;
-            padding: 20px 20px 30px;
-        }
-
-        .header h1 {
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            font-weight: 800;
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-
-        .header-emoji {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .data-timestamp {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            margin-top: 8px;
-            font-weight: 500;
-            font-style: italic;
-        }
-
-        .month-selector {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            margin: 0 0 25px 0;
-            flex-wrap: wrap;
-            padding: 0 10px;
-        }
-
-        .month-btn {
-            padding: 8px 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .month-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .month-btn.active {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            border: none;
-            color: #0f0c29;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 0 0 25px 0;
-            flex-wrap: wrap;
-        }
-
-        .toggle-btn {
-            padding: 10px 24px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .toggle-btn.active {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            border-color: transparent;
-            color: #0f0c29;
-        }
-
-        .member-view {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .alias-selector {
-            margin: 0 0 25px 0;
-        }
-
-        .alias-selector select {
-            width: 100%;
-            padding: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            border: 2px solid rgba(132, 250, 176, 0.3);
-            border-radius: 12px;
-            font-family: 'Outfit', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .alias-selector select:focus {
-            outline: none;
-            border-color: #84fab0;
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .alias-selector select option {
-            background: #1a1a2e;
             color: #fff;
             padding: 10px;
         }
 
-        .alias-selector select option:first-child {
-            color: rgba(255, 255, 255, 0.5);
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
         }
 
-        /* WARNING MESSAGE */
-        .warning-message {
-            background: rgba(255, 193, 7, 0.15);
-            border: 2px solid rgba(255, 193, 7, 0.4);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 0 0 20px 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .warning-icon {
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .warning-text {
-            flex: 1;
-        }
-
-        .warning-title {
-            color: #ffc107;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-
-        .warning-content {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .member-statement {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 25px;
-            margin: 0 0 30px 0;
-        }
-
-        .statement-alias {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        h1 {
             text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .statement-month {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 25px;
-        }
-
-        .statement-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .statement-row:last-child {
-            border-bottom: none;
-            margin-top: 15px;
-            padding-top: 20px;
-            border-top: 2px solid rgba(132, 250, 176, 0.3);
-        }
-
-        .statement-label {
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.95rem;
-        }
-
-        .statement-value {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #fff;
-            text-align: right;
-        }
-
-        /* HORIZONTAL GROUP SUMMARY */
-        .group-summary {
-            background: linear-gradient(135deg, rgba(132, 250, 176, 0.1) 0%, rgba(143, 211, 244, 0.1) 100%);
-            border: 1px solid rgba(132, 250, 176, 0.3);
-            border-radius: 16px;
-            padding: 18px;
-            margin: 50px auto 0;
-            max-width: 650px;
-        }
-
-        .group-summary-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #84fab0;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .group-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .summary-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 8px 6px 12px;
-            text-align: center;
-            display: grid;
-            grid-template-rows: auto 1fr;
-            min-height: 80px;
-            align-items: end;
-        }
-
-        .summary-label {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.2;
-            padding-bottom: 4px;
-            align-self: start;
-        }
-
-        .summary-value {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #8fd3f4;
-            line-height: 1.2;
-            text-align: center;
-            align-self: end;
-        }
-
-        .members-table-container {
-            overflow-x: auto;
-            margin: 20px 0;
-            margin-bottom: 80px;
-        }
-
-        .members-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .members-table thead {
-            background: rgba(132, 250, 176, 0.15);
-        }
-
-        .members-table th {
-            padding: 10px 8px;
-            text-align: left;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #84fab0;
-            border-bottom: 2px solid rgba(132, 250, 176, 0.3);
-        }
-
-        .members-table td {
-            padding: 10px 8px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .members-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .members-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .members-table .alias-col {
-            font-weight: 700;
-            color: #84fab0;
-        }
-
-        .members-table .number-col {
-            text-align: right;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .members-table .total-row {
-            background: rgba(132, 250, 176, 0.1);
-            font-weight: 700;
-        }
-
-        .members-table .total-row td {
-            border-top: 2px solid rgba(132, 250, 176, 0.3);
-            padding: 15px 10px;
-        }
-
-        /* MOBILE MENU TOGGLE */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            color: #0f0c29;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(132, 250, 176, 0.4);
-            z-index: 1000;
-        }
-
-        .sidebar.mobile-open {
-            display: block;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
+            margin: 15px 0;
             font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .error {
-            background: rgba(255, 100, 100, 0.1);
-            border: 1px solid rgba(255, 100, 100, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px;
-            text-align: center;
-            color: #ff6b6b;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-            margin: 10px 5px;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 968px) {
-            .app-layout {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-                z-index: 999;
-                overflow-y: auto;
-                padding: 20px;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .sidebar-close {
-                text-align: right;
-                margin-bottom: 10px;
-            }
-
-            .sidebar-close button {
-                background: rgba(255, 100, 100, 0.2);
-                border: 1px solid rgba(255, 100, 100, 0.3);
-                color: #ff6b6b;
-                padding: 8px 16px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: 600;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .month-btn {
-                padding: 7px 12px;
-                font-size: 0.8rem;
-            }
-
-            .toggle-btn {
-                padding: 9px 20px;
-                font-size: 0.85rem;
-            }
-
-            .member-statement {
-                padding: 20px;
-            }
-
-            .statement-alias {
-                font-size: 1.5rem;
-            }
-
-            .members-table {
-                font-size: 0.8rem;
-            }
-
-            .members-table th,
-            .members-table td {
-                padding: 8px 6px;
-            }
-
-            .summary-value {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* SITE TOUR */
-        .tour-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 9998;
-        }
-
-        .tour-highlight {
-            position: absolute;
-            border-radius: 10px;
-            box-shadow: 0 0 0 4px rgba(132, 250, 176, 0.6), 0 0 0 9999px rgba(0, 0, 0, 0.55);
-            z-index: 9999;
-            pointer-events: none;
-            transition: all 0.4s ease;
-        }
-
-        .tour-tooltip {
-            position: absolute;
-            z-index: 10000;
-            background: #1e1e3a;
-            border: 1px solid rgba(132, 250, 176, 0.4);
-            border-radius: 14px;
-            padding: 22px 24px 18px;
-            max-width: 300px;
-            width: 90vw;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s ease;
-        }
-
-        .tour-tooltip-arrow {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #1e1e3a;
-            border-left: 1px solid rgba(132, 250, 176, 0.4);
-            border-bottom: 1px solid rgba(132, 250, 176, 0.4);
-        }
-
-        .tour-tooltip-arrow.arrow-top {
-            top: -7px;
-            left: 30px;
-            transform: rotate(-135deg);
-        }
-
-        .tour-tooltip-arrow.arrow-bottom {
-            bottom: -7px;
-            left: 30px;
-            transform: rotate(45deg);
-        }
-
-        .tour-step-badge {
-            display: inline-block;
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            color: #0f0c29;
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
-
-        .tour-tooltip h4 {
             color: #84fab0;
-            font-size: 1rem;
-            margin-bottom: 8px;
-            font-weight: 700;
         }
 
-        .tour-tooltip p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin: 0;
+        /* TABLE CONTAINER WITH FROZEN COLUMNS */
+        .table-wrapper {
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 85vh;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .tour-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-        }
-
-        .tour-btn-next {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-            color: #0f0c29;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            font-family: 'Outfit', sans-serif;
-            transition: transform 0.2s ease;
-        }
-
-        .tour-btn-next:hover {
-            transform: translateY(-1px);
-        }
-
-        .tour-btn-skip {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-family: 'Outfit', sans-serif;
-            padding: 4px 0;
-        }
-
-        .tour-btn-skip:hover {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .tour-dots {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .tour-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            transition: background 0.3s ease;
-        }
-
-        .tour-dot.active {
-            background: #84fab0;
-        }
-
-        /* Weekly Contributions Table - Compact & Elegant */
-        .weekly-view-container {
+        table {
             width: 100%;
-            height: calc(100vh - 180px);
-            overflow: auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.7rem;
         }
 
-        .weekly-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75rem;
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .weekly-table th,
-        .weekly-table td {
-            padding: 3px 6px;
-            text-align: center;
-            border: 0.5px solid rgba(255, 255, 255, 0.08);
-            white-space: nowrap;
-            line-height: 1.3;
-        }
-
-        /* Frozen columns - very compact */
-        .weekly-table th.col-alias,
-        .weekly-table td.col-alias {
+        /* FROZEN COLUMNS - Alias and Total */
+        th:nth-child(1),
+        th:nth-child(2),
+        td:nth-child(1),
+        td:nth-child(2) {
             position: sticky;
             left: 0;
-            background: rgba(15, 12, 41, 0.98);
-            z-index: 5;
-            text-align: left;
-            padding-left: 8px;
-            width: 80px;
-            min-width: 80px;
-            max-width: 80px;
-            font-size: 0.7rem;
+            z-index: 10;
+            background: rgba(30, 30, 58, 0.95);
         }
 
-        .weekly-table th.col-total,
-        .weekly-table td.col-total {
-            position: sticky;
-            left: 80px;
-            background: rgba(15, 12, 41, 0.98);
-            z-index: 5;
-            width: 70px;
-            min-width: 70px;
-            max-width: 70px;
-            font-size: 0.7rem;
-            border-right: 1px solid rgba(132, 250, 176, 0.3);
+        td:nth-child(2),
+        th:nth-child(2) {
+            left: 60px; /* Width of first column */
         }
 
-        /* Week columns - compact */
-        .weekly-table th.col-week,
-        .weekly-table td.col-week {
-            width: 50px;
-            min-width: 50px;
-            max-width: 50px;
-            font-size: 0.7rem;
-        }
-
-        /* Headers */
-        .weekly-table thead th {
-            background: rgba(15, 12, 41, 0.95);
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
+        /* HEADER STYLING */
+        thead {
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 20;
+            background: rgba(30, 30, 58, 0.98);
+        }
+
+        th {
+            padding: 6px 4px;
+            font-weight: 600;
+            text-align: center;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        /* Alias column - minimal width */
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 60px;
+            min-width: 60px;
+            text-align: left;
+            padding-left: 6px;
             font-size: 0.65rem;
         }
 
-        .weekly-table thead th.col-alias,
-        .weekly-table thead th.col-total {
-            z-index: 15;
+        /* Total column - compact */
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 55px;
+            min-width: 55px;
+            font-weight: 600;
         }
 
-        /* Banded rows - simple elegant alternating */
-        .weekly-table tbody tr:nth-child(odd) {
+        /* Week columns - compact */
+        th:nth-child(n+3),
+        td:nth-child(n+3) {
+            width: 45px;
+            min-width: 45px;
+        }
+
+        /* BODY CELLS */
+        td {
+            padding: 5px 3px;
+            text-align: center;
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.65rem;
+        }
+
+        /* BANDED ROWS - Elegant alternating */
+        tbody tr:nth-child(odd) {
             background: rgba(255, 255, 255, 0.02);
         }
 
-        .weekly-table tbody tr:nth-child(even) {
+        tbody tr:nth-child(even) {
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .weekly-table tbody tr:hover {
-            background: rgba(132, 250, 176, 0.08);
+        tbody tr:hover {
+            background: rgba(132, 250, 176, 0.1);
         }
 
-        /* Total row */
-        .weekly-table tbody tr.total-row {
+        /* TOTAL ROW */
+        .total-row {
             background: rgba(132, 250, 176, 0.15) !important;
-            font-weight: 600;
+            font-weight: 700;
+            border-top: 2px solid #84fab0;
         }
 
-        .weekly-table tbody tr.total-row td {
-            border-top: 2px solid rgba(132, 250, 176, 0.5);
-        }
-
-        /* Empty cells */
-        .weekly-table td.empty {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Month headers row */
-        .weekly-table .month-header {
-            background: rgba(132, 250, 176, 0.1) !important;
-            font-weight: 600;
-            font-size: 0.7rem;
+        .total-row td {
             color: #84fab0;
+        }
+
+        /* EMPTY CELLS */
+        .empty {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* MONTH HEADERS - Special styling */
+        .month-header th {
+            background: rgba(132, 250, 176, 0.1);
+            color: #84fab0;
+            font-size: 0.7rem;
+            padding: 8px 4px;
+            border-bottom: 1px solid #84fab0;
+        }
+
+        /* LOADING STATE */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            h1 {
+                font-size: 1rem;
+                margin: 10px 0;
+            }
+
+            table {
+                font-size: 0.6rem;
+            }
+
+            th, td {
+                padding: 4px 2px;
+            }
+
+            th:nth-child(1), td:nth-child(1) {
+                width: 50px;
+                min-width: 50px;
+                font-size: 0.6rem;
+            }
+
+            th:nth-child(2), td:nth-child(2) {
+                width: 48px;
+                min-width: 48px;
+                left: 50px;
+            }
+
+            th:nth-child(n+3), td:nth-child(n+3) {
+                width: 40px;
+                min-width: 40px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container">
+        <h1>📊 Weekly Contributions Tracker</h1>
+        <div id="root"></div>
+    </div>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const MEMBERS = ['Tokyo', 'Berlin', 'Gandia', 'Denver', 'Helsinki', 'Oslo', 
-                        'Moscow', 'California', 'Lisbon', 'Stockholm', 'Paris', 'Marseille', 
-                        'Rio', 'Nairobi', 'Tel Aviv', 'Valencia', 'Havana', 'Manilla', 'Scofield', 
-                        'Bogota', 'Emirates', 'Dublin', 'Doha'];
-        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
-                       'July', 'August', 'September', 'October', 'November', 'December'];
-        
-        // Base64-encoded Google Sheets CSV URLs (obfuscated for privacy)
-        const ENCODED_CSV_URLS = [
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTE4ODE3NjExNTQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExODIwNzc2Mjcmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExNDkyMjYwMjQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTk2MjExMTcwNCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTUxNDQ5Mjc4MiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTU5OTQ2MTg1NyZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTcwMzc5MjUzMCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTIwOTM3MDg5Nzkmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwNzkyMzcwNDMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM2MjM4OTY0MCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM1MDMxNTkyMiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-            "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwMTY1NjE3OTgmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg=="
-        ];
-        
-        // Decode base64 URL
-        const decodeURL = (encoded) => atob(encoded);
-        
-        // Calculate moving average for smooth trend line (window size = 2 months)
-        const calculateMovingAverage = (data, windowSize = 2) => {
-            if (data.length < windowSize) return data;
-            const result = [];
-            for (let i = 0; i < data.length; i++) {
-                if (data[i] === null) {
-                    result.push(null);
-                } else if (i < windowSize - 1) {
-                    result.push(data[i]); // Not enough data points yet
-                } else {
-                    const window = data.slice(i - windowSize + 1, i + 1).filter(v => v !== null);
-                    const avg = window.reduce((sum, val) => sum + val, 0) / window.length;
-                    result.push(avg);
-                }
-            }
-            return result;
-        };
-        
-        // Map months to decoded URLs
-        const MONTH_CSV_URLS = {};
-        MONTHS.forEach((month, index) => {
-            MONTH_CSV_URLS[month] = decodeURL(ENCODED_CSV_URLS[index]);
-        });
-        
-        const MINIMUM_CONTRIBUTION = 4000;
-        
-        // Etica Money Market Fund actual yield (as of Feb 2025)
-        const ETICA_ANNUAL_YIELD = 0.12; // 12% APY
-        const ETICA_MONTHLY_YIELD = ETICA_ANNUAL_YIELD / 12; // 1% per month
-        const WARNING_START_DAY = 10; // Warnings show from 10th onwards
-        
-        // Member pairs who contribute together
-        const MEMBER_PAIRS = {
-            'California': 'Lisbon',
-            'Lisbon': 'California',
-            'Paris': 'Marseille',
-            'Marseille': 'Paris'
-        };
-
-        // Playful warning messages for partial contributions
-        const PARTIAL_CONTRIBUTION_MESSAGES = [
-            (amount, remaining) => `Hey there! 👋 You've put in KES ${amount.toLocaleString()} this month. Just KES ${remaining.toLocaleString()} more and you're all set for interest. You've got this! 💪`,
-            (amount, remaining) => `Nice start! 🌟 You're at KES ${amount.toLocaleString()} so far. Top up KES ${remaining.toLocaleString()} more to unlock this month's interest. Almost there!`,
-            (amount, remaining) => `Good progress! 🎯 Your KES ${amount.toLocaleString()} is working. Add KES ${remaining.toLocaleString()} more to hit the minimum and earn interest. Keep going!`,
-            (amount, remaining) => `You're on the right track! 🚀 KES ${amount.toLocaleString()} down, KES ${remaining.toLocaleString()} to go. Top up soon and don't miss out on this month's interest!`,
-            (amount, remaining) => `Almost there, friend! 😊 You've contributed KES ${amount.toLocaleString()}. Just KES ${remaining.toLocaleString()} more to qualify for interest this month!`
-        ];
-        
-        // Get current year dynamically
-        const CURRENT_YEAR = new Date().getFullYear();
-
-
-        // Returns current month name — defined here so it's available
-        // before App's useState initialiser runs
-        function getCurrentMonth() {
-            return MONTHS[new Date().getMonth()];
-        }
-
-        // Password protection
-        const CORRECT_PASSWORD = 'LikeMinded2026';
-        const AUTH_EXPIRY_DAYS = 30;
         const WEEKLY_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQfQdBVl01cxsIoGnfJLltGDuOkIVDFqj-rNg3KwFVZ8-GGbUqk1DSs_CVaygisjaLhg30g1gjzIsdC/pub?gid=2079453016&single=true&output=csv';
 
-        // ARCHETYPE MESSAGING SYSTEM
-        const ARCHETYPE_MESSAGES = {
-            OVERACHIEVER: [
-                { icon: '🏆', text: "You're in the top 3! At this pace, you're on track for **{projected}** by December. Your early deposits are earning you way more interest than late contributors." },
-                { icon: '💎', text: "Star performer! You've earned **{interest}** in interest so far — that's **{interestAboveAvg}%** more than the group average. Keep this up!" },
-                { icon: '🚀', text: "Your balance is growing faster than **{percentBeaten}%** of the group. December projection: **{projected}**. You're building serious wealth." },
-                { icon: '⭐', text: "Early bird champion! Depositing early like you do could mean an extra **KES 200-300** in interest by December. That's free money for good timing." },
-                { icon: '🔥', text: "On fire! You're projected to hit **{projected}** by December. Just imagine if you bumped it up slightly — **{stretchGoal}** is totally within reach." },
-                { icon: '💪', text: "You're carrying **{shareOfTotal}%** of the group's balance. That's leadership. Keep going and you'll break six figures soon." },
-                { icon: '🎯', text: "Bullseye! Your consistency + early deposits = **{projected}** by December. Add just **KES 2,000/month** and that becomes **{stretchGoal}**." },
-                { icon: '👑', text: "Top tier! You've contributed **{totalTopups}** so far. At this rate, December you will have **{projected}**. That's a serious emergency fund." },
-                { icon: '✨', text: "Shining bright! Your interest earnings (**{interest}**) are in the top 10%. Early deposits pay off — literally." },
-                { icon: '🌟', text: "Group MVP! You're on track for **{projected}** by year-end. Your contributions are lifting everyone's interest. Thank you for leading by example." }
-            ],
-            STEADY_CLIMBER: [
-                { icon: '🌱', text: "Solid progress! You're projected to hit **{projected}** by December. Just **KES 1,000 more per month** pushes that to **{stretchGoal}**. Worth it?" },
-                { icon: '💪', text: "You're beating **{percentBeaten}%** of the group. Consistent wins! If you deposited just **3 days earlier** each month, you'd earn **KES 200+ more interest** by December." },
-                { icon: '🎯', text: "You've contributed **{totalTopups}** so far. December you = **{projected}** richer. What if December you had **{stretchGoal}**? Just **{monthlyIncrease}** more per month." },
-                { icon: '📈', text: "Steady climb! Your average deposit is **{avgDeposit}** per month. Keep that up and you'll hit **{projected}** by December with **{projectedInterest}** in interest." },
-                { icon: '🌟', text: "Nice consistency! You're in the middle of the pack, but moving up. Add **KES 2,000/month** and you jump into the top 30%." },
-                { icon: '🚶', text: "One step at a time! You're on track for **{projected}** by December. That's **{monthsLeft}** months of steady contributions away. You've got this." },
-                { icon: '💚', text: "Green light! You're hitting the minimum every month. That's **{projectedInterest}** in free interest by December. Imagine if you went slightly above minimum..." },
-                { icon: '⏰', text: "Timing tip: You usually deposit mid-month. Moving that to the **1st-5th** could earn you **KES 150-250 more interest** by year-end. Easy win!" },
-                { icon: '🔄', text: "Consistency is key! You're **{totalTopups}** in, **{projected}** projected. Want to hit **{stretchGoal}**? Just bump each deposit by **{monthlyIncrease}**." },
-                { icon: '🎊', text: "You're doing great! **{percentBeaten}%** of members are behind you. Keep going and you'll crack **{projected}** by December. Momentum matters!" }
-            ],
-            LATE_BLOOMER: [
-                { icon: '🔥', text: "Look at you go! You went from **{previousMonthTopup}** last month to **{currentMonthTopup}** this month. That's growth! Keep this momentum and you'll hit **{projected}** by December." },
-                { icon: '🌅', text: "Late bloomer alert! You're gaining speed. If you maintain **{avgDeposit}** per month, you'll close the year at **{projected}**. Not bad for a late start!" },
-                { icon: '💪', text: "You're proving it's never too late! Your balance jumped **{balanceIncrease}%** this month. December projection: **{projected}**. Add **{monthlyIncrease}** more per month and that's **{stretchGoal}**." },
-                { icon: '🚀', text: "Liftoff! You started slow but you're picking up speed. **{percentBeaten}%** of members started like you — you're not behind, you're just hitting your stride." },
-                { icon: '🌟', text: "Your interest went from **{previousInterest}** to **{currentInterest}** this month. That's what consistency does. Imagine **{projectedInterest}** by December if you keep going!" },
-                { icon: '📈', text: "Upward trajectory! Last month: **{previousMonthTopup}**. This month: **{currentMonthTopup}**. Next month? Hit **{suggestedNextDeposit}** and you're on a roll." },
-                { icon: '🎯', text: "You're catching up fast! You've contributed **{totalTopups}** total. Keep this pace and you'll land at **{projected}** by December. That's real money!" },
-                { icon: '⚡', text: "Energy shift! You're depositing **{percentIncrease}%** more than last month. If this trend continues, you'll blow past your projection and hit **{stretchGoal}**." },
-                { icon: '🌊', text: "Riding the wave! You started small but you're gaining momentum. **{monthsLeft}** months at **{avgDeposit}** each = **{projected}** by year-end. Surf's up!" },
-                { icon: '🎉', text: "Progress party! You've more than doubled your deposit this month. Keep it up and December you will be sitting pretty at **{projected}**. You've got this!" }
-            ],
-            PARTIAL_CONTRIBUTOR: [
-                { icon: '🎯', text: "You've put in {currentMonthTopup} this month. You're just {gapToMinimum} away from qualifying for interest. That's doable!" },
-                { icon: '💚', text: "Good news: {similarMembers} members started at your level and hit the minimum by month-end. You're in good company. Just {gapToMinimum} more and you're earning!" },
-                { icon: '💰', text: "You've deposited {totalTopups} total. That's real money! But you've missed out on interest. Hit {minimum} this month and start earning." },
-                { icon: '🚪', text: "You're almost there! Just {gapToMinimum} more and you unlock interest. Even small amounts compound." },
-                { icon: '⏰', text: "You still have time left in the month. {gapToMinimum} is all you need to qualify for interest. Doable!" },
-                { icon: '🌱', text: "Every shilling counts! Your {currentMonthTopup} is a start. Add {gapToMinimum} more and you'll earn interest this month. Don't leave free money on the table." },
-                { icon: '🤝', text: "You're not alone. But many members already hit the minimum. Join them! Just {gapToMinimum} to go." },
-                { icon: '📊', text: "So close! Finish strong with {gapToMinimum} more and December you will thank you." },
-                { icon: '💪', text: "You're {gapToMinimum} away from interest. That's one good week of saving. Hit it and you'll start earning on {currentBalance}. Worth it!" },
-                { icon: '🎁', text: "Gift yourself interest! You're at {currentMonthTopup}. Add {gapToMinimum} and you qualify. Your December balance will thank you." }
-            ],
-            GHOST: [
-                { icon: '👋', text: "You're not alone — some members haven't deposited yet. But many have. Even at {minimum} per month, they're on track for solid gains by December." },
-                { icon: '⏰', text: "It's not too late! Start with just {minimum} this month. By December, that becomes real money plus interest. Better late than never!" },
-                { icon: '💰', text: "The group has grown significantly since January. That could be your money too. Start today with {minimum} and you're in the game." },
-                { icon: '🚀', text: "Fun fact: Even the smallest current balance will grow significantly by December. You could be that person. Start now!" },
-                { icon: '📅', text: "Every month you wait costs you growth opportunities. Deposit {minimum} now and December you will thank today you." },
-                { icon: '🌱', text: "Small starts matter! Even KES 1,000 today grows by December. And once you're in, the momentum builds. Take the first step." },
-                { icon: '🤝', text: "The group is saving together. Most members are contributing. You can join them anytime. {minimum} opens the door." },
-                { icon: '💪', text: "No judgment, just math: {minimum} per month for {monthsLeft} months = {lateStartProjection} by December. Still worth it!" },
-                { icon: '🎯', text: "Your seat is still warm! Deposit {minimum} this month and you're back in. Even starting late, you'll have {lateStartProjection} by year-end." },
-                { icon: '✨', text: "The best time to start was January. The second best time is today. {minimum} gets you in the game. December you is waiting." }
-            ],
-            EARLY_BIRD: [
-                { icon: '🐦', text: "Early bird gets the interest! Your deposit on the **{depositDay}** is earning **KES {earlyBirdBonus}** more than late-month deposits. By December: **{bonusProjection}** extra!" },
-                { icon: '⏰', text: "Perfect timing! You're earning **{percentMoreInterest}%** more interest than the average member just by depositing early. That's free money for good habits." },
-                { icon: '💰', text: "Time is money! If you keep depositing on the **1st-3rd** every month, you'll earn **~KES {yearlyBonus}** more in interest by December. That's dinner out!" },
-                { icon: '🎯', text: "Nailed it! Your early deposits mean more days earning. You're on track for **{projected}** by December with **{projectedInterest}** in interest." },
-                { icon: '🌅', text: "First light advantage! While others wait, your money's already working. December projection: **{projected}**. Your early habits are paying off — literally." },
-                { icon: '📈', text: "Smart move! Depositing early gives you **{extraDays}** more earning days per month. That compounds to **{bonusProjection}** extra by year-end." },
-                { icon: '⭐', text: "Star student! You're earning **{percentMoreInterest}%** above average just from timing. Keep it up and you'll have **{projected}** by December." },
-                { icon: '🔥', text: "Hot start! Your early deposits are outearning late deposits by **{monthlyBonus}** per month. Over the year, that's **{yearlyBonus}** in free interest." },
-                { icon: '💎', text: "Premium timing! You're maximizing interest by depositing early. December you will have **{projected}** thanks to your discipline. Well done!" },
-                { icon: '🏆', text: "Timing champion! Depositing on day **{depositDay}** vs day 20 = **{bonusProjection}** more interest by December. You're playing the game right." }
-            ],
-            BIG_DEPOSITOR: [
-                { icon: '🐋', text: "Whale alert! Your {currentBalance} is the group's backbone. At this pace, you're looking at {projected} by December. That's serious wealth-building." },
-                { icon: '💎', text: "Your interest this month: {currentInterest}. Sounds small? Multiply by 11 months = {projectedInterest} by December. That's a free phone upgrade!" },
-                { icon: '🏛️', text: "You're carrying {shareOfTotal}% of the group's balance. Your contributions lift everyone's average. Keep going and you'll hit seven figures soon." },
-                { icon: '🎯', text: "Big moves! You've deposited {totalTopups} so far. December projection: {projected}. Add just {monthlyIncrease} more and that's {stretchGoal}." },
-                { icon: '👑', text: "King/Queen of the group! Your {avgDeposit} per month is {percentAboveAvg}% above average. December you: {projected}. Respect!" },
-                { icon: '🚀', text: "To the moon! At {avgDeposit} per month, you're on track for {projected} by December. That's a down payment, an emergency fund, or a big win." },
-                { icon: '💰', text: "Money moves! You're building {projected} by year-end. Your early, large deposits mean you're earning {percentMoreInterest}% more interest than small depositors." },
-                { icon: '🔥', text: "On fire! You've contributed {shareOfTotal}% of the group's total. December projection: {projected}. Keep this energy!" },
-                { icon: '🌟', text: "Star power! Your {totalTopups} in contributions are setting the pace. You're projected to hit {projected} by December. Leadership in action." },
-                { icon: '⚡', text: "Power player! You're depositing {percentAboveMinimum}% above the minimum. That discipline will give you {projected} by December. Legendary!" }
-            ],
-            ACCELERATOR: [
-                { icon: '🚀', text: "Momentum builder! You went from {previousMonthTopup} last month to {currentMonthTopup} this month. Keep this acceleration and you'll blow past {projected}!" },
-                { icon: '📈', text: "You're scaling up! Your deposits are growing {percentIncrease}% month-over-month. At this pace, December could surprise you with {stretchGoal}." },
-                { icon: '💪', text: "Power move! You're not just consistent — you're increasing each month. That's wealth-building discipline. December: {projected}." },
-                { icon: '🔥', text: "On fire! Your contributions jumped from {previousMonthTopup} to {currentMonthTopup}. Keep this energy and you'll hit {stretchGoal} by year-end." },
-                { icon: '⚡', text: "Lightning speed! You're accelerating fast. Your {balanceIncrease}% increase this month means you're outpacing your own projections. Legendary!" }
-            ],
-            STEADY_CONTRIBUTOR: [
-                { icon: '🎯', text: "Consistency wins! You've hit {avgDeposit} like clockwork. Boring? No. Effective? Absolutely. December: {projected}." },
-                { icon: '⚙️', text: "Autopilot mode activated. Your steady {avgDeposit} per month is compounding nicely. By December: {projected}+." },
-                { icon: '🧭', text: "Reliable as clockwork. While others fluctuate, you're steady at {avgDeposit}. That's how wealth is built. Keep going." },
-                { icon: '🎖️', text: "Discipline personified! Same amount every month: {avgDeposit}. No drama, just results. December you: {projected}." },
-                { icon: '🏆', text: "Steady wins the race. Your consistent {avgDeposit} deposits are earning you {projected} by year-end. That's smart money." }
-            ],
-            DECELERATOR: [
-                { icon: '⚠️', text: "Heads up! You dropped from {previousMonthTopup} last month to {currentMonthTopup} this month. Life happens — but try to get back on track." },
-                { icon: '🔄', text: "Momentum shift detected. You started strong but dipped this month. Even {minimum} next month keeps you in the game." },
-                { icon: '💡', text: "Your balance is still growing, but slower now. Bump back to {suggestedNextDeposit} per month and you're back on track to {projected}." },
-                { icon: '🎢', text: "Slowdown spotted. You went from {previousMonthTopup} to {currentMonthTopup}. No judgment — just aim for consistency next month." },
-                { icon: '🛤️', text: "You're slipping a bit. Previous: {previousMonthTopup}. Now: {currentMonthTopup}. Get back to {minimum}+ and December you hits {projected}." }
-            ],
-            VOLATILE: [
-                { icon: '🎢', text: "Rollercoaster rider! Your deposits swing from high to low. Try smoothing to {avgDeposit} consistently for better projections." },
-                { icon: '🌊', text: "Feast or famine! Big months, small months. Averaging {avgDeposit} would give you more predictable growth to {projected}." },
-                { icon: '🎲', text: "Wildcard! Your contribution pattern is... creative. Aim for {minimum}+ steadily to maximize compound interest." },
-                { icon: '🎪', text: "Unpredictable but interesting! Your deposits vary widely. Consistency at {avgDeposit} would stabilize your path to {projected}." },
-                { icon: '🌀', text: "All over the place! One month {previousMonthTopup}, next {currentMonthTopup}. Smooth it out to {minimum}+ for steady growth." }
-            ]
-        };
+        // CSV Parser
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
 
-        function getAuthToken() {
-            try {
-                const raw = localStorage.getItem('mmf_auth');
-                if (!raw) return null;
-                const token = JSON.parse(raw);
-                const now = new Date().getTime();
-                if (now > token.expiresAt) {
-                    localStorage.removeItem('mmf_auth');
-                    return null;
-                }
-                return token;
-            } catch (e) {
-                localStorage.removeItem('mmf_auth');
-                return null;
-            }
-        }
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                const nextChar = line[i + 1];
 
-        function setAuthToken() {
-            const token = {
-                authenticated: true,
-                expiresAt: new Date().getTime() + (AUTH_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
-            };
-            localStorage.setItem('mmf_auth', JSON.stringify(token));
-        }
-
-        // ARCHETYPE CALCULATION & MESSAGE FORMATTING
-        function calculateMemberArchetype(memberData, allMembersData, currentMonth) {
-            const { totalTopups, currentMonthTopup, totalInterest, closingBalance, daysActive, previousMonthTopup } = memberData;
-            const monthIndex = MONTHS.indexOf(currentMonth);
-            const monthsElapsed = monthIndex + 1;
-            
-            // Calculate rank
-            const sortedMembers = allMembersData.sort((a, b) => b.closingBalance - a.closingBalance);
-            const rank = sortedMembers.findIndex(m => m.closingBalance === closingBalance) + 1;
-            
-            // Priority 1: Zero or partial contribution
-            if (totalTopups === 0) return 'GHOST';
-            if (currentMonthTopup > 0 && currentMonthTopup < MINIMUM_CONTRIBUTION) return 'PARTIAL_CONTRIBUTOR';
-            
-            // Priority 2: Trend-based archetypes (if we have previous month data)
-            if (monthIndex > 0 && previousMonthTopup !== undefined) {
-                const trendChange = currentMonthTopup - previousMonthTopup;
-                const trendPercent = previousMonthTopup > 0 ? (trendChange / previousMonthTopup) * 100 : 0;
-                
-                // Volatile: wild swings (>50% change in either direction, inconsistent pattern)
-                if (Math.abs(trendPercent) > 50 && monthIndex > 1) return 'VOLATILE';
-                
-                // Accelerator: increasing contributions
-                if (trendChange > 0 && trendPercent > 20) return 'ACCELERATOR';
-                
-                // Decelerator: decreasing contributions
-                if (trendChange < 0 && Math.abs(trendPercent) > 20) return 'DECELERATOR';
-                
-                // Steady: minimal change
-                if (Math.abs(trendPercent) <= 20 && currentMonthTopup >= MINIMUM_CONTRIBUTION) return 'STEADY_CONTRIBUTOR';
-            }
-            
-            // Priority 3: Performance-based archetypes
-            if (rank <= 3) return 'OVERACHIEVER';
-            if (totalTopups / monthsElapsed >= 10000) return 'BIG_DEPOSITOR';
-            if (daysActive >= 25) return 'EARLY_BIRD';
-            
-            // Default
-            return 'STEADY_CLIMBER';
-        }
-
-        function formatArchetypeMessage(archetype, memberData, allMembersData, currentMonth) {
-            try {
-                const messages = ARCHETYPE_MESSAGES[archetype] || ARCHETYPE_MESSAGES.STEADY_CLIMBER;
-                
-                // For trend archetypes in January, filter out messages mentioning previous month
-                let availableMessages = messages;
-                const monthIndex = MONTHS.indexOf(currentMonth);
-                if (monthIndex === 0) {
-                    const trendArchetypes = ['LATE_BLOOMER', 'ACCELERATOR', 'DECELERATOR', 'VOLATILE'];
-                    if (trendArchetypes.includes(archetype)) {
-                        availableMessages = messages.filter(msg => 
-                            !msg.text.includes('{previousMonthTopup}') && 
-                            !msg.text.includes('{previousInterest}')
-                        );
-                        // If all messages filtered out, use STEADY_CLIMBER instead
-                        if (availableMessages.length === 0) {
-                            availableMessages = ARCHETYPE_MESSAGES.STEADY_CLIMBER;
-                        }
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
                     }
-                }
-                
-                const randomMessage = availableMessages[Math.floor(Math.random() * availableMessages.length)];
-                
-                const monthsElapsed = monthIndex + 1;
-                const monthsRemaining = 12 - monthsElapsed;
-                const avgDeposit = monthsElapsed > 0 ? (memberData.totalTopups || 0) / monthsElapsed : 0;
-                const projected = (memberData.closingBalance || 0) + (avgDeposit * monthsRemaining);
-                const stretchGoal = (memberData.closingBalance || 0) + ((avgDeposit * 1.5) * monthsRemaining);
-                const suggestedNextDeposit = Math.round((memberData.currentMonthTopup || 0) * 1.2);
-                const monthlyIncrease = Math.round(avgDeposit * 0.5);
-                
-                // Calculate previous month values
-                const previousMonthIndex = monthIndex - 1;
-                const previousMonthTopup = previousMonthIndex >= 0 && memberData.previousMonthTopup ? memberData.previousMonthTopup : 0;
-                const previousInterest = previousMonthIndex >= 0 && memberData.previousInterest ? memberData.previousInterest : 0;
-                
-                // Calculate percentage increases
-                const balanceIncrease = previousMonthTopup > 0 ? 
-                    Math.round(((memberData.currentMonthTopup - previousMonthTopup) / previousMonthTopup) * 100) : 0;
-                const percentIncrease = balanceIncrease;
-                
-                // Calculate estimated future interest
-                const estimatedInterest = ((memberData.closingBalance || 0) + (avgDeposit * monthsRemaining)) * ETICA_MONTHLY_YIELD * monthsRemaining;
-                
-                // Calculate additional stats for placeholders
-                const avgProjected = Math.round(projected / 12);
-                const similarMembers = Math.floor(Math.random() * 5) + 3; // 3-8 members (simulated)
-                const activeCount = allMembersData.filter(m => m.closingBalance > 0).length;
-                const qualifiedCount = allMembersData.filter(m => (memberData.currentMonthTopup || 0) >= MINIMUM_CONTRIBUTION).length;
-                const percentAboveAvg = avgDeposit > 0 ? Math.round(((avgDeposit - MINIMUM_CONTRIBUTION) / MINIMUM_CONTRIBUTION) * 100) : 0;
-                const percentAboveMinimum = percentAboveAvg;
-                const shareOfTotal = allMembersData.length > 0 ? 
-                    Math.round(((memberData.closingBalance || 0) / allMembersData.reduce((s, m) => s + (m.closingBalance || 0), 0)) * 100) : 0;
-                
-                // For GHOST members (zero balance) - calculate what they could have if starting now
-                const lateStartProjection = MINIMUM_CONTRIBUTION * monthsRemaining + (MINIMUM_CONTRIBUTION * monthsRemaining * ETICA_MONTHLY_YIELD * (monthsRemaining / 2));
-                
-                // Replace all placeholders
-                let text = randomMessage.text
-                    .replace(/{projected}/g, `KES ${Math.round(projected).toLocaleString()}`)
-                    .replace(/{stretchGoal}/g, `KES ${Math.round(stretchGoal).toLocaleString()}`)
-                    .replace(/{totalTopups}/g, `KES ${(memberData.totalTopups || 0).toLocaleString()}`)
-                    .replace(/{currentMonthTopup}/g, `KES ${(memberData.currentMonthTopup || 0).toLocaleString()}`)
-                    .replace(/{previousMonthTopup}/g, `KES ${previousMonthTopup.toLocaleString()}`)
-                    .replace(/{interest}/g, `KES ${(memberData.totalInterest || 0).toLocaleString()}`)
-                    .replace(/{currentInterest}/g, `KES ${(memberData.currentInterest || 0).toLocaleString()}`)
-                    .replace(/{previousInterest}/g, `KES ${previousInterest.toLocaleString()}`)
-                    .replace(/{avgDeposit}/g, `KES ${Math.round(avgDeposit).toLocaleString()}`)
-                    .replace(/{monthsLeft}/g, monthsRemaining.toString())
-                    .replace(/{minimum}/g, `KES ${MINIMUM_CONTRIBUTION.toLocaleString()}`)
-                    .replace(/{gapToMinimum}/g, `KES ${Math.max(0, MINIMUM_CONTRIBUTION - (memberData.currentMonthTopup || 0)).toLocaleString()}`)
-                    .replace(/{currentBalance}/g, `KES ${(memberData.closingBalance || 0).toLocaleString()}`)
-                    .replace(/{suggestedNextDeposit}/g, `KES ${suggestedNextDeposit.toLocaleString()}`)
-                    .replace(/{monthlyIncrease}/g, `KES ${monthlyIncrease.toLocaleString()}`)
-                    .replace(/{balanceIncrease}/g, balanceIncrease.toString())
-                    .replace(/{percentIncrease}/g, percentIncrease.toString())
-                    .replace(/{similarMembers}/g, similarMembers.toString())
-                    .replace(/{activeCount}/g, activeCount.toString())
-                    .replace(/{qualifiedCount}/g, qualifiedCount.toString())
-                    .replace(/{avgProjected}/g, `KES ${avgProjected.toLocaleString()}`)
-                    .replace(/{percentAboveAvg}/g, percentAboveAvg.toString())
-                    .replace(/{percentAboveMinimum}/g, percentAboveMinimum.toString())
-                    .replace(/{shareOfTotal}/g, shareOfTotal.toString())
-                    .replace(/{projectedInterest}/g, `KES ${Math.round(estimatedInterest).toLocaleString()}`)
-                    .replace(/{lateStartProjection}/g, `KES ${Math.round(lateStartProjection).toLocaleString()}`);
-                
-                // Remove all ** markdown markers for clean display
-                text = text.replace(/\*\*/g, '');
-                
-                return { icon: randomMessage.icon, text };
-            } catch (error) {
-                console.error('Error formatting archetype message:', error);
-                // Return safe fallback
-                return { 
-                    icon: '📊', 
-                    text: `You're on track for KES ${Math.round((memberData.closingBalance || 0) + 40000).toLocaleString()} by December. Keep going!` 
-                };
-            }
-        }
-
-        // Password Screen Component
-        function PasswordScreen({ onSuccess }) {
-            const [password, setPassword] = useState('');
-            const [error, setError] = useState('');
-            const [shake, setShake] = useState(false);
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                if (password === CORRECT_PASSWORD) {
-                    setAuthToken();
-                    onSuccess();
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
                 } else {
-                    setError('Incorrect password. Please try again or contact admin.');
-                    setShake(true);
-                    setTimeout(() => setShake(false), 500);
-                    setPassword('');
+                    current += char;
                 }
-            };
-
-            return (
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: '100vh',
-                    background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
-                    padding: '20px'
-                }}>
-                    <div style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '20px',
-                        padding: '40px',
-                        maxWidth: '400px',
-                        width: '100%',
-                        textAlign: 'center',
-                        animation: shake ? 'shake 0.5s' : 'none'
-                    }}>
-                        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>💰</div>
-                        <h1 style={{
-                            fontSize: '1.8rem',
-                            fontWeight: '800',
-                            background: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            marginBottom: '10px'
-                        }}>
-                            Like-Minded Folks
-                        </h1>
-                        <p style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '1rem',
-                            marginBottom: '30px'
-                        }}>
-                            MMF Account Tracker
-                        </p>
-
-                        <div style={{
-                            background: 'rgba(132, 250, 176, 0.1)',
-                            border: '1px solid rgba(132, 250, 176, 0.3)',
-                            borderRadius: '12px',
-                            padding: '20px',
-                            marginBottom: '25px'
-                        }}>
-                            <div style={{
-                                fontSize: '2rem',
-                                marginBottom: '10px'
-                            }}>🔒</div>
-                            <p style={{
-                                color: 'rgba(255, 255, 255, 0.8)',
-                                fontSize: '0.9rem',
-                                lineHeight: '1.5'
-                            }}>
-                                Enter password to access your account
-                            </p>
-                        </div>
-
-                        <form onSubmit={handleSubmit}>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter password"
-                                autoFocus
-                                style={{
-                                    width: '100%',
-                                    padding: '14px',
-                                    fontSize: '1rem',
-                                    fontWeight: '600',
-                                    background: 'rgba(255, 255, 255, 0.08)',
-                                    color: '#fff',
-                                    border: error ? '2px solid rgba(255, 100, 100, 0.5)' : '2px solid rgba(132, 250, 176, 0.3)',
-                                    borderRadius: '12px',
-                                    fontFamily: 'Outfit, sans-serif',
-                                    marginBottom: '15px',
-                                    outline: 'none',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = '#84fab0'}
-                                onBlur={(e) => e.target.style.borderColor = 'rgba(132, 250, 176, 0.3)'}
-                            />
-
-                            {error && (
-                                <div style={{
-                                    background: 'rgba(255, 100, 100, 0.1)',
-                                    border: '1px solid rgba(255, 100, 100, 0.3)',
-                                    borderRadius: '8px',
-                                    padding: '10px',
-                                    marginBottom: '15px',
-                                    color: '#ff6b6b',
-                                    fontSize: '0.85rem'
-                                }}>
-                                    ❌ {error}
-                                </div>
-                            )}
-
-                            <button
-                                type="submit"
-                                style={{
-                                    width: '100%',
-                                    padding: '14px',
-                                    fontSize: '1rem',
-                                    fontWeight: '700',
-                                    background: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
-                                    color: '#0f0c29',
-                                    border: 'none',
-                                    borderRadius: '12px',
-                                    cursor: 'pointer',
-                                    fontFamily: 'Outfit, sans-serif',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                            >
-                                🔓 Access Tracker
-                            </button>
-                        </form>
-
-                        <p style={{
-                            marginTop: '20px',
-                            color: 'rgba(255, 255, 255, 0.5)',
-                            fontSize: '0.8rem'
-                        }}>
-                            Don't have the password?<br/>Contact your group admin
-                        </p>
-                    </div>
-
-                    <style>{`
-                        @keyframes shake {
-                            0%, 100% { transform: translateX(0); }
-                            25% { transform: translateX(-10px); }
-                            75% { transform: translateX(10px); }
-                        }
-                    `}</style>
-                </div>
-            );
+            }
+            result.push(current);
+            return result;
         }
 
-        // Main App Wrapper with Password Check
-        function AppWithAuth() {
-            const [showTour, setShowTour] = useState(() => !localStorage.getItem('mmf_tour_seen'));
-
-            return <App showTour={showTour} onTourDone={() => {
-                localStorage.setItem('mmf_tour_seen', 'true');
-                setShowTour(false);
-            }} />;
-        }
-
-        // SITE TOUR COMPONENT
-        function SiteTour({ onDone, openSidebar, closeSidebar, onSidebarStepChange }) {
-            const [step, setStep] = useState(0);
-            const [highlightRect, setHighlightRect] = useState(null);
-            const tooltipRef = React.useRef(null);
-
-            const TOUR_STEPS = [
-                {
-                    selector: '.month-selector',
-                    title: 'Pick a Month',
-                    text: 'Tap any month to view that month\'s data across the whole group.',
-                    position: 'below',
-                    sidebar: false
-                },
-                {
-                    selector: '.view-toggle',
-                    title: 'Switch Views',
-                    text: 'Member View lets you check your own balance. All Members shows everyone side by side for easy comparison.',
-                    position: 'below',
-                    sidebar: false
-                },
-                {
-                    selector: '.alias-selector',
-                    title: 'Select Your Alias',
-                    text: 'Choose your alias from the dropdown to see your personal balance card for the selected month.',
-                    position: 'below',
-                    sidebar: false
-                },
-                {
-                    selector: '.sidebar-section:nth-child(2)',
-                    title: 'Track Activity',
-                    text: 'Tap here to open the shared tracker and see everyone\'s contribution activity.',
-                    position: 'below',
-                    sidebar: true
-                },
-                {
-                    selector: '.sidebar-section:nth-child(3)',
-                    title: 'Make a Deposit',
-                    text: 'M-PESA and bank deposit details are right here. Always include 308398M as your reference.',
-                    position: 'below',
-                    sidebar: true
-                },
-                {
-                    selector: '.sidebar-section:nth-child(4)',
-                    title: 'Group Rules',
-                    text: 'Quick reference for contribution minimums, interest rules, and withdrawal policy.',
-                    position: 'below',
-                    sidebar: true
-                },
-                {
-                    selector: '.sidebar-section:nth-child(5)',
-                    title: 'Etica Statements',
-                    text: 'Download the official monthly statements from Etica directly here when they\'re available.',
-                    position: 'below',
-                    sidebar: true
-                }
-            ];
-
-            // Open/close sidebar AND notify App whether current step is a sidebar step
-            useEffect(() => {
-                const isMobile = window.innerWidth <= 968;
-                const isSidebarStep = TOUR_STEPS[step].sidebar;
-                if (isMobile && isSidebarStep) {
-                    openSidebar();
-                } else if (isMobile) {
-                    closeSidebar();
-                }
-                onSidebarStepChange(isSidebarStep);
-            }, [step]);
-
-            // Position highlight whenever step changes, with a short delay to let sidebar animate open
-            useEffect(() => {
-                const timer = setTimeout(() => {
-                    positionHighlight();
-                }, 350);
-                window.addEventListener('resize', positionHighlight);
-                return () => {
-                    clearTimeout(timer);
-                    window.removeEventListener('resize', positionHighlight);
-                };
-            }, [step]);
-
-            function positionHighlight() {
-                const el = document.querySelector(TOUR_STEPS[step].selector);
-                if (el) {
-                    const rect = el.getBoundingClientRect();
-                    setHighlightRect({
-                        top: rect.top + window.scrollY - 6,
-                        left: rect.left - 6,
-                        width: rect.width + 12,
-                        height: rect.height + 12
-                    });
-                }
-            }
-
-            function getTooltipStyle() {
-                if (!highlightRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-                const pos = TOUR_STEPS[step].position;
-                const base = {
-                    left: Math.max(10, Math.min(highlightRect.left, window.innerWidth - 310)) + 'px',
-                };
-                if (pos === 'below') {
-                    base.top = (highlightRect.top + highlightRect.height + 14) + 'px';
-                } else {
-                    base.top = (highlightRect.top - 180) + 'px';
-                }
-                return base;
-            }
-
-            const currentStep = TOUR_STEPS[step];
-            const isLast = step === TOUR_STEPS.length - 1;
-
-            function handleNext() {
-                if (isLast) {
-                    closeSidebar();
-                    onSidebarStepChange(false);
-                    onDone();
-                } else {
-                    setStep(s => s + 1);
-                }
-            }
-
-            function handleDone() {
-                closeSidebar();
-                onSidebarStepChange(false);
-                onDone();
-            }
-
-            return (
-                <>
-                    <div className="tour-overlay" onClick={handleDone} />
-                    {highlightRect && (
-                        <div className="tour-highlight" style={{
-                            top: highlightRect.top + 'px',
-                            left: highlightRect.left + 'px',
-                            width: highlightRect.width + 'px',
-                            height: highlightRect.height + 'px'
-                        }} />
-                    )}
-                    <div className="tour-tooltip" style={getTooltipStyle()} ref={tooltipRef}>
-                        <div className={`tour-tooltip-arrow arrow-${currentStep.position === 'below' ? 'top' : 'bottom'}`} />
-                        <div className="tour-step-badge">STEP {step + 1} OF {TOUR_STEPS.length}</div>
-                        <h4>{currentStep.title}</h4>
-                        <p>{currentStep.text}</p>
-                        <div className="tour-controls">
-                            <button className="tour-btn-skip" onClick={handleDone}>Skip tour</button>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div className="tour-dots">
-                                    {TOUR_STEPS.map((_, i) => (
-                                        <div key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
-                                    ))}
-                                </div>
-                                <button className="tour-btn-next" onClick={handleNext}>
-                                    {isLast ? '🎉 Done' : 'Next →'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            );
-        }
-
-        function App({ showTour, onTourDone }) {
+        function App() {
             const [data, setData] = useState(null);
             const [loading, setLoading] = useState(true);
             const [error, setError] = useState(null);
-            const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
-            const [selectedAlias, setSelectedAlias] = useState('');
-            const [view, setView] = useState('member');
-            const [fileLastModified, setFileLastModified] = useState(null);
-            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-            const [tourSidebarActive, setTourSidebarActive] = useState(false);
-            const [weeklyData, setWeeklyData] = useState(null);
-            const [weeklyLoading, setWeeklyLoading] = useState(false);
 
             useEffect(() => {
-                loadDataFromGoogleSheets();
+                loadData();
             }, []);
 
-            const loadDataFromGoogleSheets = async () => {
+            async function loadData() {
                 try {
                     setLoading(true);
                     setError(null);
                     
-                    const parsedData = {};
-                    
-                    // Fetch all 12 months in parallel
-                    const fetchPromises = MONTHS.map(async (month) => {
-                        const csvUrl = MONTH_CSV_URLS[month];
-                        const cacheBuster = new Date().getTime();
-                        const response = await fetch(`${csvUrl}&_=${cacheBuster}`);
-                        
-                        if (!response.ok) {
-                            throw new Error(`Could not load ${month} data`);
-                        }
-                        
-                        const csvText = await response.text();
-                        const lines = csvText.split('\n').filter(line => line.trim());
-                        
-                        const monthData = {};
-                        
-                        // Skip first 3 rows (title, blank, headers) — data starts at row 4 (index 3)
-                        for (let i = 3; i < lines.length; i++) {
-                            const cols = parseCSVLine(lines[i]);
-                            const alias = cols[0]?.trim().replace(/"/g, '');
-                            
-                            if (alias && MEMBERS.includes(alias)) {
-                                // Helper function to parse numbers (removes commas, quotes, etc.)
-                                const parseNumber = (str) => {
-                                    if (!str) return 0;
-                                    // Remove quotes, commas, and whitespace, then parse
-                                    const cleaned = str.replace(/["',\s]/g, '');
-                                    return parseFloat(cleaned) || 0;
-                                };
-                                
-                                const openingBalance = parseNumber(cols[1]);
-                                const topups = parseNumber(cols[2]);
-                                const interest = parseNumber(cols[3]);
-                                const daysActive = parseInt(cols[4]?.replace(/[",\s]/g, '')) || 0;
-                                const closingBalance = parseNumber(cols[5]);
-                                
-                                monthData[alias] = {
-                                    openingBalance,
-                                    topups,
-                                    interest,
-                                    daysActive,
-                                    closingBalance
-                                };
-                                
-                                // Debug log for first member only
-                                if (Object.keys(monthData).length === 1) {
-                                    console.log(`${month} - First member (${alias}):`, {
-                                        raw: cols.slice(1, 6),
-                                        parsed: { openingBalance, topups, interest, daysActive, closingBalance }
-                                    });
-                                }
-                            }
-                        }
-                        
-                        return { month, monthData };
-                    });
-                    
-                    const results = await Promise.all(fetchPromises);
-                    results.forEach(({ month, monthData }) => {
-                        parsedData[month] = monthData;
-                    });
-                    
-                    setData(parsedData);
-                    setFileLastModified(new Date()); // Current timestamp since Google Sheets doesn't send Last-Modified
-                    setLoading(false);
-                } catch (err) {
-                    console.error('Error loading data:', err);
-                    setError('Unable to load data from Google Sheets. Please refresh the page or contact the admin.');
-                    setLoading(false);
-                }
-            };
-
-            // Simple CSV parser that handles quoted fields
-            const parseCSVLine = (line) => {
-                const result = [];
-                let current = '';
-                let inQuotes = false;
-                
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        result.push(current);
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                result.push(current);
-                return result;
-            };
-
-            const getAllMembersData = (month) => {
-                return MEMBERS.map(alias => ({
-                    alias,
-                    ...data[month]?.[alias] || {
-                        openingBalance: 0,
-                        topups: 0,
-                        interest: 0,
-                        daysActive: 0,
-                        closingBalance: 0
-                    }
-                })).sort((a, b) => b.closingBalance - a.closingBalance);
-            };
-
-            const loadWeeklyData = async () => {
-                try {
-                    setWeeklyLoading(true);
                     const cacheBuster = Date.now();
                     const response = await fetch(`${WEEKLY_CSV_URL}&_=${cacheBuster}`);
-                    const csvText = await response.text();
                     
-                    const lines = csvText.trim().split('\n').filter(line => line.trim());
-                    if (lines.length < 4) {
-                        console.error('Not enough rows in CSV');
-                        setWeeklyLoading(false);
-                        return;
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
+                    const csvText = await response.text();
+                    const lines = csvText.trim().split('\n').filter(line => line.trim());
+
+                    console.log('CSV loaded, total lines:', lines.length);
+
+                    if (lines.length < 4) {
+                        throw new Error('Not enough rows in CSV');
+                    }
+
                     // Row 0: Week numbers (1-52)
-                    const weekNumbers = parseCSVLine(lines[0]).slice(2); // Skip first 2 columns
-                    
-                    // Row 1: Month names (merged cells)
+                    const weekNumbers = parseCSVLine(lines[0]).slice(2);
+
+                    // Row 1: Month names
                     const monthNames = parseCSVLine(lines[1]).slice(2);
-                    
-                    // Row 2: Headers (Alias, TOTAL AMOUNT, week dates...)
+
+                    // Row 2: Headers (Alias, TOTAL AMOUNT, dates...)
                     const headers = parseCSVLine(lines[2]);
                     const weekDates = headers.slice(2);
-                    
+
                     // Build week headers
                     const weekHeaders = weekNumbers.map((weekNum, idx) => ({
                         weekNum: weekNum || '',
                         month: monthNames[idx] || '',
                         dates: weekDates[idx] || ''
                     }));
-                    
-                    // Parse member rows (skip row 3, start from row 4)
+
+                    // Parse member rows (start from row 3)
                     const members = [];
                     for (let i = 3; i < lines.length; i++) {
                         const cells = parseCSVLine(lines[i]);
                         if (cells.length < 2) continue;
-                        
+
                         const alias = cells[0]?.trim();
-                        if (!alias || alias === 'TOTAL') break; // Stop at TOTAL row
-                        
+                        if (!alias || alias.toUpperCase() === 'TOTAL') break;
+
                         const totalAmount = parseFloat(cells[1]?.replace(/,/g, '') || 0);
                         const weeks = cells.slice(2).map(val => {
                             const cleaned = val?.trim().replace(/,/g, '');
-                            return cleaned && cleaned !== '-' ? parseFloat(cleaned) : null;
+                            return cleaned && cleaned !== '-' && cleaned !== '' ? parseFloat(cleaned) : null;
                         });
-                        
+
                         members.push({ alias, totalAmount, weeks });
                     }
-                    
-                    // Parse TOTAL row (last line)
+
+                    // Parse TOTAL row
                     const totalLine = lines[lines.length - 1];
                     const totalCells = parseCSVLine(totalLine);
                     const weeklyTotals = totalCells.slice(2).map(val => {
                         const cleaned = val?.trim().replace(/,/g, '');
                         return cleaned && cleaned !== '-' ? parseFloat(cleaned) : 0;
                     });
-                    
-                    setWeeklyData({ weekHeaders, members, weeklyTotals });
-                    setWeeklyLoading(false);
+
+                    console.log('Parsed data:', { weekHeaders: weekHeaders.length, members: members.length, weeklyTotals: weeklyTotals.length });
+
+                    setData({ weekHeaders, members, weeklyTotals });
+                    setLoading(false);
+
                 } catch (err) {
-                    console.error('Error loading weekly data:', err);
-                    setWeeklyLoading(false);
+                    console.error('Error loading data:', err);
+                    setError(err.message);
+                    setLoading(false);
                 }
-            };
-
-            const calculateGroupStats = () => {
-                if (!data || !data[selectedMonth]) return null;
-                
-                const members = getAllMembersData(selectedMonth);
-                const monthTopups = members.reduce((sum, m) => sum + m.topups, 0);
-                const monthInterest = members.reduce((sum, m) => sum + m.interest, 0);
-                const totalBalance = members.reduce((sum, m) => sum + m.closingBalance, 0);
-                
-                // Calculate cumulative contributions (all months up to selected month)
-                const selectedMonthIndex = MONTHS.indexOf(selectedMonth);
-                let cumulativeContributions = 0;
-                
-                for (let i = 0; i <= selectedMonthIndex; i++) {
-                    const monthName = MONTHS[i];
-                    if (data[monthName]) {
-                        const monthMembers = getAllMembersData(monthName);
-                        cumulativeContributions += monthMembers.reduce((sum, m) => sum + m.topups, 0);
-                    }
-                }
-                
-                // Debug log
-                console.log(`Group Stats for ${selectedMonth}:`, {
-                    memberCount: members.length,
-                    monthTopups,
-                    monthInterest,
-                    cumulativeContributions,
-                    totalBalance,
-                    sampleMember: members[0]
-                });
-                
-                return { 
-                    monthTopups,           // This month's contributions only
-                    monthInterest,         // This month's interest
-                    cumulativeContributions, // All contributions from Jan to selected month
-                    totalBalance 
-                };
-            };
-
-            const isCurrentMonth = (month) => {
-                return month === getCurrentMonth();
-            };
-            
-            const shouldShowWarnings = () => {
-                const now = new Date();
-                return now.getDate() >= WARNING_START_DAY; // Show warnings from 10th onwards
-            };
+            }
 
             if (loading) {
-                return (
-                    <div className="app-layout">
-                        <div className="main-content">
-                            <div className="header">
-                                <div className="header-emoji">💰</div>
-                                <h1>Like-Minded Folks</h1>
-                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
-                            </div>
-                            <div className="loading">Loading your data...</div>
-                        </div>
-                    </div>
-                );
+                return <div className="loading">Loading weekly contributions...</div>;
             }
 
             if (error) {
                 return (
-                    <div className="app-layout">
-                        <div className="main-content">
-                            <div className="header">
-                                <div className="header-emoji">💰</div>
-                                <h1>Like-Minded Folks</h1>
-                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
-                            </div>
-                            <div className="error">
-                                <p>{error}</p>
-                                <button className="btn-secondary" onClick={loadDataFromGoogleSheets}>Retry</button>
-                            </div>
-                        </div>
+                    <div className="loading">
+                        <p style={{ color: '#ff6464' }}>Error loading data: {error}</p>
+                        <button onClick={loadData} style={{ marginTop: '15px', padding: '8px 16px', background: '#84fab0', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+                            Retry
+                        </button>
                     </div>
                 );
             }
 
-            const stats = calculateGroupStats();
-
-            return (
-                <>
-                    <div className="app-layout">
-                        {/* LEFT SIDEBAR */}
-                        <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`} style={tourSidebarActive ? { zIndex: 10001 } : {}}>
-                            <div className="sidebar-close">
-                                <button onClick={() => setMobileMenuOpen(false)}>✕ Close</button>
-                            </div>
-
-                            {/* Track Contributions */}
-                            <div className="sidebar-section">
-                                <h3>📊 Track Activity</h3>
-                                <button 
-                                    onClick={() => {
-                                        setView('weekly');
-                                        if (!weeklyData) loadWeeklyData();
-                                        setMobileMenuOpen(false);
-                                    }}
-                                    className="sidebar-link"
-                                    style={{ 
-                                        background: 'transparent',
-                                        border: 'none',
-                                        width: '100%',
-                                        textAlign: 'left',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    View Weekly Tracker
-                                </button>
-                            </div>
-
-                            {/* Make a Deposit */}
-                            <div className="sidebar-section">
-                                <h3>💳 Make a Deposit</h3>
-                                
-                                <div className="deposit-method">
-                                    <div className="deposit-title">M-PESA</div>
-                                    <div className="deposit-info">
-                                        Paybill: <strong>4096483</strong><br/>
-                                        Account: <strong>308398M</strong>
-                                    </div>
-                                </div>
-
-                                <div className="deposit-method">
-                                    <div className="deposit-title">Bank Deposit/Transfer</div>
-                                    <div className="deposit-info">
-                                        Bank: <strong>Equity Bank</strong><br/>
-                                        A/C Name: Etica Unit Trust Collection<br/>
-                                        A/C No: <strong>0180 28395 1027</strong><br/>
-                                        Reference/Remarks: <strong>308398M</strong>
-                                    </div>
-                                    <div style={{ 
-                                        marginTop: '10px', 
-                                        padding: '8px', 
-                                        background: 'rgba(255, 193, 7, 0.1)', 
-                                        borderRadius: '6px',
-                                        fontSize: '0.8rem',
-                                        color: 'rgba(255, 193, 7, 0.9)',
-                                        lineHeight: '1.4'
-                                    }}>
-                                        ⚠️ <strong>Important:</strong> Always write <strong>308398M</strong> in the Reference/Remarks section
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Group Rules */}
-                            <div className="sidebar-section">
-                                <h3>📜 Group Rules</h3>
-                                <ul className="rules-list">
-                                    <li>Min. contribution: <strong>KES 4,000/month</strong></li>
-                                    <li>Interest only on months with the minimum contribution</li>
-                                    <li>Withdrawals: December (before Week 3)</li>
-                                    <li>Fund: <strong>Etica MMF</strong></li>
-                                    <li>Max members: <strong>15</strong></li>
-                                </ul>
-                            </div>
-
-                            {/* Etica Monthly Statements */}
-                            <div className="sidebar-section">
-                                <h3>📄 Etica Monthly Statements</h3>
-                                <div style={{ 
-                                    fontSize: '0.75rem', 
-                                    fontStyle: 'italic', 
-                                    color: '#ff9800',
-                                    marginBottom: '12px',
-                                    textAlign: 'right',
-                                    opacity: 0.9
-                                }}>
-                                    Password: 308398
-                                </div>
-                                <select 
-                                    className="statements-dropdown"
-                                    onChange={(e) => {
-                                        if (e.target.value) {
-                                            const selectedMonth = e.target.value;
-                                            const pdfUrl = `${selectedMonth}_${CURRENT_YEAR}_Statement.pdf`;
-                                            
-                                            // Try to open PDF, show fun message if not available
-                                            fetch(pdfUrl, { method: 'HEAD' })
-                                                .then(response => {
-                                                    if (response.ok) {
-                                                        window.open(pdfUrl, '_blank');
-                                                    } else {
-                                                        // Fun 404 messages
-                                                        const messages = [
-                                                            `📊 The ${selectedMonth} statement is still cooking in our financial kitchen... Check back soon! 🍳`,
-                                                            `⏳ ${selectedMonth}'s numbers are being crunched by our diligent accountant... Almost ready! 🧮`,
-                                                            `🎬 ${selectedMonth} statement: Coming to a screen near you... Stay tuned! 🎥`,
-                                                            `📝 Our team is dotting the i's and crossing the t's on ${selectedMonth}... Patience! ✍️`,
-                                                            `🔮 ${selectedMonth} statement is not available yet, but your patience will be rewarded! ⭐`,
-                                                            `⏰ ${selectedMonth} statement: Under construction... Hard hats required! 👷`
-                                                        ];
-                                                        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                                                        alert(randomMessage);
-                                                    }
-                                                })
-                                                .catch(() => {
-                                                    // If fetch fails, just try opening it (might work on some servers)
-                                                    window.open(pdfUrl, '_blank');
-                                                });
-                                            
-                                            e.target.value = ''; // Reset dropdown
-                                        }
-                                    }}
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px 14px',
-                                        fontSize: '0.9rem',
-                                        fontWeight: '600',
-                                        background: 'rgba(132, 250, 176, 0.1)',
-                                        color: '#84fab0',
-                                        border: '1px solid rgba(132, 250, 176, 0.3)',
-                                        borderRadius: '10px',
-                                        fontFamily: 'Outfit, sans-serif',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                >
-                                    <option value="">📥 Select Month to Download</option>
-                                    {MONTHS.map(month => (
-                                        <option 
-                                            key={month} 
-                                            value={month}
-                                            style={{ background: '#1a1a2e', color: '#fff' }}
-                                        >
-                                            {month}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </aside>
-
-                        {/* MAIN CONTENT */}
-                        <main className="main-content">
-                            <div className="header">
-                                <div className="header-emoji">💰</div>
-                                <h1>Like-Minded Folks</h1>
-                                <p style={{ fontSize: '1.2rem', fontWeight: '600', marginTop: '5px', color: 'rgba(255, 255, 255, 0.9)' }}>MMF Account Tracker</p>
-                            </div>
-
-                            {view !== 'weekly' && (
-                                <div className="month-selector">
-                                    {MONTHS.map(month => (
-                                        <button
-                                            key={month}
-                                            className={`month-btn ${selectedMonth === month ? 'active' : ''}`}
-                                            onClick={() => setSelectedMonth(month)}
-                                        >
-                                            {month}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-
-                            {view === 'weekly' && (
-                                <div style={{ marginBottom: '15px' }}>
-                                    <button
-                                        onClick={() => setView('member')}
-                                        style={{
-                                            background: 'rgba(132, 250, 176, 0.1)',
-                                            border: '1px solid rgba(132, 250, 176, 0.3)',
-                                            borderRadius: '8px',
-                                            padding: '8px 16px',
-                                            color: '#84fab0',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontFamily: 'Outfit'
-                                        }}
-                                    >
-                                        ← Back
-                                    </button>
-                                </div>
-                            )}
-
-                            {view !== 'weekly' && (
-                                <div className="view-toggle">
-                                    <button
-                                        className={`toggle-btn ${view === 'member' ? 'active' : ''}`}
-                                        onClick={() => setView('member')}
-                                    >
-                                        📱 Member View
-                                    </button>
-                                    <button
-                                        className={`toggle-btn ${view === 'all' ? 'active' : ''}`}
-                                        onClick={() => setView('all')}
-                                    >
-                                        👥 All Members
-                                    </button>
-                                </div>
-                            )}
-
-                            {view === 'member' && (
-                                <MemberView
-                                    month={selectedMonth}
-                                    selectedAlias={selectedAlias}
-                                    setSelectedAlias={setSelectedAlias}
-                                    data={data}
-                                    stats={stats}
-                                    fileLastModified={fileLastModified}
-                                    isCurrentMonth={isCurrentMonth(selectedMonth)}
-                                    shouldShowWarnings={shouldShowWarnings()}
-                                />
-                            )}
-
-                            {view === 'all' && (
-                                <AllMembersView
-                                    month={selectedMonth}
-                                    members={getAllMembersData(selectedMonth)}
-                                    fileLastModified={fileLastModified}
-                                    data={data}
-                                />
-                            )}
-
-                            {view === 'weekly' && (
-                                <WeeklyContributionsTable 
-                                    weeklyData={weeklyData}
-                                    loading={weeklyLoading}
-                                />
-                            )}
-                        </main>
-                    </div>
-
-                    {/* SITE TOUR */}
-                    {showTour && <SiteTour onDone={onTourDone} openSidebar={() => setMobileMenuOpen(true)} closeSidebar={() => setMobileMenuOpen(false)} onSidebarStepChange={setTourSidebarActive} />}
-
-                    {/* MOBILE MENU TOGGLE */}
-                    <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                        ☰
-                    </button>
-                </>
-            );
-        }
-
-        // MEMBER PROJECTION CHART COMPONENT
-        function MemberProjectionChart({ selectedAlias, data, currentMonth }) {
-            const chartRef = React.useRef(null);
-            const chartInstanceRef = React.useRef(null);
-
-            React.useEffect(() => {
-                if (!chartRef.current || !selectedAlias || !data) return;
-
-                // Destroy previous chart instance
-                if (chartInstanceRef.current) {
-                    chartInstanceRef.current.destroy();
-                }
-
-                const ctx = chartRef.current.getContext('2d');
-                const monthIndex = MONTHS.indexOf(currentMonth);
-                
-                // Gather historical data
-                const actualBalances = [];
-                const labels = [];
-                let totalTopups = 0;
-                let totalInterest = 0;
-                
-                for (let i = 0; i <= monthIndex; i++) {
-                    const monthName = MONTHS[i];
-                    const monthData = data[monthName]?.[selectedAlias] || {
-                        closingBalance: 0,
-                        topups: 0,
-                        interest: 0
-                    };
-                    actualBalances.push(monthData.closingBalance);
-                    labels.push(monthName.slice(0, 3));
-                    totalTopups += monthData.topups;
-                    totalInterest += monthData.interest;
-                }
-                
-                // Calculate projection
-                const monthsElapsed = monthIndex + 1;
-                const avgMonthlyDeposit = monthsElapsed > 0 ? totalTopups / monthsElapsed : 0;
-                const projectedBalances = [...actualBalances];
-                
-                for (let i = monthIndex + 1; i < 12; i++) {
-                    const lastBalance = projectedBalances[projectedBalances.length - 1];
-                    const projectedNext = lastBalance + avgMonthlyDeposit + (lastBalance * ETICA_MONTHLY_YIELD);
-                    projectedBalances.push(projectedNext);
-                    if (i <= monthIndex) {
-                        labels.push(MONTHS[i].slice(0, 3));
-                    }
-                }
-                
-                // Complete labels for all 12 months
-                for (let i = labels.length; i < 12; i++) {
-                    labels.push(MONTHS[i].slice(0, 3));
-                }
-                
-                // Calculate moving average for smooth trend
-                const movingAvg = calculateMovingAverage(actualBalances, 2);
-
-                chartInstanceRef.current = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Actual Balance',
-                                data: actualBalances,
-                                backgroundColor: 'rgba(132, 250, 176, 0.6)',
-                                borderColor: '#84fab0',
-                                borderWidth: 2,
-                                type: 'bar',
-                                order: 3
-                            },
-                            {
-                                label: 'Trend',
-                                data: movingAvg,
-                                borderColor: '#B19CD9',
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                type: 'line',
-                                pointRadius: 3,
-                                pointBackgroundColor: '#B19CD9',
-                                order: 2,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Projected',
-                                data: projectedBalances,
-                                borderColor: '#8fd3f4',
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                type: 'line',
-                                pointRadius: 4,
-                                pointBackgroundColor: '#8fd3f4',
-                                order: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                labels: {
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    font: { size: 11, family: 'Outfit' }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(30, 30, 58, 0.95)',
-                                titleColor: '#84fab0',
-                                bodyColor: '#fff',
-                                borderColor: '#84fab0',
-                                borderWidth: 1,
-                                callbacks: {
-                                    label: (context) => {
-                                        return `${context.dataset.label}: KES ${Math.round(context.parsed.y).toLocaleString()}`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    font: { size: 10 },
-                                    callback: (value) => 'KES ' + (value / 1000).toFixed(0) + 'k'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    font: { size: 10 }
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.05)'
-                                }
-                            }
-                        }
-                    }
-                });
-
-                return () => {
-                    if (chartInstanceRef.current) {
-                        chartInstanceRef.current.destroy();
-                    }
-                };
-            }, [selectedAlias, data, currentMonth]);
-
-            if (!selectedAlias) return null;
-
-            // Calculate archetype message
-            const monthIndex = MONTHS.indexOf(currentMonth);
-            const memberHistoricalData = {
-                totalTopups: 0,
-                totalInterest: 0,
-                currentMonthTopup: 0,
-                currentInterest: 0,
-                previousMonthTopup: 0,
-                previousInterest: 0,
-                closingBalance: 0,
-                daysActive: 0
-            };
-
-            for (let i = 0; i <= monthIndex; i++) {
-                const monthData = data[MONTHS[i]]?.[selectedAlias] || {};
-                memberHistoricalData.totalTopups += monthData.topups || 0;
-                memberHistoricalData.totalInterest += monthData.interest || 0;
-                if (i === monthIndex) {
-                    memberHistoricalData.currentMonthTopup = monthData.topups || 0;
-                    memberHistoricalData.currentInterest = monthData.interest || 0;
-                    memberHistoricalData.closingBalance = monthData.closingBalance || 0;
-                    memberHistoricalData.daysActive = monthData.daysActive || 0;
-                }
-                if (i === monthIndex - 1) {
-                    memberHistoricalData.previousMonthTopup = monthData.topups || 0;
-                    memberHistoricalData.previousInterest = monthData.interest || 0;
-                }
+            if (!data || !data.members || data.members.length === 0) {
+                return <div className="loading">No data available</div>;
             }
 
-            const allMembersData = MEMBERS.map(alias => {
-                let totalForMember = 0;
-                for (let i = 0; i <= monthIndex; i++) {
-                    totalForMember += data[MONTHS[i]]?.[alias]?.closingBalance || 0;
-                }
-                return { alias, closingBalance: data[currentMonth]?.[alias]?.closingBalance || 0 };
-            });
-
-            const archetype = calculateMemberArchetype(memberHistoricalData, allMembersData, currentMonth);
-            const motivationalMessage = formatArchetypeMessage(archetype, memberHistoricalData, allMembersData, currentMonth);
+            const grandTotal = data.members.reduce((sum, m) => sum + m.totalAmount, 0);
 
             return (
-                <div style={{ marginTop: '20px' }}>
-                    <div style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '16px',
-                        padding: '20px',
-                        marginBottom: '15px'
-                    }}>
-                        <h3 style={{
-                            fontSize: '1.1rem',
-                            color: '#84fab0',
-                            marginBottom: '15px',
-                            textAlign: 'center'
-                        }}>
-                            📈 Your Growth Trajectory
-                        </h3>
-                        <div style={{ height: '250px', position: 'relative' }}>
-                            <canvas ref={chartRef}></canvas>
-                        </div>
-                    </div>
-                    
-                    {/* Motivational Message */}
-                    <div style={{
-                        background: 'linear-gradient(135deg, rgba(132, 250, 176, 0.15), rgba(143, 211, 244, 0.15))',
-                        border: '1px solid rgba(132, 250, 176, 0.3)',
-                        borderRadius: '12px',
-                        padding: '16px 18px',
-                        marginBottom: '80px',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '12px'
-                    }}>
-                        <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>{motivationalMessage.icon}</span>
-                        <p style={{
-                            fontSize: '0.9rem',
-                            lineHeight: '1.5',
-                            color: 'rgba(255, 255, 255, 0.9)',
-                            margin: 0
-                        }}>
-                            {motivationalMessage.text}
-                        </p>
-                    </div>
-                </div>
-            );
-        }
-
-        // WEEKLY CONTRIBUTIONS TABLE - COMPACT
-        function WeeklyContributionsTable({ weeklyData, loading }) {
-            if (loading) {
-                return (
-                    <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                        Loading weekly contributions...
-                    </div>
-                );
-            }
-
-            if (!weeklyData || !weeklyData.members || weeklyData.members.length === 0) {
-                return (
-                    <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                        No weekly data available
-                    </div>
-                );
-            }
-
-            const grandTotal = weeklyData.members.reduce((sum, m) => sum + m.totalAmount, 0);
-
-            return (
-                <div className="weekly-view-container">
-                    <table className="weekly-table">
+                <div className="table-wrapper">
+                    <table>
                         <thead>
-                            {/* Month headers row */}
+                            {/* Month headers */}
                             <tr className="month-header">
-                                <th className="col-alias">Alias</th>
-                                <th className="col-total">Total</th>
-                                {weeklyData.weekHeaders.map((header, idx) => (
-                                    <th key={idx} className="col-week">
-                                        {header.month}
-                                    </th>
+                                <th>Alias</th>
+                                <th>Total</th>
+                                {data.weekHeaders.map((header, idx) => (
+                                    <th key={idx}>{header.month}</th>
                                 ))}
                             </tr>
-                            {/* Week numbers and dates row */}
+                            {/* Week numbers and dates */}
                             <tr>
-                                <th className="col-alias"></th>
-                                <th className="col-total"></th>
-                                {weeklyData.weekHeaders.map((header, idx) => (
-                                    <th key={idx} className="col-week">
-                                        <div style={{ fontSize: '0.65rem' }}>{header.weekNum}</div>
+                                <th></th>
+                                <th></th>
+                                {data.weekHeaders.map((header, idx) => (
+                                    <th key={idx}>
+                                        <div>{header.weekNum}</div>
                                         <div style={{ fontSize: '0.55rem', opacity: 0.6, marginTop: '1px' }}>
                                             {header.dates.split('-')[0]}
                                         </div>
@@ -2371,14 +375,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {weeklyData.members.map((member, idx) => (
+                            {data.members.map((member, idx) => (
                                 <tr key={idx}>
-                                    <td className="col-alias">{member.alias}</td>
-                                    <td className="col-total">
+                                    <td>{member.alias}</td>
+                                    <td>
                                         {member.totalAmount > 0 ? member.totalAmount.toLocaleString('en-KE', { maximumFractionDigits: 0 }) : '-'}
                                     </td>
                                     {member.weeks.map((amount, weekIdx) => (
-                                        <td key={weekIdx} className={`col-week ${amount === null ? 'empty' : ''}`}>
+                                        <td key={weekIdx} className={amount === null ? 'empty' : ''}>
                                             {amount !== null ? amount.toLocaleString('en-KE', { maximumFractionDigits: 0 }) : '-'}
                                         </td>
                                     ))}
@@ -2386,12 +390,10 @@
                             ))}
                             {/* Total row */}
                             <tr className="total-row">
-                                <td className="col-alias">TOTAL</td>
-                                <td className="col-total">
-                                    {grandTotal.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                </td>
-                                {weeklyData.weeklyTotals.map((total, idx) => (
-                                    <td key={idx} className="col-week">
+                                <td>TOTAL</td>
+                                <td>{grandTotal.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
+                                {data.weeklyTotals.map((total, idx) => (
+                                    <td key={idx}>
                                         {total > 0 ? total.toLocaleString('en-KE', { maximumFractionDigits: 0 }) : '-'}
                                     </td>
                                 ))}
@@ -2402,451 +404,7 @@
             );
         }
 
-        function MemberView({ month, selectedAlias, setSelectedAlias, data, stats, fileLastModified, isCurrentMonth, shouldShowWarnings }) {
-            const memberData = data[month]?.[selectedAlias] || {
-                openingBalance: 0,
-                topups: 0,
-                interest: 0,
-                daysActive: 0,
-                closingBalance: 0
-            };
-
-            // Check if member is part of a pair
-            const partnerAlias = MEMBER_PAIRS[selectedAlias];
-            let showWarning = false;
-            let warningMessage = '';
-
-            // Only show warnings if: current month + after 10th of month + contribution below minimum
-            if (isCurrentMonth && shouldShowWarnings && selectedAlias) {
-                if (partnerAlias) {
-                    // Member is part of a pair - check combined contribution
-                    const partnerData = data[month]?.[partnerAlias] || { topups: 0 };
-                    const combinedTopups = memberData.topups + partnerData.topups;
-                    
-                    if (combinedTopups > 0 && combinedTopups < MINIMUM_CONTRIBUTION) {
-                        // Partial contribution - soft message
-                        showWarning = true;
-                        const remaining = MINIMUM_CONTRIBUTION - combinedTopups;
-                        const randomMsg = PARTIAL_CONTRIBUTION_MESSAGES[Math.floor(Math.random() * PARTIAL_CONTRIBUTION_MESSAGES.length)];
-                        warningMessage = randomMsg(combinedTopups, remaining) + ` (Combined with ${partnerAlias})`;
-                    } else if (combinedTopups === 0) {
-                        // Zero contribution - more direct
-                        showWarning = true;
-                        warningMessage = `Your combined ${month} contribution with ${partnerAlias} hasn't been recorded yet. Please coordinate to deposit KES ${MINIMUM_CONTRIBUTION.toLocaleString()} soon so you don't miss out on this month's interest.`;
-                    }
-                } else {
-                    // Individual member
-                    if (memberData.topups > 0 && memberData.topups < MINIMUM_CONTRIBUTION) {
-                        // Partial contribution - soft message
-                        showWarning = true;
-                        const remaining = MINIMUM_CONTRIBUTION - memberData.topups;
-                        const randomMsg = PARTIAL_CONTRIBUTION_MESSAGES[Math.floor(Math.random() * PARTIAL_CONTRIBUTION_MESSAGES.length)];
-                        warningMessage = randomMsg(memberData.topups, remaining);
-                    } else if (memberData.topups === 0) {
-                        // Zero contribution - more direct
-                        showWarning = true;
-                        warningMessage = `Your ${month} contribution hasn't been recorded yet. Please deposit at least KES ${MINIMUM_CONTRIBUTION.toLocaleString()} soon to qualify for this month's interest.`;
-                    }
-                }
-            }
-
-            return (
-                <div className="member-view">
-                    <div className="alias-selector">
-                        <select value={selectedAlias} onChange={(e) => setSelectedAlias(e.target.value)}>
-                            <option value="" disabled>👆 Select your alias to view balance</option>
-                            {MEMBERS.map(alias => (
-                                <option key={alias} value={alias}>{alias}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {selectedAlias && (
-                        <>
-                            <div className="member-statement">
-                                <div className="statement-alias">{selectedAlias}</div>
-                                <div className="statement-month">{month} {CURRENT_YEAR}</div>
-
-                                <div style={{ marginTop: '25px' }}>
-                                    <div className="statement-row">
-                                        <span className="statement-label">Started with</span>
-                                        <span className="statement-value">
-                                            KES {memberData.openingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </span>
-                                    </div>
-
-                                    <div className="statement-row">
-                                        <span className="statement-label">Top-ups</span>
-                                        <span className="statement-value" style={{ color: '#8fd3f4' }}>
-                                            KES {memberData.topups.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </span>
-                                    </div>
-
-                                    <div className="statement-row">
-                                        <span className="statement-label">Interest earned</span>
-                                        <span className="statement-value" style={{ color: '#84fab0' }}>
-                                            KES {memberData.interest.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </span>
-                                    </div>
-                                    <div style={{ 
-                                        fontSize: '0.7rem', 
-                                        fontStyle: 'italic', 
-                                        color: '#ff9800',
-                                        marginTop: '-8px',
-                                        marginBottom: '10px',
-                                        textAlign: 'right',
-                                        paddingRight: '4px'
-                                    }}>
-                                        Early deposits earn more interest
-                                    </div>
-
-                                    <div className="statement-row">
-                                        <span className="statement-label">Days Earning</span>
-                                        <span className="statement-value">
-                                            {memberData.daysActive} days
-                                        </span>
-                                    </div>
-
-                                    <div className="statement-row">
-                                        <span className="statement-label" style={{ fontSize: '1.1rem', fontWeight: '700' }}>Current Balance</span>
-                                        <span className="statement-value" style={{ fontSize: '1.6rem', color: '#84fab0' }}>
-                                            KES {memberData.closingBalance.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {fileLastModified && (
-                                    <div className="data-timestamp">
-                                        Data as of {fileLastModified.toLocaleString('en-KE', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: true
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* WARNING BELOW BALANCE CARD */}
-                            {showWarning && (
-                                <div className="warning-message">
-                                    <div className="warning-icon">⚠️</div>
-                                    <div className="warning-text">
-                                        <div className="warning-title">Friendly Reminder</div>
-                                        <div className="warning-content">
-                                            {warningMessage}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </>
-                    )}
-
-                    {/* PERSONALIZED PROJECTION CHART - Only when alias selected */}
-                    {selectedAlias && (
-                        <MemberProjectionChart 
-                            selectedAlias={selectedAlias}
-                            data={data}
-                            currentMonth={month}
-                        />
-                    )}
-
-                    {/* GROUP SUMMARY - Only when NO alias selected (landing page) */}
-                    {!selectedAlias && stats && (
-                        <div className="group-summary">
-                            <div className="group-summary-title">📊 Group Summary - {month}</div>
-                            <div className="group-summary-grid">
-                                <div className="summary-item">
-                                    <div className="summary-label">Total Contributions<br/>(Jan-{month})</div>
-                                    <div className="summary-value">
-                                        KES {stats.cumulativeContributions.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                    </div>
-                                </div>
-                                <div className="summary-item">
-                                    <div className="summary-label">{month} Top-ups</div>
-                                    <div className="summary-value">
-                                        KES {stats.monthTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                    </div>
-                                </div>
-                                <div className="summary-item">
-                                    <div className="summary-label">{month} Interest</div>
-                                    <div className="summary-value">
-                                        KES {stats.monthInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {/* Privacy Notice */}
-                            <div style={{
-                                marginTop: '20px',
-                                padding: '12px 16px',
-                                background: 'rgba(255, 193, 7, 0.1)',
-                                border: '1px solid rgba(255, 193, 7, 0.3)',
-                                borderRadius: '8px',
-                                fontSize: '0.85rem',
-                                color: 'rgba(255, 255, 255, 0.85)',
-                                textAlign: 'center',
-                                lineHeight: '1.5'
-                            }}>
-                                🔐 <strong>Privacy Notice:</strong> This site is for LMF members only. Keep it confidential. Do not share links or screenshots outside LMF.
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        }
-
-        // GROUP BALANCE CHART COMPONENT
-        function GroupBalanceChart({ data, currentMonth }) {
-            const chartRef = React.useRef(null);
-            const chartInstanceRef = React.useRef(null);
-
-            React.useEffect(() => {
-                if (!chartRef.current || !data) return;
-
-                if (chartInstanceRef.current) {
-                    chartInstanceRef.current.destroy();
-                }
-
-                const ctx = chartRef.current.getContext('2d');
-                const monthIndex = MONTHS.indexOf(currentMonth);
-                
-                const actualBalances = [];
-                const labels = MONTHS.map(m => m.slice(0, 3));
-                
-                // Gather actual data
-                for (let i = 0; i <= monthIndex; i++) {
-                    const monthName = MONTHS[i];
-                    let monthTotalBalance = 0;
-                    
-                    MEMBERS.forEach(alias => {
-                        monthTotalBalance += data[monthName]?.[alias]?.closingBalance || 0;
-                    });
-                    
-                    actualBalances.push(monthTotalBalance);
-                }
-                
-                // Calculate projection
-                const monthsElapsed = monthIndex + 1;
-                let totalContributions = 0;
-                
-                for (let i = 0; i <= monthIndex; i++) {
-                    MEMBERS.forEach(alias => {
-                        totalContributions += data[MONTHS[i]]?.[alias]?.topups || 0;
-                    });
-                }
-                
-                const avgMonthlyContribution = monthsElapsed > 0 ? totalContributions / monthsElapsed : 0;
-                const projectedBalances = [];
-                
-                for (let i = 0; i < 12; i++) {
-                    if (i < actualBalances.length) {
-                        projectedBalances.push(null);
-                    } else if (i === actualBalances.length) {
-                        projectedBalances.push(actualBalances[actualBalances.length - 1]);
-                    } else {
-                        const lastVal = projectedBalances[projectedBalances.length - 1];
-                        projectedBalances.push(lastVal + avgMonthlyContribution + (lastVal * ETICA_MONTHLY_YIELD));
-                    }
-                }
-
-                const barData = MONTHS.map((m, idx) => idx < actualBalances.length ? actualBalances[idx] : null);
-                const movingAvg = calculateMovingAverage(actualBalances, 2);
-
-                chartInstanceRef.current = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [{
-                            type: 'bar',
-                            label: 'Actual Balance',
-                            data: barData,
-                            backgroundColor: 'rgba(143, 211, 244, 0.7)',
-                            borderColor: '#8fd3f4',
-                            borderWidth: 1,
-                            order: 3
-                        }, {
-                            type: 'line',
-                            label: 'Trend',
-                            data: movingAvg,
-                            borderColor: '#B19CD9',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            pointRadius: 3,
-                            fill: false,
-                            order: 2,
-                            tension: 0.4
-                        }, {
-                            type: 'line',
-                            label: 'Projected',
-                            data: projectedBalances,
-                            borderColor: '#84fab0',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            fill: false,
-                            pointRadius: 3,
-                            order: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: true, position: 'top', labels: { color: '#fff', font: { size: 10 } } },
-                            tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': KES ' + (ctx.parsed.y || 0).toLocaleString() } }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                            x: { ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 9 } }, grid: { display: false } }
-                        }
-                    }
-                });
-
-                return () => {
-                    if (chartInstanceRef.current) {
-                        chartInstanceRef.current.destroy();
-                    }
-                };
-            }, [data, currentMonth]);
-
-            const monthIndex = MONTHS.indexOf(currentMonth);
-            const monthsElapsed = monthIndex + 1;
-            let totalContributions = 0;
-            
-            for (let i = 0; i <= monthIndex; i++) {
-                MEMBERS.forEach(alias => {
-                    totalContributions += data[MONTHS[i]]?.[alias]?.topups || 0;
-                });
-            }
-            
-            const avgMonthlyContribution = monthsElapsed > 0 ? totalContributions / monthsElapsed : 0;
-            const currentBalance = MEMBERS.reduce((sum, alias) => {
-                return sum + (data[currentMonth]?.[alias]?.closingBalance || 0);
-            }, 0);
-            const projectedDecBalance = currentBalance + (avgMonthlyContribution * (12 - monthsElapsed)) + (currentBalance * ETICA_MONTHLY_YIELD * (12 - monthsElapsed));
-
-            return (
-                <div style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '16px',
-                    padding: '20px',
-                    marginBottom: '20px'
-                }}>
-                    <h3 style={{
-                        fontSize: '1.2rem',
-                        color: '#84fab0',
-                        marginBottom: '10px',
-                        textAlign: 'center'
-                    }}>
-                        📊 Group Balance Growth
-                    </h3>
-                    <p style={{
-                        fontSize: '0.85rem',
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        textAlign: 'center',
-                        marginBottom: '15px',
-                        fontStyle: 'italic'
-                    }}>
-                        At KES {Math.round(avgMonthlyContribution).toLocaleString()} avg/month → projected KES {Math.round(projectedDecBalance).toLocaleString()} by December
-                    </p>
-                    <div style={{ height: '280px', position: 'relative' }}>
-                        <canvas ref={chartRef}></canvas>
-                    </div>
-                </div>
-            );
-        }
-
-        function AllMembersView({ month, members, fileLastModified, data }) {
-            const totalOpening = members.reduce((sum, m) => sum + m.openingBalance, 0);
-            const totalTopups = members.reduce((sum, m) => sum + m.topups, 0);
-            const totalInterest = members.reduce((sum, m) => sum + m.interest, 0);
-            const totalClosing = members.reduce((sum, m) => sum + m.closingBalance, 0);
-
-            return (
-                <div>
-                    <h2 style={{ textAlign: 'center', margin: '0 0 20px', fontSize: '1.6rem', color: '#84fab0' }}>
-                        All Members - {month} {CURRENT_YEAR}
-                    </h2>
-
-                    <GroupBalanceChart data={data} currentMonth={month} />
-
-                    <div className="members-table-container">
-                        <table className="members-table">
-                            <thead>
-                                <tr>
-                                    <th>Alias</th>
-                                    <th className="number-col">Opening</th>
-                                    <th className="number-col">Top-ups</th>
-                                    <th className="number-col">{month.slice(0, 3)} Interest</th>
-                                    <th className="number-col">Closing</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {members.map(member => {
-                                    const dotColor = member.topups >= MINIMUM_CONTRIBUTION ? '#84fab0' :
-                                                     member.topups > 0 ? '#FFD700' : '#DC143C';
-                                    const dotTitle = member.topups >= MINIMUM_CONTRIBUTION ? '✅ Met minimum (KES 4,000+)' :
-                                                     member.topups > 0 ? '⚠️ Partial contribution' : '❌ No contribution yet';
-                                    return (
-                                        <tr key={member.alias}>
-                                            <td className="alias-col">{member.alias}</td>
-                                            <td className="number-col">
-                                                {member.openingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                            </td>
-                                            <td className="number-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
-                                                {member.topups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                                <span 
-                                                    title={dotTitle}
-                                                    style={{
-                                                        display: 'inline-block',
-                                                        width: '10px',
-                                                        height: '10px',
-                                                        borderRadius: '50%',
-                                                        backgroundColor: dotColor,
-                                                        cursor: 'help',
-                                                        flexShrink: 0
-                                                    }}
-                                                ></span>
-                                            </td>
-                                            <td className="number-col">
-                                                {member.interest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                            </td>
-                                            <td className="number-col" style={{ fontWeight: '700', color: '#8fd3f4' }}>
-                                                {member.closingBalance.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                                <tr className="total-row">
-                                    <td style={{ color: '#84fab0' }}>TOTALS</td>
-                                    <td className="number-col">{totalOpening.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
-                                    <td className="number-col">{totalTopups.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
-                                    <td className="number-col">{totalInterest.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
-                                    <td className="number-col">{totalClosing.toLocaleString('en-KE', { maximumFractionDigits: 0 })}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {fileLastModified && (
-                        <div className="data-timestamp" style={{ textAlign: 'center', marginTop: '15px' }}>
-                            Data as of {fileLastModified.toLocaleString('en-KE', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true
-                            })}
-                        </div>
-                    )}
-                </div>
-            );
-        }
-
-        ReactDOM.render(<AppWithAuth />, document.getElementById('root'));
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>
