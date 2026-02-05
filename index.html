@@ -730,113 +730,117 @@
             background: #84fab0;
         }
 
-        /* Weekly Contributions Table */
-        .weekly-table-container {
+        /* Weekly Contributions Table - Compact & Elegant */
+        .weekly-view-container {
             width: 100%;
-            overflow-x: auto;
-            overflow-y: auto;
-            max-height: calc(100vh - 200px);
-            margin-top: 20px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.03);
+            height: calc(100vh - 180px);
+            overflow: auto;
         }
 
         .weekly-table {
-            width: auto;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 0.85rem;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
             font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .weekly-table th,
         .weekly-table td {
-            padding: 10px 12px;
+            padding: 3px 6px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
             white-space: nowrap;
+            line-height: 1.3;
         }
 
-        .weekly-table th {
-            background: rgba(30, 30, 58, 0.95);
-            color: #84fab0;
-            font-weight: 600;
+        /* Frozen columns - very compact */
+        .weekly-table th.col-alias,
+        .weekly-table td.col-alias {
+            position: sticky;
+            left: 0;
+            background: rgba(15, 12, 41, 0.98);
+            z-index: 5;
+            text-align: left;
+            padding-left: 8px;
+            width: 80px;
+            min-width: 80px;
+            max-width: 80px;
+            font-size: 0.7rem;
+        }
+
+        .weekly-table th.col-total,
+        .weekly-table td.col-total {
+            position: sticky;
+            left: 80px;
+            background: rgba(15, 12, 41, 0.98);
+            z-index: 5;
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
+            font-size: 0.7rem;
+            border-right: 1px solid rgba(132, 250, 176, 0.3);
+        }
+
+        /* Week columns - compact */
+        .weekly-table th.col-week,
+        .weekly-table td.col-week {
+            width: 50px;
+            min-width: 50px;
+            max-width: 50px;
+            font-size: 0.7rem;
+        }
+
+        /* Headers */
+        .weekly-table thead th {
+            background: rgba(15, 12, 41, 0.95);
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
             position: sticky;
             top: 0;
             z-index: 10;
+            font-size: 0.65rem;
         }
 
-        .weekly-table th.month-header {
-            background: rgba(30, 30, 58, 0.98);
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* Frozen columns */
-        .weekly-table .frozen-col {
-            position: sticky;
-            left: 0;
-            background: rgba(30, 30, 58, 0.98);
-            z-index: 5;
-            border-right: 2px solid rgba(132, 250, 176, 0.3);
-        }
-
-        .weekly-table .frozen-col-2 {
-            position: sticky;
-            left: 50px;
-            background: rgba(30, 30, 58, 0.98);
-            z-index: 5;
-        }
-
-        .weekly-table .frozen-col-3 {
-            position: sticky;
-            left: 200px;
-            background: rgba(30, 30, 58, 0.98);
-            z-index: 5;
-            border-right: 3px solid rgba(132, 250, 176, 0.5);
-        }
-
-        .weekly-table th.frozen-col,
-        .weekly-table th.frozen-col-2,
-        .weekly-table th.frozen-col-3 {
+        .weekly-table thead th.col-alias,
+        .weekly-table thead th.col-total {
             z-index: 15;
         }
 
-        /* Month separators */
-        .weekly-table .month-separator {
-            border-left: 4px solid #84fab0 !important;
-        }
-
-        .weekly-table td {
+        /* Banded rows - simple elegant alternating */
+        .weekly-table tbody tr:nth-child(odd) {
             background: rgba(255, 255, 255, 0.02);
-            color: rgba(255, 255, 255, 0.9);
         }
 
-        .weekly-table td.empty-cell {
-            color: rgba(255, 255, 255, 0.3);
+        .weekly-table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .weekly-table .total-row {
-            background: rgba(255, 100, 100, 0.2) !important;
-            font-weight: 700;
-            color: #fff;
+        .weekly-table tbody tr:hover {
+            background: rgba(132, 250, 176, 0.08);
         }
 
-        .weekly-table .total-row td:first-child {
-            background: rgba(255, 50, 50, 0.8) !important;
-            color: #fff;
+        /* Total row */
+        .weekly-table tbody tr.total-row {
+            background: rgba(132, 250, 176, 0.15) !important;
+            font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-            .weekly-table {
-                font-size: 0.75rem;
-            }
-            
-            .weekly-table th,
-            .weekly-table td {
-                padding: 8px 10px;
-            }
+        .weekly-table tbody tr.total-row td {
+            border-top: 2px solid rgba(132, 250, 176, 0.5);
+        }
+
+        /* Empty cells */
+        .weekly-table td.empty {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Month headers row */
+        .weekly-table .month-header {
+            background: rgba(132, 250, 176, 0.1) !important;
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: #84fab0;
         }
     </style>
 </head>
@@ -1684,59 +1688,57 @@
                     const response = await fetch(`${WEEKLY_CSV_URL}&_=${cacheBuster}`);
                     const csvText = await response.text();
                     
-                    const lines = csvText.trim().split('\n');
-                    const parsed = {
-                        members: [],
-                        weekHeaders: [],
-                        weeklyTotals: []
-                    };
-                    
-                    // Parse headers (first 2 rows)
-                    if (lines.length < 3) {
-                        setWeeklyData(parsed);
+                    const lines = csvText.trim().split('\n').filter(line => line.trim());
+                    if (lines.length < 4) {
+                        console.error('Not enough rows in CSV');
+                        setWeeklyLoading(false);
                         return;
                     }
                     
-                    const headerRow1 = parseCSVLine(lines[0]);
-                    const headerRow2 = parseCSVLine(lines[1]);
+                    // Row 0: Week numbers (1-52)
+                    const weekNumbers = parseCSVLine(lines[0]).slice(2); // Skip first 2 columns
                     
-                    // Build week headers from row 1 and row 2
-                    for (let i = 3; i < headerRow1.length; i++) {
-                        parsed.weekHeaders.push({
-                            weekNum: headerRow1[i] || '',
-                            month: headerRow1[i] || '',
-                            dates: headerRow2[i] || ''
-                        });
-                    }
+                    // Row 1: Month names (merged cells)
+                    const monthNames = parseCSVLine(lines[1]).slice(2);
                     
-                    // Parse member rows
-                    for (let i = 2; i < lines.length - 1; i++) {
+                    // Row 2: Headers (Alias, TOTAL AMOUNT, week dates...)
+                    const headers = parseCSVLine(lines[2]);
+                    const weekDates = headers.slice(2);
+                    
+                    // Build week headers
+                    const weekHeaders = weekNumbers.map((weekNum, idx) => ({
+                        weekNum: weekNum || '',
+                        month: monthNames[idx] || '',
+                        dates: weekDates[idx] || ''
+                    }));
+                    
+                    // Parse member rows (skip row 3, start from row 4)
+                    const members = [];
+                    for (let i = 3; i < lines.length; i++) {
                         const cells = parseCSVLine(lines[i]);
-                        if (cells.length > 2 && cells[1]) {
-                            const member = {
-                                rowNum: cells[0],
-                                alias: cells[1],
-                                totalAmount: parseFloat(cells[2]?.replace(/,/g, '') || 0),
-                                weeks: []
-                            };
-                            
-                            for (let j = 3; j < cells.length; j++) {
-                                const value = cells[j]?.trim();
-                                member.weeks.push(value && value !== '-' ? parseFloat(value.replace(/,/g, '')) : null);
-                            }
-                            
-                            parsed.members.push(member);
-                        }
+                        if (cells.length < 2) continue;
+                        
+                        const alias = cells[0]?.trim();
+                        if (!alias || alias === 'TOTAL') break; // Stop at TOTAL row
+                        
+                        const totalAmount = parseFloat(cells[1]?.replace(/,/g, '') || 0);
+                        const weeks = cells.slice(2).map(val => {
+                            const cleaned = val?.trim().replace(/,/g, '');
+                            return cleaned && cleaned !== '-' ? parseFloat(cleaned) : null;
+                        });
+                        
+                        members.push({ alias, totalAmount, weeks });
                     }
                     
-                    // Parse total row (last row)
-                    const totalRow = parseCSVLine(lines[lines.length - 1]);
-                    for (let i = 3; i < totalRow.length; i++) {
-                        const value = totalRow[i]?.trim();
-                        parsed.weeklyTotals.push(value && value !== '-' ? parseFloat(value.replace(/,/g, '')) : 0);
-                    }
+                    // Parse TOTAL row (last line)
+                    const totalLine = lines[lines.length - 1];
+                    const totalCells = parseCSVLine(totalLine);
+                    const weeklyTotals = totalCells.slice(2).map(val => {
+                        const cleaned = val?.trim().replace(/,/g, '');
+                        return cleaned && cleaned !== '-' ? parseFloat(cleaned) : 0;
+                    });
                     
-                    setWeeklyData(parsed);
+                    setWeeklyData({ weekHeaders, members, weeklyTotals });
                     setWeeklyLoading(false);
                 } catch (err) {
                     console.error('Error loading weekly data:', err);
@@ -1850,11 +1852,10 @@
                                         border: 'none',
                                         width: '100%',
                                         textAlign: 'left',
-                                        cursor: 'pointer',
-                                        padding: '12px 15px'
+                                        cursor: 'pointer'
                                     }}
                                 >
-                                    View Weekly Contributions
+                                    View Weekly Tracker
                                 </button>
                             </div>
 
@@ -2002,21 +2003,21 @@
                             )}
 
                             {view === 'weekly' && (
-                                <div style={{ marginBottom: '20px' }}>
+                                <div style={{ marginBottom: '15px' }}>
                                     <button
                                         onClick={() => setView('member')}
                                         style={{
                                             background: 'rgba(132, 250, 176, 0.1)',
                                             border: '1px solid rgba(132, 250, 176, 0.3)',
                                             borderRadius: '8px',
-                                            padding: '10px 20px',
+                                            padding: '8px 16px',
                                             color: '#84fab0',
                                             cursor: 'pointer',
-                                            fontSize: '0.9rem',
+                                            fontSize: '0.85rem',
                                             fontFamily: 'Outfit'
                                         }}
                                     >
-                                        ← Back to Dashboard
+                                        ← Back
                                     </button>
                                 </div>
                             )}
@@ -2321,6 +2322,86 @@
             );
         }
 
+        // WEEKLY CONTRIBUTIONS TABLE - COMPACT
+        function WeeklyContributionsTable({ weeklyData, loading }) {
+            if (loading) {
+                return (
+                    <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                        Loading weekly contributions...
+                    </div>
+                );
+            }
+
+            if (!weeklyData || !weeklyData.members || weeklyData.members.length === 0) {
+                return (
+                    <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                        No weekly data available
+                    </div>
+                );
+            }
+
+            const grandTotal = weeklyData.members.reduce((sum, m) => sum + m.totalAmount, 0);
+
+            return (
+                <div className="weekly-view-container">
+                    <table className="weekly-table">
+                        <thead>
+                            {/* Month headers row */}
+                            <tr className="month-header">
+                                <th className="col-alias">Alias</th>
+                                <th className="col-total">Total</th>
+                                {weeklyData.weekHeaders.map((header, idx) => (
+                                    <th key={idx} className="col-week">
+                                        {header.month}
+                                    </th>
+                                ))}
+                            </tr>
+                            {/* Week numbers and dates row */}
+                            <tr>
+                                <th className="col-alias"></th>
+                                <th className="col-total"></th>
+                                {weeklyData.weekHeaders.map((header, idx) => (
+                                    <th key={idx} className="col-week">
+                                        <div style={{ fontSize: '0.65rem' }}>{header.weekNum}</div>
+                                        <div style={{ fontSize: '0.55rem', opacity: 0.6, marginTop: '1px' }}>
+                                            {header.dates.split('-')[0]}
+                                        </div>
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {weeklyData.members.map((member, idx) => (
+                                <tr key={idx}>
+                                    <td className="col-alias">{member.alias}</td>
+                                    <td className="col-total">
+                                        {member.totalAmount > 0 ? member.totalAmount.toLocaleString('en-KE', { maximumFractionDigits: 0 }) : '-'}
+                                    </td>
+                                    {member.weeks.map((amount, weekIdx) => (
+                                        <td key={weekIdx} className={`col-week ${amount === null ? 'empty' : ''}`}>
+                                            {amount !== null ? amount.toLocaleString('en-KE', { maximumFractionDigits: 0 }) : '-'}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                            {/* Total row */}
+                            <tr className="total-row">
+                                <td className="col-alias">TOTAL</td>
+                                <td className="col-total">
+                                    {grandTotal.toLocaleString('en-KE', { maximumFractionDigits: 0 })}
+                                </td>
+                                {weeklyData.weeklyTotals.map((total, idx) => (
+                                    <td key={idx} className="col-week">
+                                        {total > 0 ? total.toLocaleString('en-KE', { maximumFractionDigits: 0 }) : '-'}
+                                    </td>
+                                ))}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
         function MemberView({ month, selectedAlias, setSelectedAlias, data, stats, fileLastModified, isCurrentMonth, shouldShowWarnings }) {
             const memberData = data[month]?.[selectedAlias] || {
                 openingBalance: 0,
@@ -2513,141 +2594,6 @@
                             </div>
                         </div>
                     )}
-                </div>
-            );
-        }
-
-        // WEEKLY CONTRIBUTIONS TABLE COMPONENT
-        function WeeklyContributionsTable({ weeklyData, loading }) {
-            if (loading) {
-                return (
-                    <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                        <div>Loading weekly contributions...</div>
-                    </div>
-                );
-            }
-
-            if (!weeklyData || !weeklyData.members || weeklyData.members.length === 0) {
-                return (
-                    <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                        <div>No weekly data available</div>
-                    </div>
-                );
-            }
-
-            // Group weeks by month for headers
-            const monthGroups = [];
-            let currentMonth = null;
-            let currentGroup = [];
-            
-            weeklyData.weekHeaders.forEach((header, idx) => {
-                const month = header.month || header.weekNum;
-                if (month !== currentMonth) {
-                    if (currentGroup.length > 0) {
-                        monthGroups.push({ month: currentMonth, weeks: currentGroup });
-                    }
-                    currentMonth = month;
-                    currentGroup = [{ ...header, index: idx }];
-                } else {
-                    currentGroup.push({ ...header, index: idx });
-                }
-            });
-            if (currentGroup.length > 0) {
-                monthGroups.push({ month: currentMonth, weeks: currentGroup });
-            }
-
-            const grandTotal = weeklyData.members.reduce((sum, m) => sum + m.totalAmount, 0);
-
-            return (
-                <div>
-                    <h2 style={{ textAlign: 'center', margin: '0 0 20px', fontSize: '1.6rem', color: '#84fab0' }}>
-                        Weekly Contributions Tracker
-                    </h2>
-                    
-                    <div className="weekly-table-container">
-                        <table className="weekly-table">
-                            <thead>
-                                {/* Month headers row */}
-                                <tr>
-                                    <th className="frozen-col">#</th>
-                                    <th className="frozen-col-2">Alias</th>
-                                    <th className="frozen-col-3">TOTAL AMOUNT</th>
-                                    {monthGroups.map((group, idx) => (
-                                        <th 
-                                            key={idx} 
-                                            colSpan={group.weeks.length}
-                                            className={`month-header ${idx > 0 ? 'month-separator' : ''}`}
-                                            style={{ background: 'rgba(15, 12, 41, 0.95)' }}
-                                        >
-                                            {group.month}
-                                        </th>
-                                    ))}
-                                </tr>
-                                
-                                {/* Week numbers and dates row */}
-                                <tr>
-                                    <th className="frozen-col">WEEK NO</th>
-                                    <th className="frozen-col-2">MONTH</th>
-                                    <th className="frozen-col-3"></th>
-                                    {weeklyData.weekHeaders.map((header, idx) => {
-                                        const isMonthStart = idx === 0 || 
-                                            (idx > 0 && weeklyData.weekHeaders[idx-1].month !== header.month);
-                                        return (
-                                            <th key={idx} className={isMonthStart ? 'month-separator' : ''}>
-                                                <div style={{ fontSize: '0.75rem', marginBottom: '4px' }}>
-                                                    {header.weekNum}
-                                                </div>
-                                                <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>
-                                                    {header.dates}
-                                                </div>
-                                            </th>
-                                        );
-                                    })}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {weeklyData.members.map((member, rowIdx) => (
-                                    <tr key={rowIdx}>
-                                        <td className="frozen-col">{member.rowNum || rowIdx + 1}</td>
-                                        <td className="frozen-col-2" style={{ textAlign: 'left' }}>{member.alias}</td>
-                                        <td className="frozen-col-3" style={{ fontWeight: '700', color: '#8fd3f4' }}>
-                                            {member.totalAmount > 0 ? member.totalAmount.toLocaleString('en-KE', { minimumFractionDigits: 2 }) : '-'}
-                                        </td>
-                                        {member.weeks.map((amount, weekIdx) => {
-                                            const isMonthStart = weekIdx === 0 || 
-                                                (weekIdx > 0 && weeklyData.weekHeaders[weekIdx-1]?.month !== weeklyData.weekHeaders[weekIdx]?.month);
-                                            return (
-                                                <td 
-                                                    key={weekIdx} 
-                                                    className={`${amount === null ? 'empty-cell' : ''} ${isMonthStart ? 'month-separator' : ''}`}
-                                                >
-                                                    {amount !== null ? amount.toLocaleString('en-KE', { minimumFractionDigits: 2 }) : '-'}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                ))}
-                                
-                                {/* Total row */}
-                                <tr className="total-row">
-                                    <td className="frozen-col"></td>
-                                    <td className="frozen-col-2" style={{ textAlign: 'left' }}>TOTAL</td>
-                                    <td className="frozen-col-3" style={{ fontWeight: '700' }}>
-                                        {grandTotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
-                                    </td>
-                                    {weeklyData.weeklyTotals.map((total, idx) => {
-                                        const isMonthStart = idx === 0 || 
-                                            (idx > 0 && weeklyData.weekHeaders[idx-1]?.month !== weeklyData.weekHeaders[idx]?.month);
-                                        return (
-                                            <td key={idx} className={isMonthStart ? 'month-separator' : ''}>
-                                                {total > 0 ? total.toLocaleString('en-KE', { minimumFractionDigits: 2 }) : '-'}
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             );
         }
