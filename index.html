@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -13,157 +13,414 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root{--ac:#00c87a;--acl:rgba(0,200,122,.13);--bl:#3b82f6;--bll:rgba(59,130,246,.13);--gd:#f59e0b;--gdl:rgba(245,158,11,.13);--rd:#ef4444;--tr:.25s ease;}
-[data-theme=dark]{--bg:#0d0f14;--card:#181c26;--card2:#1e2232;--br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.14);--t1:#eef0f8;--t2:rgba(238,240,248,.6);--t3:rgba(238,240,248,.32);--sh:0 4px 24px rgba(0,0,0,.45);--shl:0 8px 40px rgba(0,0,0,.55);--ibg:rgba(255,255,255,.05);--swbg:rgba(255,255,255,.1);}
-[data-theme=light]{--bg:#f0f4f2;--card:#fff;--card2:#f7faf8;--br:rgba(0,0,0,.07);--br2:rgba(0,0,0,.13);--t1:#111827;--t2:rgba(17,24,39,.6);--t3:rgba(17,24,39,.35);--sh:0 4px 24px rgba(0,0,0,.08);--shl:0 8px 40px rgba(0,0,0,.13);--ibg:rgba(0,0,0,.04);--swbg:rgba(0,0,0,.1);}
+:root {
+  /* ── Apple HIG Dynamic Type scale (rem-based so system font size is respected) ──
+     Base: 1rem = 16px (browser default). User bumping system font size to 20px
+     makes 1rem = 20px automatically — every size below scales with it.
+     
+     Scale mapped to Apple HIG text styles:
+     --t-largetitle  → 34pt  Large Title   (hero numbers, major displays)
+     --t-title1      → 28pt  Title 1       (section heroes)
+     --t-title2      → 22pt  Title 2       (card titles, alias name)
+     --t-title3      → 20pt  Title 3       (inner titles)
+     --t-headline    → 17pt  Headline      (primary labels, bold body)
+     --t-body        → 17pt  Body          (standard readable text)
+     --t-callout     → 16pt  Callout       (supporting body text)
+     --t-subhead     → 15pt  Subheadline   (secondary labels)
+     --t-footnote    → 13pt  Footnote      (metadata, timestamps)
+     --t-caption1    → 12pt  Caption 1     (table headers, tags)
+     --t-caption2    → 11pt  Caption 2     (smallest labels)
+  */
+  --t-largetitle: 2.125rem;   /* 34pt */
+  --t-title1:     1.75rem;    /* 28pt */
+  --t-title2:     1.375rem;   /* 22pt */
+  --t-title3:     1.25rem;    /* 20pt */
+  --t-headline:   1.0625rem;  /* 17pt — same size as body, but bold */
+  --t-body:       1.0625rem;  /* 17pt */
+  --t-callout:    1rem;       /* 16pt */
+  --t-subhead:    0.9375rem;  /* 15pt */
+  --t-footnote:   0.8125rem;  /* 13pt */
+  --t-caption1:   0.75rem;    /* 12pt */
+  --t-caption2:   0.6875rem;  /* 11pt */
+
+  /* Accent & semantic colours — same in both modes */
+  --ac:  #00c87a;
+  --acl: rgba(0,200,122,.13);
+  --bl:  #3b82f6;
+  --bll: rgba(59,130,246,.13);
+  --gd:  #f59e0b;
+  --gdl: rgba(245,158,11,.13);
+  --rd:  #ef4444;
+  --tr:  .25s ease;
+}
+
+/* ── DARK MODE — follows system preference automatically (Apple HIG) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:   #0d0f14;
+    --card: #181c26;
+    --card2:#1e2232;
+    --br:   rgba(255,255,255,.07);
+    --br2:  rgba(255,255,255,.14);
+    --t1:   #eef0f8;
+    --t2:   rgba(238,240,248,.6);
+    --t3:   rgba(238,240,248,.32);
+    --sh:   0 4px 24px rgba(0,0,0,.45);
+    --shl:  0 8px 40px rgba(0,0,0,.55);
+    --ibg:  rgba(255,255,255,.05);
+    --swbg: rgba(255,255,255,.1);
+  }
+}
+
+/* ── LIGHT MODE — follows system preference automatically (Apple HIG) ── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:   #f0f4f2;
+    --card: #fff;
+    --card2:#f7faf8;
+    --br:   rgba(0,0,0,.07);
+    --br2:  rgba(0,0,0,.13);
+    --t1:   #111827;
+    --t2:   rgba(17,24,39,.6);
+    --t3:   rgba(17,24,39,.35);
+    --sh:   0 4px 24px rgba(0,0,0,.08);
+    --shl:  0 8px 40px rgba(0,0,0,.13);
+    --ibg:  rgba(0,0,0,.04);
+    --swbg: rgba(0,0,0,.1);
+  }
+}
+
+/* ── MANUAL OVERRIDE — user can force light/dark via data-theme attribute ──
+   This lets us keep the toggle as a secondary override without it being
+   the primary mechanism. System preference always wins unless overridden. */
+[data-theme=dark] {
+  --bg:#0d0f14;--card:#181c26;--card2:#1e2232;
+  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.14);
+  --t1:#eef0f8;--t2:rgba(238,240,248,.6);--t3:rgba(238,240,248,.32);
+  --sh:0 4px 24px rgba(0,0,0,.45);--shl:0 8px 40px rgba(0,0,0,.55);
+  --ibg:rgba(255,255,255,.05);--swbg:rgba(255,255,255,.1);
+}
+[data-theme=light] {
+  --bg:#f0f4f2;--card:#fff;--card2:#f7faf8;
+  --br:rgba(0,0,0,.07);--br2:rgba(0,0,0,.13);
+  --t1:#111827;--t2:rgba(17,24,39,.6);--t3:rgba(17,24,39,.35);
+  --sh:0 4px 24px rgba(0,0,0,.08);--shl:0 8px 40px rgba(0,0,0,.13);
+  --ibg:rgba(0,0,0,.04);--swbg:rgba(0,0,0,.1);
+}
+
+/* ══════════════════════════════════════════════════════
+   LIGHT MODE COMPONENT OVERRIDES
+   All components below use hardcoded rgba values tuned
+   for dark backgrounds — these rules correct them for light.
+   ══════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: light) {
+  /* Pill nav track — dark glass → light frosted */
+  .nav-track {
+    background: rgba(0,0,0,.05);
+    border-color: rgba(0,0,0,.1);
+  }
+  /* Active tab text colours already fine via CSS vars;
+     just ensure the inactive pill text is readable */
+  .tab { color: rgba(17,24,39,.45); }
+
+  /* Hero pill — green stays but darkened for legibility */
+  .hero-pill { color: #009958; border-color: rgba(0,153,88,.3); background: rgba(0,153,88,.1); }
+
+  /* Glass action cards — white base instead of white-on-dark */
+  .qac {
+    background: rgba(255,255,255,.7);
+    border-color: rgba(0,0,0,.08);
+    box-shadow: 0 2px 16px rgba(0,0,0,.07);
+  }
+  .qac-ico {
+    background: rgba(0,0,0,.05);
+    border-color: rgba(0,0,0,.08);
+  }
+  .qac-lbl { color: rgba(17,24,39,.75); }
+  .qac-arr  { color: rgba(17,24,39,.3); }
+
+  /* Card 1 — blue tint on light */
+  .qac1 { background: rgba(59,130,246,.07); border-color: rgba(59,130,246,.18); }
+  .qac1 .qac-ico { background: rgba(59,130,246,.1); border-color: rgba(59,130,246,.2); }
+  .qac1 .qac-lbl { color: #1d4ed8; }
+
+  /* Card 2 — green tint on light */
+  .qac2 { background: rgba(0,160,100,.07); border-color: rgba(0,160,100,.18); }
+  .qac2 .qac-ico { background: rgba(0,160,100,.1); border-color: rgba(0,160,100,.2); }
+  .qac2 .qac-lbl { color: #047857; }
+
+  /* Group Performance card */
+  .perf-card {
+    background: #fff;
+    border-color: rgba(0,160,100,.15);
+    box-shadow: 0 4px 24px rgba(0,0,0,.07);
+  }
+  .perf-ico  { background: rgba(0,160,100,.08); border-color: rgba(0,160,100,.18); }
+  .perf-title{ color: rgba(17,24,39,.55); }
+  .perf-n.int{ color: rgba(17,24,39,.8); }
+  .perf-n.bal{ color: #009958; text-shadow: 0 0 20px rgba(0,153,88,.2); }
+  .perf-lbl  { color: rgba(17,24,39,.35); }
+  .perf-div  { background: rgba(0,0,0,.07); }
+}
+
+/* Same overrides for manual data-theme=light toggle */
+[data-theme=light] .nav-track {
+  background: rgba(0,0,0,.05); border-color: rgba(0,0,0,.1);
+}
+[data-theme=light] .tab { color: rgba(17,24,39,.45); }
+[data-theme=light] .hero-pill { color:#009958; border-color:rgba(0,153,88,.3); background:rgba(0,153,88,.1); }
+[data-theme=light] .qac { background:rgba(255,255,255,.7); border-color:rgba(0,0,0,.08); box-shadow:0 2px 16px rgba(0,0,0,.07); }
+[data-theme=light] .qac-ico { background:rgba(0,0,0,.05); border-color:rgba(0,0,0,.08); }
+[data-theme=light] .qac-lbl { color:rgba(17,24,39,.75); }
+[data-theme=light] .qac-arr  { color:rgba(17,24,39,.3); }
+[data-theme=light] .qac1 { background:rgba(59,130,246,.07); border-color:rgba(59,130,246,.18); }
+[data-theme=light] .qac1 .qac-ico { background:rgba(59,130,246,.1); border-color:rgba(59,130,246,.2); }
+[data-theme=light] .qac1 .qac-lbl { color:#1d4ed8; }
+[data-theme=light] .qac2 { background:rgba(0,160,100,.07); border-color:rgba(0,160,100,.18); }
+[data-theme=light] .qac2 .qac-ico { background:rgba(0,160,100,.1); border-color:rgba(0,160,100,.2); }
+[data-theme=light] .qac2 .qac-lbl { color:#047857; }
+[data-theme=light] .perf-card { background:#fff; border-color:rgba(0,160,100,.15); box-shadow:0 4px 24px rgba(0,0,0,.07); }
+[data-theme=light] .perf-ico  { background:rgba(0,160,100,.08); border-color:rgba(0,160,100,.18); }
+[data-theme=light] .perf-title{ color:rgba(17,24,39,.55); }
+[data-theme=light] .perf-n.int{ color:rgba(17,24,39,.8); }
+[data-theme=light] .perf-n.bal{ color:#009958; text-shadow:0 0 20px rgba(0,153,88,.2); }
+[data-theme=light] .perf-lbl  { color:rgba(17,24,39,.35); }
+[data-theme=light] .perf-div  { background:rgba(0,0,0,.07); }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+/* Setting font-size:100% means 1rem = user's system font size preference.
+   If user has set "Larger Text" in iOS Settings → Accessibility, this respects it. */
+html{font-size:100%;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100svh;overscroll-behavior:none;transition:background var(--tr),color var(--tr);}
 button,select,input{touch-action:manipulation;font-family:inherit;}
 
 .pw-screen{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px;}
 .pw-card{background:var(--card);border:1px solid var(--br2);border-radius:28px;padding:40px 32px;width:100%;max-width:360px;box-shadow:var(--shl);display:flex;flex-direction:column;align-items:center;gap:6px;}
-.pw-title{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;margin-top:6px;}
-.pw-sub{font-size:.82rem;color:var(--t3);margin-bottom:16px;text-align:center;}
-.pw-inp{width:100%;padding:13px 16px;background:var(--ibg);border:1px solid var(--br2);border-radius:14px;color:var(--t1);font-size:1rem;outline:none;transition:border-color .2s;}
+.pw-title{font-family:'Sora',sans-serif;font-size:var(--t-title2);font-weight:800;margin-top:6px;}
+.pw-sub{font-size:var(--t-footnote);color:var(--t3);margin-bottom:16px;text-align:center;}
+.pw-inp{width:100%;padding:13px 16px;background:var(--ibg);border:1px solid var(--br2);border-radius:14px;color:var(--t1);font-size:var(--t-callout);outline:none;transition:border-color .2s;}
 .pw-inp:focus{border-color:var(--ac);}
 .pw-inp.err{border-color:var(--rd);}
-.pw-err{color:var(--rd);font-size:.78rem;min-height:18px;align-self:flex-start;}
-.pw-btn{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:4px;}
-.pw-help{font-size:.74rem;color:var(--t3);text-align:center;margin-top:8px;}
+.pw-err{color:var(--rd);font-size:var(--t-footnote);min-height:18px;align-self:flex-start;}
+.pw-btn{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-size:var(--t-callout);font-weight:700;cursor:pointer;margin-top:4px;}
+.pw-help{font-size:var(--t-caption1);color:var(--t3);text-align:center;margin-top:8px;}
 
 .shell{max-width:430px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column;overflow-x:hidden;}
 .hdr{padding:20px 20px 0;}
 .hdr-row{display:flex;justify-content:space-between;align-items:flex-start;}
-.eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);}
-.title{font-family:'Sora',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-.02em;}
-.subtitle{font-size:.8rem;color:var(--t2);margin-top:2px;}
+.eyebrow{font-size:var(--t-caption2);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);}
+.title{font-family:'Sora',sans-serif;font-size:var(--t-title1);font-weight:800;letter-spacing:-.02em;}
+.subtitle{font-size:var(--t-footnote);color:var(--t2);margin-top:2px;}
 .sw{width:52px;height:28px;border-radius:20px;background:var(--swbg);border:1px solid var(--br2);cursor:pointer;display:flex;align-items:center;padding:3px;flex-shrink:0;transition:background .25s;}
-.knob{width:22px;height:22px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:.75rem;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .25s;}
+.knob{width:22px;height:22px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:var(--t-caption1);box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .25s;}
 [data-theme=light] .knob{transform:translateX(24px);}
 [data-theme=light] .sw{background:var(--acl);border-color:var(--ac);}
 
 .greet{padding:22px 20px 10px;}
-.greet-line{font-size:.84rem;font-weight:500;line-height:1.4;color:var(--t1);letter-spacing:.01em;}
+.greet-line{font-size:var(--t-subhead);font-weight:500;line-height:1.4;color:var(--t1);letter-spacing:.01em;}
 
 
-.tabs{padding:0 16px;margin-top:16px;display:flex;gap:0;border-bottom:2px solid var(--br2);position:sticky;top:0;z-index:50;background:var(--bg);align-items:flex-end;}
-.tab{flex:1;text-align:center;padding:10px 8px 11px;background:var(--ibg);border:1px solid var(--br2);border-bottom:none;border-radius:10px 10px 0 0;color:var(--t3);font-size:.82rem;font-weight:700;cursor:pointer;position:relative;white-space:nowrap;transition:all .2s;margin-right:2px;top:2px;}
-.tab.on{color:#fff;border-color:var(--br2);border-bottom:2px solid transparent;margin-bottom:-2px;}.tab-ov.on{background:#00c87a;border-color:#00c87a;}.tab-bl.on{background:#3b82f6;border-color:#3b82f6;}.tab-mo.on{background:#8b5cf6;border-color:#8b5cf6;}
+/* ── Pill Nav ── */
+.nav-wrap{padding:14px 16px 0;position:sticky;top:0;z-index:50;background:var(--bg);}
+.nav-track{display:flex;gap:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:4px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.tab{flex:1;text-align:center;padding:9px 6px;border-radius:50px;color:var(--t3);font-size:var(--t-footnote);font-weight:700;cursor:pointer;white-space:nowrap;transition:all .22s;border:none;background:transparent;letter-spacing:.01em;}
+.tab-ov.on{background:#00c87a;color:#001a0e;box-shadow:0 2px 12px rgba(0,200,122,.35);}
+.tab-bl.on{background:#3b82f6;color:#fff;box-shadow:0 2px 12px rgba(59,130,246,.35);}
+.tab-mo.on{background:#8b5cf6;color:#fff;box-shadow:0 2px 12px rgba(139,92,246,.35);}
 
 
 .panel{display:none;padding-bottom:80px;}
 .panel.on{display:block;animation:up .3s ease;}
 
-.hero{padding:24px 20px 8px;}
-.hero-lbl{font-size:.78rem;color:var(--t2);margin-bottom:4px;font-weight:500;}
-.hero-num{font-family:'Sora',sans-serif;font-size:3rem;font-weight:800;line-height:1;letter-spacing:-.03em;}
-.hero-sub{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.78rem;color:var(--t2);}
-.hero-pill{background:var(--acl);color:var(--ac);padding:3px 10px;border-radius:20px;font-size:.74rem;font-weight:700;border:1px solid rgba(0,200,122,.2);}
+.hero{padding:28px 20px 10px;text-align:center;}
+.hero-lbl{font-size:var(--t-caption1);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
+.hero-num{font-family:'Sora',sans-serif;font-size:var(--t-largetitle);font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--t1);}
+.hero-sub{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:var(--t-footnote);color:var(--t3);}
+.hero-pill{background:rgba(0,200,122,.12);color:#00e5a0;padding:4px 12px;border-radius:20px;font-size:var(--t-caption1);font-weight:700;border:1px solid rgba(0,229,160,.25);letter-spacing:.02em;}
 
-.blobzone{position:relative;margin-top:12px;padding-bottom:24px;overflow:visible;}
-.blobzone::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;filter:blur(40px);background:rgba(0,200,122,.18);bottom:-20px;right:-30px;pointer-events:none;z-index:0;}
-.blobzone::after{content:'';position:absolute;width:160px;height:160px;border-radius:50%;filter:blur(40px);background:rgba(59,130,246,.15);bottom:60px;left:-20px;pointer-events:none;z-index:0;}
-.blob3{position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(139,92,246,.10);filter:blur(45px);bottom:40px;left:10px;pointer-events:none;z-index:0;}
-.scards{position:relative;z-index:1;margin-left:20px;padding-top:152px;}
-.sc{position:absolute;right:0;border-radius:20px 0 0 20px;padding:22px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 28px rgba(0,0,0,.30);cursor:pointer;transition:transform .15s;}
-.sc:active{transform:scale(.97);}
-.sc1{background:linear-gradient(135deg,#1e6ef0,#06c0f0);width:76%;top:0;z-index:1;}
-.sc2{background:linear-gradient(135deg,#00b87a,#22d9a0);width:88%;top:76px;z-index:2;}
-.sc3{background:linear-gradient(135deg,#0a3d2e,#0d5c42);width:100%;position:relative;z-index:3;display:flex;flex-direction:column;align-items:flex-start;gap:0;cursor:default;padding:22px 20px 28px;border:1px solid rgba(0,200,122,.15);}
-[data-theme=dark] [data-theme=dark] 
-.sc-ico{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
-.sc-lbl{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;flex:1;}
-.sc-arr{color:rgba(255,255,255,.7);}
-.sc3 .sc-lbl{color:#ffffff;}
+/* ── Quick-action glass cards (side by side) ── */
+.qarow{display:flex;gap:10px;padding:14px 16px 0;}
+.qac{flex:1;border-radius:18px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:transform .15s,opacity .15s;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 2px 16px rgba(0,0,0,.2);}
+.qac:active{transform:scale(.96);opacity:.85;}
+.qac-ico{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:var(--t-headline);}
+.qac-lbl{font-family:'Sora',sans-serif;font-size:var(--t-footnote);font-weight:700;color:rgba(238,240,248,.8);line-height:1.3;text-align:center;}
+.qac-arr{font-size:var(--t-caption1);color:rgba(238,240,248,.3);}
+/* subtle tint per card */
+.qac1{background:rgba(59,130,246,.06);border-color:rgba(91,163,246,.14);}
+.qac1 .qac-ico{background:rgba(59,130,246,.1);border-color:rgba(91,163,246,.18);}
+.qac1 .qac-lbl{color:rgba(180,210,255,.75);}
+.qac2{background:rgba(0,200,122,.06);border-color:rgba(0,200,122,.14);}
+.qac2 .qac-ico{background:rgba(0,200,122,.1);border-color:rgba(0,200,122,.18);}
+.qac2 .qac-lbl{color:rgba(180,245,220,.75);}
 
-.sc3-head{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
-.c3nums{width:100%;margin-top:4px;}
-.c3row{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
-.c3row:last-child{margin-bottom:0;}
-.c3n{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;line-height:1;}
-.c3n.big{font-size:2.2rem;color:#00e887;}
-.c3l{font-size:.73rem;font-weight:600;color:rgba(255,255,255,.58);line-height:1.3;}
+/* ── Group Performance card ── */
+.perf-card{margin:14px 16px 0;border-radius:22px;padding:20px 18px 24px;
+  background:#0f1410;border:1px solid rgba(0,200,122,.14);
+  box-shadow:0 4px 24px rgba(0,0,0,.4);}
+.perf-head{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:18px;}
+.perf-ico{width:36px;height:36px;border-radius:10px;background:rgba(0,200,122,.09);border:1px solid rgba(0,200,122,.2);display:flex;align-items:center;justify-content:center;font-size:var(--t-headline);}
+.perf-title{font-family:'Sora',sans-serif;font-size:var(--t-subhead);font-weight:700;color:rgba(238,240,248,.6);text-align:center;}
+.perf-nums{display:flex;flex-direction:column;gap:14px;}
+.perf-row{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.perf-n{font-family:'Sora',sans-serif;font-weight:800;line-height:1;letter-spacing:-.02em;text-align:center;}
+.perf-n.int{font-size:var(--t-title2);color:rgba(238,240,248,.75);}
+.perf-n.bal{font-size:var(--t-title1);color:#00e5a0;letter-spacing:-.03em;text-shadow:0 0 28px rgba(0,229,160,.3);}
+.perf-lbl{font-size:var(--t-caption2);font-weight:600;color:rgba(238,240,248,.28);text-transform:uppercase;letter-spacing:.08em;text-align:center;}
+.perf-div{height:1px;background:rgba(255,255,255,.06);margin:0 4px;}
 
-[data-theme=dark] [data-theme=dark] 
 .inner{padding:0 20px;animation:up .25s ease;}
-.back-btn{display:flex;align-items:center;gap:8px;padding:14px 0 10px;color:var(--t2);font-size:.88rem;font-weight:600;cursor:pointer;background:transparent;border:none;}
-.inner-title{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:14px;}
+.back-btn{display:flex;align-items:center;gap:8px;padding:14px 0 10px;color:var(--t2);font-size:var(--t-subhead);font-weight:600;cursor:pointer;background:transparent;border:none;}
+.inner-title{font-family:'Sora',sans-serif;font-size:var(--t-title3);font-weight:800;margin-bottom:14px;}
 .ccrd{background:var(--card);border:1px solid var(--br);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:var(--sh);}
-.clbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:2px;}
-.csub{font-size:.72rem;color:var(--t3);margin-bottom:10px;}
+.clbl{font-size:var(--t-caption1);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:2px;}
+.csub{font-size:var(--t-caption1);color:var(--t3);margin-bottom:10px;}
 
 .mtbl-wrap{background:var(--card);border:1px solid var(--br);border-radius:20px;overflow:hidden;box-shadow:var(--sh);margin-bottom:12px;}
-.mtbl{width:100%;border-collapse:collapse;font-size:.75rem;table-layout:fixed;}
+.mtbl{width:100%;border-collapse:collapse;font-size:var(--t-caption1);table-layout:fixed;}
 .mtbl thead{background:var(--card2);}
-.mtbl th{padding:7px 5px;text-align:right;color:var(--t3);font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--br);white-space:nowrap;overflow:hidden;}
+.mtbl th{padding:7px 5px;text-align:right;color:var(--t3);font-size:var(--t-caption2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--br);white-space:nowrap;overflow:hidden;}
 .mtbl th.tl{text-align:left;}
 .mtbl td{padding:7px 5px;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mtbl td.tl{text-align:left;}
 .mtbl tbody tr:last-child td{border-bottom:none;}
 .mtbl .tot td{background:var(--card2);color:var(--t1);font-weight:700;border-top:1px solid var(--br2);border-bottom:none;}
-.nm{font-family:'JetBrains Mono',monospace;font-size:.7rem;}
+.nm{font-family:'JetBrains Mono',monospace;font-size:var(--t-caption1);}
 .ac{color:var(--ac)!important;font-weight:700!important;}
 .tcell{display:flex;align-items:center;justify-content:flex-end;gap:5px;}
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.dts{font-size:.65rem;color:var(--t3);text-align:center;padding:8px 0;}
+.dts{font-size:var(--t-caption2);color:var(--t3);text-align:center;padding:8px 0;}
 
 .bpad{padding:16px 20px 0;}
 .mscroll{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px;}
 .mscroll::-webkit-scrollbar{display:none;}
-.mpill{padding:7px 14px;border-radius:20px;border:1px solid var(--br2);background:transparent;color:var(--t3);font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.mpill{padding:7px 14px;border-radius:20px;border:1px solid var(--br2);background:transparent;color:var(--t3);font-size:var(--t-footnote);font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
 .mpill.on{background:var(--ac);color:#fff;border-color:var(--ac);}
 .acrd{background:var(--card);border:1px solid var(--br2);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:var(--sh);}
-.albl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px;}
-.asel{width:100%;padding:12px 14px;background:var(--ibg);border:1px solid var(--br2);border-radius:14px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(150,150,170,.6)' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.albl{font-size:var(--t-caption2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px;}
+.asel{width:100%;padding:12px 14px;background:var(--ibg);border:1px solid var(--br2);border-radius:14px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:var(--t-subhead);font-weight:600;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(150,150,170,.6)' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
 .asel:focus{border-color:var(--ac);}
 .asel option{background:var(--card);}
 .scrd{background:var(--card);border:1px solid var(--br);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:var(--sh);}
-.s-alias{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:2px;}
-.s-month{font-size:.78rem;color:var(--t3);margin-bottom:18px;}
+.s-alias{font-family:'Sora',sans-serif;font-size:var(--t-title2);font-weight:800;margin-bottom:2px;}
+.s-month{font-size:var(--t-footnote);color:var(--t3);margin-bottom:18px;}
 .srow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--br);}
 .srow:last-child{border-bottom:none;padding-bottom:0;}
-.slbl{font-size:.88rem;color:var(--t2);}
-.sval{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;color:var(--t1);}
+.slbl{font-size:var(--t-subhead);color:var(--t2);}
+.sval{font-family:'JetBrains Mono',monospace;font-size:var(--t-subhead);font-weight:600;color:var(--t1);}
 .sval.bl{color:var(--bl);}
 .sval.gr{color:var(--ac);}
-.sval.hero{font-size:1.5rem;color:var(--ac);font-family:'Sora',sans-serif;font-weight:800;}
-.slbl.big{font-size:.95rem;font-weight:700;color:var(--t1);}
-.hint{font-size:.62rem;color:var(--gd);margin-top:2px;}
-.sts{font-size:.65rem;color:var(--t3);text-align:right;margin-top:10px;}
+.sval.hero{font-size:var(--t-title2);color:var(--ac);font-family:'Sora',sans-serif;font-weight:800;}
+.slbl.big{font-size:var(--t-subhead);font-weight:700;color:var(--t1);}
+.hint{font-size:var(--t-caption2);color:var(--gd);margin-top:2px;}
+.sts{font-size:var(--t-caption2);color:var(--t3);text-align:right;margin-top:10px;}
 .wcrd{background:var(--gdl);border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;}
-.wtitle{font-size:.8rem;font-weight:700;color:var(--gd);margin-bottom:3px;}
-.wbody{font-size:.78rem;color:var(--t2);line-height:1.5;}
+.wtitle{font-size:var(--t-footnote);font-weight:700;color:var(--gd);margin-bottom:3px;}
+.wbody{font-size:var(--t-footnote);color:var(--t2);line-height:1.5;}
 .mcrd{background:var(--card);border:1px solid var(--br);border-radius:20px;padding:16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;box-shadow:var(--sh);}
 .mico{font-size:1.4rem;flex-shrink:0;}
-.mtxt{font-size:.84rem;color:var(--t2);line-height:1.6;}
-.empty{text-align:center;padding:40px 20px;color:var(--t3);font-size:.88rem;}
+.mtxt{font-size:var(--t-subhead);color:var(--t2);line-height:1.6;}
+.empty{text-align:center;padding:40px 20px;color:var(--t3);font-size:var(--t-subhead);}
 
 .morepad{padding:16px 20px 0;display:flex;flex-direction:column;gap:12px;}
 .morecrd{background:var(--card);border:1px solid var(--br);border-radius:20px;overflow:hidden;box-shadow:var(--sh);}
-.morehead{padding:13px 16px;border-bottom:1px solid var(--br);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);}
+.morehead{padding:13px 16px;border-bottom:1px solid var(--br);font-size:var(--t-caption1);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);}
 .morebody{padding:14px 16px;}
 .dep{background:var(--ibg);border:1px solid var(--br);border-radius:14px;padding:12px;margin-bottom:8px;}
 .dep:last-child{margin-bottom:0;}
-.dep-t{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--bl);margin-bottom:6px;}
-.dep-i{font-size:.82rem;color:var(--t2);line-height:1.7;}
+.dep-t{font-size:var(--t-caption1);font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--bl);margin-bottom:6px;}
+.dep-i{font-size:var(--t-footnote);color:var(--t2);line-height:1.7;}
 .dep-i strong{color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
-.dep-w{margin-top:8px;padding:8px 10px;background:var(--gdl);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.74rem;color:var(--gd);line-height:1.4;}
+.dep-w{margin-top:8px;padding:8px 10px;background:var(--gdl);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:var(--t-caption1);color:var(--gd);line-height:1.4;}
 .rlist{list-style:none;}
-.rlist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--br);font-size:.84rem;color:var(--t2);line-height:1.5;}
+.rlist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--br);font-size:var(--t-subhead);color:var(--t2);line-height:1.5;}
 .rlist li:last-child{border-bottom:none;}
 .rlist li::before{content:'—';color:var(--ac);font-weight:700;flex-shrink:0;}
 .rlist strong{color:var(--t1);}
-.pdf-pw{font-size:.68rem;color:var(--gd);margin-bottom:8px;text-align:right;}
+.pdf-pw{font-size:var(--t-caption2);color:var(--gd);margin-bottom:8px;text-align:right;}
 .ssel{width:100%;padding:11px 13px;background:var(--acl);color:var(--ac);border:1px solid rgba(0,200,122,.22);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;}
 .ssel option{background:var(--card);color:var(--t1);}
-.priv{margin:16px 20px 0;padding:12px 14px;background:var(--gdl);border:1px solid rgba(245,158,11,.18);border-radius:14px;font-size:.78rem;color:var(--t2);line-height:1.5;text-align:center;}
+.priv{margin:16px 20px 0;padding:12px 14px;background:var(--gdl);border:1px solid rgba(245,158,11,.18);border-radius:14px;font-size:var(--t-footnote);color:var(--t2);line-height:1.5;text-align:center;}
 .priv strong{color:var(--t1);}
 
-.lscreen{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--t3);font-size:.88rem;}
+.lscreen{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--t3);font-size:var(--t-subhead);}
 .spin{width:32px;height:32px;border:3px solid var(--br2);border-top-color:var(--ac);border-radius:50%;animation:rot .7s linear infinite;}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes rot{to{transform:rotate(360deg)}}
 @keyframes shk{0%,100%{transform:none}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+
+/* ── Custom dropdown wrapper (alias + statements) ── */
+.cdrop{position:relative;width:100%;}
+.cdrop-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;border:none;text-align:left;}
+.cdrop-btn.asel-btn{padding:12px 14px;background:var(--ibg);border:1px solid var(--br2);border-radius:14px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:var(--t-subhead);font-weight:600;}
+.cdrop-btn.asel-btn:focus-visible{outline:2px solid var(--ac);}
+.cdrop-btn.ssel-btn{padding:11px 13px;background:var(--acl);border:1px solid rgba(0,200,122,.22);border-radius:14px;color:var(--ac);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;}
+.cdrop-btn.ssel-btn:focus-visible{outline:2px solid var(--ac);}
+.cdrop-arrow{flex-shrink:0;transition:transform .2s;font-size:.65rem;opacity:.55;}
+.cdrop-arrow.open{transform:rotate(180deg);}
+.cdrop-list{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--card);border:1px solid var(--br2);border-radius:16px;z-index:999;max-height:260px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.28);padding:6px;animation:up .15s ease;}
+.cdrop-item{padding:10px 13px;border-radius:10px;font-size:var(--t-subhead);font-weight:500;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .1s;}
+.cdrop-item:hover{background:var(--ibg);}
+.cdrop-item.sel{color:var(--ac);font-weight:700;background:var(--acl);}
+.cdrop-item .chk{font-size:.7rem;flex-shrink:0;}
+.pdf-msg{margin-top:10px;padding:11px 13px;background:var(--gdl);border:1px solid rgba(245,158,11,.3);border-radius:12px;font-size:var(--t-footnote);color:var(--gd);line-height:1.5;}
+
+/* ── Statements month-picker modal ── */
+.modal-overlay{position:fixed;inset:0;z-index:1200;display:flex;align-items:flex-end;justify-content:center;padding:0 0 20px;}
+.modal-blur{position:fixed;inset:0;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(0,0,0,.45);z-index:1199;}
+.modal-sheet{position:relative;z-index:1201;width:100%;max-width:480px;background:var(--card);border:1px solid var(--br2);border-radius:24px 24px 16px 16px;padding:0 0 12px;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:up .2s ease;}
+.modal-handle{width:36px;height:4px;background:var(--br2);border-radius:4px;margin:10px auto 0;}
+.modal-title{padding:14px 20px 10px;font-size:var(--t-caption1);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);}
+.modal-item{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-size:var(--t-body);font-weight:600;color:var(--t1);cursor:pointer;border-bottom:1px solid var(--br);transition:background .1s;}
+.modal-item:last-child{border-bottom:none;}
+.modal-item:hover,.modal-item:active{background:var(--ibg);}
+.modal-cancel{display:block;width:calc(100% - 32px);margin:10px 16px 0;padding:14px;background:var(--ibg);border:1px solid var(--br2);border-radius:14px;font-size:var(--t-body);font-weight:700;color:var(--t3);cursor:pointer;text-align:center;}
+
+/* ── Withdrawal window ── */
+.wdraw-banner{margin:0 16px 14px;border-radius:20px;overflow:hidden;border:1px solid rgba(0,200,122,.25);}
+.wdraw-banner.soon{border-color:rgba(245,158,11,.3);}
+.wdraw-banner.closed{border-color:rgba(239,68,68,.25);}
+.wdraw-bhead{padding:12px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,200,122,.08);}
+.wdraw-banner.soon .wdraw-bhead{background:rgba(245,158,11,.08);}
+.wdraw-banner.closed .wdraw-bhead{background:rgba(239,68,68,.07);}
+.wdraw-bico{font-size:1.3rem;flex-shrink:0;}
+.wdraw-btxt{flex:1;}
+.wdraw-btitle{font-size:var(--t-footnote);font-weight:700;color:var(--ac);margin-bottom:1px;}
+.wdraw-banner.soon .wdraw-btitle{color:var(--gd);}
+.wdraw-banner.closed .wdraw-btitle{color:var(--rd);}
+.wdraw-bsub{font-size:var(--t-caption2);color:var(--t3);}
+.wdraw-bbadge{font-size:var(--t-caption2);font-weight:800;padding:4px 10px;border-radius:20px;background:rgba(0,200,122,.15);color:var(--ac);border:1px solid rgba(0,200,122,.3);}
+.wdraw-banner.soon .wdraw-bbadge{background:rgba(245,158,11,.13);color:var(--gd);border-color:rgba(245,158,11,.3);}
+.wdraw-banner.closed .wdraw-bbadge{background:rgba(239,68,68,.1);color:var(--rd);border-color:rgba(239,68,68,.25);}
+
+.wdraw-crd{background:var(--card);border:1px solid rgba(0,200,122,.25);border-radius:20px;margin-bottom:14px;overflow:hidden;box-shadow:var(--sh);}
+.wdraw-crd.closed{border-color:rgba(239,68,68,.2);}
+.wdraw-chead{padding:14px 16px 12px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px;}
+.wdraw-ctitle{font-size:var(--t-caption1);font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);}
+.wdraw-crd.closed .wdraw-ctitle{color:var(--rd);}
+.wdraw-cbody{padding:16px;}
+.wdraw-amount{font-family:'JetBrains Mono',monospace;font-size:var(--t-title2);font-weight:700;color:var(--ac);margin-bottom:4px;}
+.wdraw-amtlbl{font-size:var(--t-caption2);color:var(--t3);margin-bottom:16px;}
+.wdraw-note{font-size:var(--t-footnote);color:var(--t2);line-height:1.6;padding:10px 12px;background:var(--acl);border-radius:12px;margin-bottom:14px;}
+.wdraw-crd.closed .wdraw-note{background:rgba(239,68,68,.07);}
+.wdraw-btn{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:var(--t-subhead);font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.wdraw-btn:active{opacity:.8;}
+.wdraw-btn.disabled{background:var(--ibg);color:var(--t3);cursor:default;border:1px solid var(--br2);}
+
+/* ── Alias picker modal grid ── */
+.modal-sheet.alias-sheet{max-height:82svh;display:flex;flex-direction:column;}
+.alias-grid-wrap{overflow-y:auto;flex:1;padding:4px 12px 0;}
+.alias-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-bottom:8px;}
+.alias-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px 8px;border-radius:16px;background:var(--ibg);border:1px solid var(--br);cursor:pointer;transition:all .15s;text-align:center;}
+.alias-cell:active{transform:scale(.95);}
+.alias-cell.sel{background:var(--acl);border-color:var(--ac);}
+.alias-cell-ico{font-size:1.6rem;line-height:1;}
+.alias-cell-lbl{font-size:var(--t-footnote);font-weight:700;color:var(--t1);line-height:1.2;}
+.alias-cell.sel .alias-cell-lbl{color:var(--ac);}
+.alias-sel-display{display:flex;align-items:center;gap:8px;}
+.alias-sel-ico{font-size:1.1rem;}
 </style>
 </head>
 <body>
@@ -171,12 +428,86 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback } = React;
 
-const MEMBERS = [
+// ── FALLBACK member list (used only if Members sheet tab fails to load) ──
+const FALLBACK_MEMBERS = [
   'Tokyo','Berlin','Gandia','Denver','Helsinki','Oslo','Moscow',
   'California','Lisbon','Stockholm','Paris','Marseille','Rio','Nairobi',
   'Tel Aviv','Valencia','Havana','Manilla','Scofield','Bogota',
   'Emirates','Dublin','Doha','Bern'
 ];
+const FALLBACK_PAIRS = {
+  'California':'Lisbon','Lisbon':'California',
+  'Paris':'Marseille','Marseille':'Paris'
+};
+
+// Members tab URL (encoded) — sheet column layout:
+//   A: Alias   B: Icon (emoji)   C: PairWith (optional)
+const MEMBERS_URL = atob('aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlFmUWRCVmwwMWN4c0lvR25mSkxsdEdEdU9rSVZERnFqLXJOZzNLd0ZWWjgtR0diVXFrMURTc19DVmF5Z2lzamFMaGczMGcxZ2p6SXNkQy9wdWI/Z2lkPTE4MDc5MjY5NzMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==');
+
+const CITY_ICON = {
+  Tokyo:      '🗼', Berlin:    '🐻', Gandia:    '🏖️',
+  Denver:     '🏔️', Helsinki:  '🇫🇮', Oslo:      '🫎',
+  Moscow:     '🏛️', California:'🌴', Lisbon:    '🛸',
+  Stockholm:  '👑', Paris:     '🗽', Marseille: '⚓',
+  Rio:        '🌊', Nairobi:   '🦁', 'Tel Aviv': '✡️',
+  Valencia:   '🍊', Havana:    '🎺', Manilla:   '🌺',
+  Scofield:   '🔑', Bogota:    '☁️', Emirates:  '🌇',
+  Dublin:     '🍀', Doha:      '🌙', Bern:      '🐻‍❄️'
+};
+
+const CITY_COLOR = {
+  Tokyo:      'rgba(239,68,68,.15)',
+  Berlin:     'rgba(168,85,247,.15)',
+  Gandia:     'rgba(245,158,11,.15)',
+  Denver:     'rgba(59,130,246,.15)',
+  Helsinki:   'rgba(20,184,166,.15)',
+  Oslo:       'rgba(16,185,129,.15)',
+  Moscow:     'rgba(99,102,241,.15)',
+  California: 'rgba(251,146,60,.15)',
+  Lisbon:     'rgba(236,72,153,.15)',
+  Stockholm:  'rgba(234,179,8,.15)',
+  Paris:      'rgba(59,130,246,.15)',
+  Marseille:  'rgba(14,165,233,.15)',
+  Rio:        'rgba(6,182,212,.15)',
+  Nairobi:    'rgba(132,204,22,.15)',
+  'Tel Aviv': 'rgba(168,85,247,.15)',
+  Valencia:   'rgba(249,115,22,.15)',
+  Havana:     'rgba(239,68,68,.15)',
+  Manilla:    'rgba(236,72,153,.15)',
+  Scofield:   'rgba(100,116,139,.15)',
+  Bogota:     'rgba(20,184,166,.15)',
+  Emirates:   'rgba(234,179,8,.15)',
+  Dublin:     'rgba(34,197,94,.15)',
+  Doha:       'rgba(99,102,241,.15)',
+  Bern:       'rgba(14,165,233,.15)'
+};
+
+const CITY_BORDER = {
+  Tokyo:      'rgba(239,68,68,.3)',
+  Berlin:     'rgba(168,85,247,.3)',
+  Gandia:     'rgba(245,158,11,.3)',
+  Denver:     'rgba(59,130,246,.3)',
+  Helsinki:   'rgba(20,184,166,.3)',
+  Oslo:       'rgba(16,185,129,.3)',
+  Moscow:     'rgba(99,102,241,.3)',
+  California: 'rgba(251,146,60,.3)',
+  Lisbon:     'rgba(236,72,153,.3)',
+  Stockholm:  'rgba(234,179,8,.3)',
+  Paris:      'rgba(59,130,246,.3)',
+  Marseille:  'rgba(14,165,233,.3)',
+  Rio:        'rgba(6,182,212,.3)',
+  Nairobi:    'rgba(132,204,22,.3)',
+  'Tel Aviv': 'rgba(168,85,247,.3)',
+  Valencia:   'rgba(249,115,22,.3)',
+  Havana:     'rgba(239,68,68,.3)',
+  Manilla:    'rgba(236,72,153,.3)',
+  Scofield:   'rgba(100,116,139,.3)',
+  Bogota:     'rgba(20,184,166,.3)',
+  Emirates:   'rgba(234,179,8,.3)',
+  Dublin:     'rgba(34,197,94,.3)',
+  Doha:       'rgba(99,102,241,.3)',
+  Bern:       'rgba(14,165,233,.3)'
+};
 const MONTHS = ['January','February','March','April','May','June',
   'July','August','September','October','November','December'];
 
@@ -205,28 +536,185 @@ const WARN_START_DAY       = 10;
 const PASSWORD             = 'LikeMinded2026';
 const AUTH_DAYS            = 30;
 const CUR_YEAR             = new Date().getFullYear();
-const PAIRS = {
-  'California':'Lisbon','Lisbon':'California',
-  'Paris':'Marseille','Marseille':'Paris'
+
+// December withdrawal window — opens Dec 5, closes end of Week 3 (Dec 21)
+const WITHDRAWAL_MONTH     = 11;   // 0-indexed: December
+const WITHDRAWAL_OPEN_DAY  = 5;
+const WITHDRAWAL_CLOSE_DAY = 21;
+const ADMIN_WHATSAPP       = '254700000000'; // ← replace with your number (no + or spaces)
+// Default icon/colour lookups — extended automatically for new members via sheet
+// New member? Just add their row to the Members tab. Icon/colour defaults apply if not in these maps.
+
+// ═══════════════════════════════════════════════════════════
+// GREETING SYSTEM — holidays, seasons, time-of-day, milestones
+// ═══════════════════════════════════════════════════════════
+
+// ── Easter (Anonymous Gregorian algorithm) ──────────────────
+function easterDate(yr) {
+  const a=yr%19, b=Math.floor(yr/100), c=yr%100;
+  const d=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31)-1; // 0-indexed
+  const day=((h+l-7*m+114)%31)+1;
+  return {month, day};
+}
+
+// ── Hijri date approximation (Umm al-Qura algorithm) ────────
+function toHijri(date) {
+  const JD = Math.floor((date.getTime()/86400000) + 2440587.5 + 0.5);
+  const l  = JD - 1948440 + 10632;
+  const n  = Math.floor((l-1)/10631);
+  const l2 = l - 10631*n + 354;
+  const j  = Math.floor((10985-l2)/5316)*Math.floor(50*l2/17719) +
+              Math.floor(l2/5670)*Math.floor(43*l2/15238);
+  const l3 = l2 - Math.floor((30-j)/15)*Math.floor(17719*j/50) -
+              Math.floor(j/16)*Math.floor(15238*j/43) + 29;
+  const hMonth = Math.floor(24*l3/709);   // 1-indexed
+  const hDay   = l3 - Math.floor(709*hMonth/24);
+  const hYear  = 30*n + j - 30;
+  return { year: hYear, month: hMonth, day: hDay };
+}
+
+// ── Kenya public holidays (fixed-date) ──────────────────────
+const KE_HOLIDAYS = {
+  '01-01': { name: "New Year's Day",       msg: "Happy New Year! 🎆 A fresh year, a fresh start — let's make 2{YR} the one where LMF reaches new heights.",      emoji: '🎆' },
+  '05-01': { name: "Labour Day",            msg: "Happy Labour Day! 👷 Heshima kwa kila mfanyakazi. Hard work today plants the seeds of tomorrow's harvest.",       emoji: '👷' },
+  '06-01': { name: "Madaraka Day",          msg: "Happy Madaraka Day! 🇰🇪 On this day Kenya chose self-rule. We too are choosing financial freedom — together.",    emoji: '🇰🇪' },
+  '10-10': { name: "Utamaduni Day",         msg: "Utamaduni Day Njema! 🎭 Culture is our strength. Umoja ni nguvu — unity builds more than any one of us alone.",   emoji: '🎭' },
+  '10-20': { name: "Mashujaa Day",          msg: "Happy Mashujaa Day! 🦁 Honour to our heroes. Every shilling we save is a small act of courage for our future.",   emoji: '🦁' },
+  '12-12': { name: "Jamhuri Day",           msg: "Happy Jamhuri Day! 🇰🇪 60 years of independence — and we are still building, still growing, still together.",     emoji: '🇰🇪' },
+  '12-25': { name: "Christmas Day",         msg: "Merry Christmas! 🎄 Wishing every member of LMF a joyful, peaceful, and blessed Christmas with family.",         emoji: '🎄' },
+  '12-26': { name: "Boxing Day",            msg: "Happy Boxing Day! 🎁 A day to give, reflect, and appreciate. Grateful for this community we have built together.", emoji: '🎁' },
 };
 
-const INSPIRATIONS = [
+// ── Seasonal messages (Kenya) ────────────────────────────────
+function kenyaSeason(month, day) {
+  // Long rains: Mar–May
+  if (month >= 2 && month <= 4)
+    return { season:'Long Rains', msg: "Saving through the long rains ☔ — the best time to water your financial roots.", emoji:'☔' };
+  // Short rains: Oct–Nov
+  if (month >= 9 && month <= 10)
+    return { season:'Short Rains', msg: "The short rains are here 🌦️ — a gentle reminder that consistent deposits, like rain, make things grow.", emoji:'🌦️' };
+  // Hot dry: Jan–Feb
+  if (month <= 1)
+    return { season:'Dry Season', msg: "Kali kali ☀️ — the dry season tests our discipline. Stay consistent and the harvest will come.", emoji:'☀️' };
+  // Cool dry: Jun–Sep
+  return { season:'Cool Season', msg: "Cool and clear skies ☁️ — the perfect mindset for steady, focused saving.", emoji:'☁️' };
+}
+
+// ── Month-end awareness ──────────────────────────────────────
+function monthEndMsg(day, daysInMonth) {
+  const remaining = daysInMonth - day;
+  if (remaining <= 0)  return "Last day of the month! ⏰ Final call — is your contribution sorted?";
+  if (remaining <= 2)  return `${remaining} day${remaining>1?'s':''} to month-end ⏳ — don't let the deadline sneak up on you.`;
+  if (remaining <= 5)  return `${remaining} days to month-end 📅 — a gentle nudge: are you on track?`;
+  if (day <= 3)        return "Fresh month, fresh start 🌱 — the best time to lock in your contribution early.";
+  return null;
+}
+
+// ── Time-of-day greetings ────────────────────────────────────
+function timeGreeting(h) {
+  if (h < 5)  return "Burning the midnight oil 🌙";
+  if (h < 12) return "Good morning";
+  if (h < 14) return "Good afternoon";
+  if (h < 17) return "Good afternoon";
+  if (h < 20) return "Good evening";
+  return "Good evening";
+}
+
+// ── Regular inspiration pool (time-tuned) ───────────────────
+const INSPIRATIONS_MORNING = [
+  "Asubuhi njema — a productive morning sets the tone for the whole day. 🌅",
+  "Start the day with intention. Every great saving habit begins with one decision.",
+  "The early bird saves more. Lock in your contribution before the day gets busy.",
+  "Good morning! Discipline today. Freedom tomorrow.",
+];
+const INSPIRATIONS_DAY = [
   "Small, consistent steps build extraordinary wealth.",
   "Every contribution today is a gift to your future self.",
   "Saving together multiplies what we could never do alone.",
-  "Discipline today. Freedom tomorrow.",
-  "Wealth is built every single day.",
   "Consistency is the most underrated financial strategy.",
-  "Your commitment is an investment in yourself.",
+  "Wealth is built every single day — including today.",
+];
+const INSPIRATIONS_EVENING = [
+  "End the day with gratitude 🙏 — you are building something real.",
+  "Usiku mwema — reflect on today. Did your money move with purpose?",
+  "Evening check-in: your future self is watching. Keep going.",
+  "The best investment you can make is in your community. You are doing it.",
+];
+const INSPIRATIONS_SWAHILI = [
+  "Umoja ni nguvu 🤝 — together we are far stronger than alone.",
+  "Haba na haba hujaza kibaba 🪣 — little by little fills the pot.",
+  "Haraka haraka haina baraka ⏳ — slow and steady wins the financial race.",
+  "Mtu ni watu 👥 — a person is defined by their community.",
 ];
 
+// ── Master greeting resolver ─────────────────────────────────
 function greetLine() {
-  const h = new Date().getHours();
-  const time = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  const quotes = INSPIRATIONS;
-  const quote = quotes[Math.floor(Date.now()/(1000*60*60*3)) % quotes.length];
-  return `${time} — ${quote}`;
+  const now        = new Date();
+  const yr         = now.getFullYear();
+  const month      = now.getMonth();   // 0-indexed
+  const day        = now.getDate();
+  const h          = now.getHours();
+  const mmdd       = String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+  const daysInMo   = new Date(yr, month+1, 0).getDate();
+  const timeGreet  = timeGreeting(h);
+
+  // 1. FIXED KENYA PUBLIC HOLIDAYS
+  if (KE_HOLIDAYS[mmdd]) {
+    const hd = KE_HOLIDAYS[mmdd];
+    return `${timeGreet} — ${hd.msg.replace('2{YR}', yr)}`;
+  }
+
+  // 2. EASTER (Good Friday = -2, Easter Sunday = 0, Easter Monday = +1)
+  const easter = easterDate(yr);
+  const easterMs  = new Date(yr, easter.month, easter.day).getTime();
+  const todayMs   = new Date(yr, month, day).getTime();
+  const easterDiff = Math.round((todayMs - easterMs) / 86400000);
+  if (easterDiff === -2) return `${timeGreet} — Good Friday 🕊️ — a solemn day of reflection. Grateful for the sacrifices that shape who we are.`;
+  if (easterDiff === 0)  return `${timeGreet} — Happy Easter! 🐣 Resurrection Sunday — a powerful symbol of new beginnings and renewed hope.`;
+  if (easterDiff === 1)  return `${timeGreet} — Happy Easter Monday! 🌸 May this season bring renewal to your finances and your spirit.`;
+
+  // 3. EID AL-FITR (Hijri month 10, day 1 — end of Ramadan)
+  const hijri = toHijri(now);
+  if (hijri.month === 10 && hijri.day <= 3)
+    return `${timeGreet} — Eid al-Fitr Mubarak! 🌙 May this blessed celebration bring joy, peace, and abundance to you and your family.`;
+
+  // 4. EID AL-ADHA (Hijri month 12, day 10)
+  if (hijri.month === 12 && hijri.day >= 10 && hijri.day <= 13)
+    return `${timeGreet} — Eid al-Adha Mubarak! 🐑 The spirit of sacrifice and gratitude — may it bless you and those you love.`;
+
+  // 5. RAMADAN greeting (Hijri month 9)
+  if (hijri.month === 9)
+    return `${timeGreet} — Ramadan Kareem 🌙 — wishing our fasting members strength, peace, and barakah this holy month.`;
+
+  // 6. MONTH-END AWARENESS
+  const meMsg = monthEndMsg(day, daysInMo);
+  if (meMsg) return `${timeGreet} — ${meMsg}`;
+
+  // 7. TIME-OF-DAY TUNED INSPIRATION (with Swahili rotation every 4th cycle)
+  const cycle = Math.floor(Date.now() / (1000*60*60*3)); // rotates every 3 hrs
+  if (cycle % 7 === 0) {
+    // Swahili rotation
+    return `${timeGreet} — ${INSPIRATIONS_SWAHILI[cycle % INSPIRATIONS_SWAHILI.length]}`;
+  }
+  const pool = h < 11 ? INSPIRATIONS_MORNING : h < 18 ? INSPIRATIONS_DAY : INSPIRATIONS_EVENING;
+  return `${timeGreet} — ${pool[cycle % pool.length]}`;
 }
+
+// Returns withdrawal window state: { state: 'off'|'open'|'closed' }
+function withdrawalWindow() {
+  const now   = new Date();
+  const month = now.getMonth();
+  const day   = now.getDate();
+  if (month !== WITHDRAWAL_MONTH) return { state: 'off' };
+  if (day < WITHDRAWAL_OPEN_DAY)  return { state: 'off' };
+  if (day <= WITHDRAWAL_CLOSE_DAY) return { state: 'open', daysLeft: WITHDRAWAL_CLOSE_DAY - day + 1 };
+  return { state: 'closed' };
+}
+
 function curMonth() { return MONTHS[new Date().getMonth()]; }
 
 function getAuth() {
@@ -485,7 +973,7 @@ function MemberChart({alias, data, month, theme}) {
 }
 
 // ─── GROUP CHART ───────────────────────────────────────────────────────────
-function GroupChart({data, month, theme}) {
+function GroupChart({data, month, theme, members}) {
   const ref = useRef(null), inst = useRef(null);
   useEffect(() => {
     if (!ref.current || !data) return;
@@ -496,7 +984,7 @@ function GroupChart({data, month, theme}) {
     const tots=[], bals=[];
     for (let i=0; i<=idx; i++) {
       let t=0,b=0;
-      MEMBERS.forEach(a => { t+=data[MONTHS[i]]?.[a]?.topups||0; b+=data[MONTHS[i]]?.[a]?.closingBalance||0; });
+      members.forEach(a => { t+=data[MONTHS[i]]?.[a]?.topups||0; b+=data[MONTHS[i]]?.[a]?.closingBalance||0; });
       tots.push(t); bals.push(b); total+=t;
     }
     const avg  = (idx+1)>0 ? total/(idx+1) : 0;
@@ -528,7 +1016,7 @@ function GroupChart({data, month, theme}) {
 }
 
 // ─── ALL MEMBERS VIEW ──────────────────────────────────────────────────────
-function AllMembers({month, rows, ts, data, theme, onBack}) {
+function AllMembers({month, rows, ts, data, theme, onBack, members}) {
   const tO=rows.reduce((s,r)=>s+r.openingBalance,0);
   const tT=rows.reduce((s,r)=>s+r.topups,0);
   const tI=rows.reduce((s,r)=>s+r.interest,0);
@@ -541,7 +1029,7 @@ function AllMembers({month, rows, ts, data, theme, onBack}) {
       <div className="ccrd">
         <div className="clbl">Group Monthly Totals &amp; Projection</div>
         <div className="csub"><span style={{color:'#00c87a'}}>&#9646;</span> Monthly &nbsp;&middot;&nbsp; <span style={{color:'#3b82f6'}}>&#8213;</span> Projected</div>
-        <GroupChart data={data} month={month} theme={theme} />
+        <GroupChart data={data} month={month} theme={theme} members={members} />
       </div>
       <div className="mtbl-wrap">
         <table className="mtbl">
@@ -587,7 +1075,12 @@ function AllMembers({month, rows, ts, data, theme, onBack}) {
 // ─── MAIN APP ──────────────────────────────────────────────────────────────
 function App() {
   const [auth,    setAuth2]    = useState(() => !!getAuth());
-  const [theme,   setTheme]    = useState(() => localStorage.getItem('mmf_theme')||'dark');
+  const [theme, setTheme] = useState(() => {
+    // Check for manual override first; otherwise follow system
+    const saved = localStorage.getItem('mmf_theme');
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [data,    setData]     = useState(null);
   const [loading, setLoading]  = useState(true);
   const [error,   setError]    = useState(null);
@@ -596,6 +1089,18 @@ function App() {
   const [alias,   setAlias]    = useState('');
   const [allView, setAllView]  = useState(false);
   const [ts,      setTs]       = useState(null);
+  const [pdfMsg,  setPdfMsg]   = useState(null);
+  const [openDrop, setOpenDrop] = useState(null);
+  const [members,  setMembers]  = useState(FALLBACK_MEMBERS);
+  const [pairs,    setPairs]    = useState(FALLBACK_PAIRS);
+  const [cityIcon, setCityIcon] = useState(CITY_ICON);
+  const [cityColor,setCityColor]= useState(CITY_COLOR);
+  const [cityBorder,setCityBorder]=useState(CITY_BORDER);
+  const [wdrawAmt, setWdrawAmt] = useState('');
+  const [wdrawReqs,setWdrawReqs]= useState(() => {
+    try { return JSON.parse(localStorage.getItem('mmf_wdraw_'+CUR_YEAR)||'{}'); }
+    catch(e) { return {}; }
+  });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -604,9 +1109,95 @@ function App() {
 
   useEffect(() => { if (auth) load(); }, [auth]);
 
+  useEffect(() => {
+    if (!openDrop) return;
+    const handler = e => {
+      const id = 'drop-' + (openDrop === 'alias' ? 'alias' : 'stmt');
+      const el = document.getElementById(id);
+      if (el && !el.contains(e.target)) setOpenDrop(null);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [openDrop]);
+
   const load = async () => {
     try {
       setLoading(true); setError(null);
+
+      // ── Step 1: fetch Members tab ──────────────────────────────────────────
+      let liveMembers = FALLBACK_MEMBERS;
+      let livePairs   = FALLBACK_PAIRS;
+      let liveIcon    = {...CITY_ICON};
+      let liveColor   = {...CITY_COLOR};
+      let liveBorder  = {...CITY_BORDER};
+
+      // Rotating colour palette for new members not yet in the hardcoded maps
+      const PALETTE = [
+        ['rgba(239,68,68,.15)','rgba(239,68,68,.3)'],
+        ['rgba(168,85,247,.15)','rgba(168,85,247,.3)'],
+        ['rgba(245,158,11,.15)','rgba(245,158,11,.3)'],
+        ['rgba(59,130,246,.15)','rgba(59,130,246,.3)'],
+        ['rgba(20,184,166,.15)','rgba(20,184,166,.3)'],
+        ['rgba(16,185,129,.15)','rgba(16,185,129,.3)'],
+        ['rgba(99,102,241,.15)','rgba(99,102,241,.3)'],
+        ['rgba(251,146,60,.15)','rgba(251,146,60,.3)'],
+        ['rgba(236,72,153,.15)','rgba(236,72,153,.3)'],
+        ['rgba(234,179,8,.15)','rgba(234,179,8,.3)'],
+      ];
+
+      try {
+        const mr   = await fetch(MEMBERS_URL + '&_=' + Date.now(), {cache:'no-store'});
+        const mtxt = await mr.text();
+        const mlines = mtxt.split('\n').filter(l => l.trim());
+        if (mlines.length < 2) throw new Error('Empty members sheet');
+
+        // Detect column positions from header row (case-insensitive)
+        const headers = parseRow(mlines[0]).map(h => h.trim().toLowerCase().replace(/"/g,''));
+        const colAlias  = headers.findIndex(h => h.includes('alias') || h.includes('name'));
+        const colIcon   = headers.findIndex(h => h.includes('icon') || h.includes('emoji'));
+        const colPair   = headers.findIndex(h => h.includes('pair') || h.includes('partner'));
+        // Default to positional (A=0,B=1,C=2) if headers not recognised
+        const iA = colAlias  >= 0 ? colAlias  : 0;
+        const iI = colIcon   >= 0 ? colIcon   : 1;
+        const iP = colPair   >= 0 ? colPair   : 2;
+
+        const parsed = [];
+        const parsedPairs = {};
+        mlines.slice(1).forEach((line, idx) => {
+          const cols  = parseRow(line);
+          const name  = cols[iA]?.trim().replace(/"/g,'');
+          const icon  = cols[iI]?.trim().replace(/"/g,'').trim() || '';
+          const pair  = cols[iP]?.trim().replace(/"/g,'') || '';
+          if (!name) return;
+          parsed.push(name);
+          if (pair) { parsedPairs[name] = pair; }
+          // Colour: use hardcoded if exists, otherwise assign from palette
+          if (!liveColor[name]) {
+            const [bg, br] = PALETTE[idx % PALETTE.length];
+            liveColor[name]  = bg;
+            liveBorder[name] = br;
+          }
+          // Icon: sheet ALWAYS wins — only fall back to hardcoded if sheet cell is blank
+          const cleanIcon = icon.replace(/"/g,'').trim();
+          liveIcon[name] = cleanIcon || CITY_ICON[name] || '👤';
+        });
+        if (parsed.length > 0) {
+          liveMembers = parsed;
+          livePairs   = parsedPairs;
+          console.log('✅ Members loaded from sheet:', parsed.length, 'members');
+          console.log('📍 Icons from sheet:', Object.fromEntries(parsed.map(n => [n, liveIcon[n]])));
+          setMembers(parsed);
+          setPairs(parsedPairs);
+          setCityIcon(liveIcon);
+          setCityColor(liveColor);
+          setCityBorder(liveBorder);
+        }
+      } catch(e) {
+        // Members tab fetch failed — silently use fallback, site still works
+        console.warn('Members tab fetch failed, using fallback list:', e);
+      }
+
+      // ── Step 2: fetch month data using live member list ────────────────────
       const parsed = {};
       const res = await Promise.all(MONTHS.map(async m => {
         const url  = MONTH_URLS[m];
@@ -618,7 +1209,7 @@ function App() {
         for (let i=3; i<ls.length; i++) {
           const cols  = parseRow(ls[i]);
           const name  = cols[0]?.trim().replace(/"/g,'');
-          if (name && MEMBERS.includes(name)) {
+          if (name && liveMembers.includes(name)) {
             const n = s => parseFloat((s||'').replace(/["',\s]/g,''))||0;
             md[name] = {
               openingBalance: n(cols[1]),
@@ -640,7 +1231,7 @@ function App() {
 
   const getRows = useCallback(m => {
     if (!data) return [];
-    return MEMBERS.map(a => ({alias:a,...(data[m]?.[a]||{openingBalance:0,topups:0,interest:0,daysActive:0,closingBalance:0})}))
+    return members.map(a => ({alias:a,...(data[m]?.[a]||{openingBalance:0,topups:0,interest:0,daysActive:0,closingBalance:0})}))
       .sort((a,b)=>b.closingBalance-a.closingBalance);
   }, [data]);
 
@@ -682,8 +1273,10 @@ function App() {
   const st      = stats();
   const cm      = curMonth();
   const today   = new Date().getDate();
+  const wdraw   = withdrawalWindow();
+  const decData = data?.['December'];
   const md      = data?.[month]?.[alias]||{openingBalance:0,topups:0,interest:0,daysActive:0,closingBalance:0};
-  const partner = PAIRS[alias];
+  const partner = pairs[alias];
   const f2 = n => n.toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
   const f0 = n => n.toLocaleString('en-KE',{maximumFractionDigits:0});
 
@@ -718,7 +1311,7 @@ function App() {
       if (i===idx) { hist.currentMonthTopup=m2.topups||0; hist.currentInterest=m2.interest||0; hist.closingBalance=m2.closingBalance||0; hist.daysActive=m2.daysActive||0; }
       if (i===idx-1) hist.previousMonthTopup=m2.topups||0;
     }
-    const allMD=MEMBERS.map(a=>({alias:a,closingBalance:data[month]?.[a]?.closingBalance||0}));
+    const allMD=members.map(a=>({alias:a,closingBalance:data[month]?.[a]?.closingBalance||0}));
     const arch=calculateMemberArchetype(hist,allMD,month);
     motiv=formatArchetypeMessage(arch,hist,allMD,month);
   }
@@ -742,7 +1335,12 @@ function App() {
             <div className="title">Like-Minded Folks</div>
             <div className="subtitle">Contributions, interest &amp; projections</div>
           </div>
-          <button className="sw" onClick={() => setTheme(t=>t==='dark'?'light':'dark')} aria-label="theme">
+          <button className="sw" onClick={() => {
+              const next = theme==='dark'?'light':'dark';
+              setTheme(next);
+              // Store override; user is intentionally overriding system setting
+              localStorage.setItem('mmf_theme', next);
+            }} aria-label={`Switch to ${theme==='dark'?'light':'dark'} mode`} title="Override display mode">
             <div className="knob">{theme==='dark'?'☀️':'🌙'}</div>
           </button>
         </div>
@@ -753,58 +1351,83 @@ function App() {
         <div className="greet-line">{greetLine()}</div>
       </div>
 
-      {/* TABS */}
-      <div className="tabs">
-        {[['overview','Overview','tab-ov'],['balance','My Balance','tab-bl'],['more','More+','tab-mo']].map(([id,lbl,cls]) => (
-          <button key={id} className={`tab ${cls}${tab===id?' on':''}`}
-            onClick={() => { setTab(id); setAllView(false); }}>
-            {lbl}
-          </button>
-        ))}
+      {/* PILL NAV */}
+      <div className="nav-wrap">
+        <div className="nav-track">
+          {[['overview','Overview','tab-ov'],['balance','My Balance','tab-bl'],['more','More+','tab-mo']].map(([id,lbl,cls]) => (
+            <button key={id} className={`tab ${cls}${tab===id?' on':''}`}
+              onClick={() => { setTab(id); setAllView(false); }}>
+              {lbl}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ══ OVERVIEW ══ */}
       <div className={`panel${tab==='overview'?' on':''}`}>
         {allView
-          ? <AllMembers month={month} rows={getRows(month)} ts={ts} data={data} theme={theme} onBack={() => setAllView(false)} />
+          ? <AllMembers month={month} rows={getRows(month)} ts={ts} data={data} theme={theme} onBack={() => setAllView(false)} members={members} />
           : <>
               <div className="hero">
                 <div className="hero-lbl">Group Contributions to Date &middot; Jan &ndash; {month}</div>
-                <div className="hero-num">{st ? f0(st.cumC) : '—'}</div>
+                <div className="hero-num">{st ? f2(st.cumC) : '—'}</div>
                 <div className="hero-sub">
                   <span style={{color:'var(--t3)'}}>This month:</span>
-                  <span className="hero-pill">&#8593; KES {st ? f0(st.mTopups) : '0'}</span>
+                  <span className="hero-pill">&#8593; KES {st ? f2(st.mTopups) : '0.00'}</span>
                 </div>
               </div>
 
-              <div className="blobzone">
-                <div className="blob3"/>
-                <div className="scards">
-                  <div className="sc sc1" onClick={openContrib}>
-                    <div className="sc-ico">&#128200;<div>
-                    <div className="sc-lbl">View Group Contributions</div>
-                    <div className="sc-arr">&#8599;</div>
-                  </div>
-                  <div className="sc sc2" onClick={() => setAllView(true)}>
-                    <div className="sc-ico">&#128176;<div>
-                    <div className="sc-lbl">View Group Saving &amp; Interest</div>
-                    <div className="sc-arr">&#8594;</div>
-                  </div>
-                  <div className="sc sc3">
-                    <div className="sc3-head">
-                      <div className="sc-ico" style={{background:'rgba(0,200,122,.22)'}}>&#9878;<div>
-                      <div className="sc-lbl">Group Balance</div>
-                    </div>
-                    <div className="c3nums">
-                      <div className="c3row">
-                        <div className="c3n">{st ? f2(st.cumI) : '—'}</div>
-                        <div className="c3l">Interest Earned</div>
+              {/* Withdrawal window banner — shown from Dec 5 */}
+              {wdraw.state !== 'off' && (
+                <div className={'wdraw-banner ' + wdraw.state} style={{margin:'0 0 14px'}}>
+                  <div className="wdraw-bhead">
+                    <span className="wdraw-bico">{wdraw.state === 'open' ? '🏦' : '🔒'}</span>
+                    <div className="wdraw-btxt">
+                      <div className="wdraw-btitle">
+                        {wdraw.state === 'open'   ? 'Withdrawal Window is Open!' : 'Withdrawal Window Closed'}
                       </div>
-                      <div className="c3row">
-                        <div className="c3n big">{st ? f2(st.totBal) : '—'}</div>
-                        <div className="c3l">Total Group Balance</div>
+                      <div className="wdraw-bsub">
+                        {wdraw.state === 'open'
+                          ? `Go to My Balance tab to request your withdrawal. ${wdraw.daysLeft} day${wdraw.daysLeft!==1?'s':''} left — closes 21 Dec.`
+                          : 'The window closed on 21 Dec. See you next December!'}
                       </div>
                     </div>
+                    {wdraw.state === 'open' && (
+                      <span className="wdraw-bbadge">{wdraw.daysLeft}d left</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick-action glass cards — side by side */}
+              <div className="qarow">
+                <div className="qac qac1" onClick={openContrib}>
+                  <div className="qac-ico">&#128200;</div>
+                  <div className="qac-lbl">View Group Contributions</div>
+                  <div className="qac-arr">&#8599;</div>
+                </div>
+                <div className="qac qac2" onClick={() => setAllView(true)}>
+                  <div className="qac-ico">&#128176;</div>
+                  <div className="qac-lbl">View Group Saving &amp; Interest</div>
+                  <div className="qac-arr">&#8594;</div>
+                </div>
+              </div>
+
+              {/* Group Performance card */}
+              <div className="perf-card">
+                <div className="perf-head">
+                  <div className="perf-ico">&#9878;</div>
+                  <div className="perf-title">Group Performance</div>
+                </div>
+                <div className="perf-nums">
+                  <div className="perf-row">
+                    <div className="perf-n int">{st ? f2(st.cumI) : '—'}</div>
+                    <div className="perf-lbl">Interest Earned</div>
+                  </div>
+                  <div className="perf-div"/>
+                  <div className="perf-row">
+                    <div className="perf-n bal">{st ? f2(st.totBal) : '—'}</div>
+                    <div className="perf-lbl">Total Group Balance</div>
                   </div>
                 </div>
               </div>
@@ -827,11 +1450,47 @@ function App() {
 
           <div className="acrd">
             <div className="albl">Who are you?</div>
-            <select className="asel" value={alias} onChange={e => setAlias(e.target.value)}>
-              <option value="" disabled>Select your alias&hellip;</option>
-              {MEMBERS.map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
+            <button className="cdrop-btn asel-btn" style={{width:'100%'}} onClick={() => setOpenDrop('alias')}>
+              {alias
+                ? <span className="alias-sel-display">
+                    <span className="alias-sel-ico">{cityIcon[alias]}</span>
+                    <span style={{color:'var(--t1)'}}>{alias}</span>
+                  </span>
+                : <span style={{color:'var(--t3)'}}>Select your alias&hellip;</span>
+              }
+              <span style={{fontSize:'.65rem',opacity:.55}}>&#9660;</span>
+            </button>
           </div>
+
+          {/* ALIAS MODAL */}
+          {openDrop === 'alias' && (
+            <>
+              <div className="modal-blur" onClick={() => setOpenDrop(null)} />
+              <div className="modal-overlay" onClick={() => setOpenDrop(null)}>
+                <div className="modal-sheet alias-sheet" onClick={e => e.stopPropagation()}>
+                  <div className="modal-handle" />
+                  <div className="modal-title">&#128100; Who are you?</div>
+                  <div className="alias-grid-wrap">
+                    <div className="alias-grid">
+                      {members.map(a => (
+                        <div key={a}
+                          className={'alias-cell' + (alias === a ? ' sel' : '')}
+                          style={{
+                            background: alias === a ? 'var(--acl)' : cityColor[a] || 'var(--ibg)',
+                            borderColor: alias === a ? 'var(--ac)'  : cityBorder[a] || 'var(--br)'
+                          }}
+                          onClick={() => { setAlias(a); setOpenDrop(null); }}>
+                          <span className="alias-cell-ico">{cityIcon[a] || '👤'}</span>
+                          <span className="alias-cell-lbl">{a}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <button className="modal-cancel" onClick={() => setOpenDrop(null)}>Cancel</button>
+                </div>
+              </div>
+            </>
+          )}
 
           {alias ? <>
             <div className="scrd">
@@ -869,20 +1528,137 @@ function App() {
               </div>
             )}
 
-            <div className="ccrd">
-              <div className="clbl">Contributions &amp; Balance Growth</div>
-              <div className="csub">
-                <span style={{color:'#00c87a'}}>&#9646;</span> Top-ups &nbsp;
-                <span style={{color:'#00c87a'}}>&#9135;</span> Balance &nbsp;
-                <span style={{color:'#3b82f6'}}>&#8213;</span> Projected
-              </div>
-              <MemberChart alias={alias} data={data} month={month} theme={theme} />
-            </div>
+            {wdraw.state === 'open' ? (
+              /* ── DECEMBER: hide chart, show withdrawal form ── */
+              (() => {
+                const decBal = decData?.[alias]?.closingBalance || 0;
+                const reqAmt = parseFloat(wdrawAmt) || 0;
+                const remaining = decBal - reqAmt;
+                const existing = wdrawReqs[alias];
 
-            <div className="mcrd">
-              <div className="mico">{motiv.icon}</div>
-              <div className="mtxt">{motiv.text}</div>
-            </div>
+                const submitWithdrawal = () => {
+                  if (!reqAmt || reqAmt <= 0) return;
+                  if (reqAmt > decBal) return;
+                  const req = {
+                    alias,
+                    balance:   decBal,
+                    amount:    reqAmt,
+                    remaining: remaining,
+                    date:      new Date().toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'}),
+                    time:      new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit',hour12:true}),
+                    year:      CUR_YEAR
+                  };
+                  const updated = {...wdrawReqs, [alias]: req};
+                  setWdrawReqs(updated);
+                  localStorage.setItem('mmf_wdraw_'+CUR_YEAR, JSON.stringify(updated));
+                  setWdrawAmt('');
+                };
+
+                return (
+                  <div className="wdraw-crd">
+                    <div className="wdraw-chead">
+                      <span style={{fontSize:'1.1rem'}}>🏦</span>
+                      <span className="wdraw-ctitle">Request Withdrawal</span>
+                      <span className="wdraw-bbadge" style={{marginLeft:'auto'}}>{wdraw.daysLeft}d left</span>
+                    </div>
+                    <div className="wdraw-cbody">
+
+                      {existing ? (
+                        /* Already submitted */
+                        <>
+                          <div style={{textAlign:'center',padding:'8px 0 16px'}}>
+                            <div style={{fontSize:'2rem',marginBottom:6}}>✅</div>
+                            <div style={{fontSize:'var(--t-subhead)',fontWeight:700,color:'var(--ac)',marginBottom:4}}>Withdrawal Requested</div>
+                            <div style={{fontSize:'var(--t-caption1)',color:'var(--t3)'}}>Submitted {existing.date} at {existing.time}</div>
+                          </div>
+                          <div className="srow">
+                            <span className="slbl">December Balance</span>
+                            <span className="sval">{f2(existing.balance)}</span>
+                          </div>
+                          <div className="srow">
+                            <span className="slbl">Amount Requested</span>
+                            <span className="sval gr">{f2(existing.amount)}</span>
+                          </div>
+                          <div className="srow" style={{borderBottom:'none'}}>
+                            <span className="slbl big">Balance After</span>
+                            <span className="sval hero">{f2(existing.remaining)}</span>
+                          </div>
+                          <div className="wdraw-note" style={{marginTop:14}}>
+                            Your request has been recorded. The admin will process it before 21 Dec.
+                          </div>
+                          <button className="wdraw-btn" style={{background:'var(--ibg)',color:'var(--t3)',border:'1px solid var(--br2)',marginTop:4}}
+                            onClick={() => {
+                              const updated = {...wdrawReqs};
+                              delete updated[alias];
+                              setWdrawReqs(updated);
+                              localStorage.setItem('mmf_wdraw_'+CUR_YEAR, JSON.stringify(updated));
+                            }}>
+                            ✏️ Edit Request
+                          </button>
+                        </>
+                      ) : (
+                        /* Withdrawal form */
+                        <>
+                          <div className="srow">
+                            <span className="slbl big">December Balance</span>
+                            <span className="sval hero">{decBal > 0 ? f2(decBal) : '—'}</span>
+                          </div>
+                          <div style={{margin:'14px 0 6px',fontSize:'var(--t-caption2)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.07em',color:'var(--t3)'}}>Amount to Withdraw</div>
+                          <div style={{position:'relative',marginBottom:12}}>
+                            <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',fontSize:'var(--t-footnote)',fontWeight:700,color:'var(--t3)'}}>KES</span>
+                            <input
+                              type="number"
+                              value={wdrawAmt}
+                              onChange={e => setWdrawAmt(e.target.value)}
+                              placeholder="0"
+                              min="0"
+                              max={decBal}
+                              inputMode="decimal"
+                              style={{width:'100%',padding:'12px 12px 12px 44px',background:'var(--ibg)',border:'1px solid '+(reqAmt>decBal?'var(--rd)':'var(--br2)'),borderRadius:12,color:'var(--t1)',fontFamily:"'JetBrains Mono',monospace",fontSize:'var(--t-subhead)',fontWeight:600,outline:'none'}}
+                            />
+                          </div>
+                          <div className="srow" style={{borderBottom:'none',paddingBottom:0}}>
+                            <span className="slbl big">Balance After</span>
+                            <span className="sval hero" style={{color: remaining < 0 ? 'var(--rd)' : 'var(--ac)'}}>
+                              {reqAmt > 0 ? f2(Math.max(remaining,0)) : '—'}
+                            </span>
+                          </div>
+                          {reqAmt > decBal && (
+                            <div style={{fontSize:'var(--t-caption2)',color:'var(--rd)',marginTop:6}}>
+                              ⚠️ Amount exceeds your balance
+                            </div>
+                          )}
+                          <button
+                            className={'wdraw-btn' + (!reqAmt || reqAmt <= 0 || reqAmt > decBal ? ' disabled' : '')}
+                            style={{marginTop:16}}
+                            onClick={submitWithdrawal}
+                          >
+                            🏦 Submit Withdrawal Request
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
+              /* Normal months — show chart and motivational card */
+              <>
+                <div className="ccrd">
+                  <div className="clbl">Contributions &amp; Balance Growth</div>
+                  <div className="csub">
+                    <span style={{color:'#00c87a'}}>&#9646;</span> Top-ups &nbsp;
+                    <span style={{color:'#00c87a'}}>&#9135;</span> Balance &nbsp;
+                    <span style={{color:'#3b82f6'}}>&#8213;</span> Projected
+                  </div>
+                  <MemberChart alias={alias} data={data} month={month} theme={theme} />
+                </div>
+                <div className="mcrd">
+                  <div className="mico">{motiv.icon}</div>
+                  <div className="mtxt">{motiv.text}</div>
+                </div>
+              </>
+            )}
           </> : (
             <div className="empty">
               <div style={{fontSize:'2rem',marginBottom:10}}>&#128070;</div>
@@ -922,7 +1698,7 @@ function App() {
               <ul className="rlist">
                 <li>Minimum contribution: <strong>KES 4,000/month</strong></li>
                 <li>Interest only on months with full minimum</li>
-                <li>Withdrawals in December (before Week 3)</li>
+                <li>Withdrawals in December — window open 5–21 Dec</li>
                 <li>Fund: <strong>Etica MMF</strong></li>
                 <li>Maximum members: <strong>15</strong></li>
               </ul>
@@ -933,18 +1709,88 @@ function App() {
             <div className="morehead">&#128196; Etica Monthly Statements</div>
             <div className="morebody">
               <div className="pdf-pw">PDF Password: 308398</div>
-              <select className="ssel" onChange={e => {
-                if (!e.target.value) return;
-                const m = e.target.value;
-                alert(['The '+m+' statement is still being prepared. Check back soon!',
-                       m+' numbers are being finalised. Almost ready!'][Math.floor(Math.random()*2)]);
-                e.target.value='';
-              }}>
-                <option value="">&#128229; Select Month to Download</option>
-                {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
+              <button className="cdrop-btn ssel-btn" style={{width:'100%'}} onClick={() => setOpenDrop('stmt')}>
+                <span>&#128229; Select Month to Download</span>
+                <span style={{fontSize:'.65rem',opacity:.55}}>&#9660;</span>
+              </button>
+              {pdfMsg && <div className="pdf-msg">⏳ {pdfMsg}</div>}
             </div>
           </div>
+
+          {/* Withdrawal Statement — shown in Dec if a request exists for the selected alias */}
+          {alias && wdrawReqs[alias] && (() => {
+            const r = wdrawReqs[alias];
+            return (
+              <div className="morecrd" style={{borderColor:'rgba(0,200,122,.25)'}}>
+                <div className="morehead" style={{color:'var(--ac)'}}>🏦 Withdrawal Statement {CUR_YEAR}</div>
+                <div className="morebody">
+                  <div style={{fontSize:'var(--t-caption2)',color:'var(--t3)',marginBottom:12}}>
+                    Submitted {r.date} at {r.time}
+                  </div>
+                  <div className="srow">
+                    <span className="slbl">Member</span>
+                    <span className="sval" style={{display:'flex',alignItems:'center',gap:6}}>
+                      <span>{cityIcon[r.alias]||'👤'}</span>{r.alias}
+                    </span>
+                  </div>
+                  <div className="srow">
+                    <span className="slbl">December Balance</span>
+                    <span className="sval">{f2(r.balance)}</span>
+                  </div>
+                  <div className="srow">
+                    <span className="slbl">Amount Requested</span>
+                    <span className="sval gr">{f2(r.amount)}</span>
+                  </div>
+                  <div className="srow" style={{borderBottom:'none'}}>
+                    <span className="slbl big">Balance After Withdrawal</span>
+                    <span className="sval hero">{f2(r.remaining)}</span>
+                  </div>
+                  <div style={{marginTop:12,padding:'10px 12px',background:'var(--acl)',borderRadius:12,fontSize:'var(--t-caption2)',color:'var(--t2)',lineHeight:1.6}}>
+                    ℹ️ This is your withdrawal request record. The admin will confirm processing separately.
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* STATEMENTS MODAL */}
+          {openDrop === 'stmt' && (
+            <>
+              <div className="modal-blur" onClick={() => setOpenDrop(null)} />
+              <div className="modal-overlay" onClick={() => setOpenDrop(null)}>
+                <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+                  <div className="modal-handle" />
+                  <div className="modal-title">&#128196; Select a Statement</div>
+                  {MONTHS.map(m => (
+                    <div key={m} className="modal-item" onClick={() => {
+                      setOpenDrop(null);
+                      const base = window.location.href.split('/').slice(0, -1).join('/');
+                      const url  = base + '/' + m + '_' + CUR_YEAR + '_Statement.pdf';
+                      fetch(url, {method:'HEAD'})
+                        .then(r => {
+                          if (r.ok) {
+                            window.open(url, '_blank');
+                            setPdfMsg(null);
+                          } else {
+                            const msgs = [
+                              'The ' + m + ' statement is still being prepared. Check back soon!',
+                              m + ' numbers are being finalised. Almost ready!'
+                            ];
+                            setPdfMsg(msgs[Math.floor(Math.random()*msgs.length)]);
+                            setTimeout(() => setPdfMsg(null), 7000);
+                          }
+                        })
+                        .catch(() => { window.open(url, '_blank'); });
+                    }}>
+                      <span>{m}</span>
+                      <span style={{fontSize:'1rem'}}>&#128229;</span>
+                    </div>
+                  ))}
+                  <button className="modal-cancel" onClick={() => setOpenDrop(null)}>Cancel</button>
+                </div>
+              </div>
+            </>
+          )}
 
         </div>
       </div>
