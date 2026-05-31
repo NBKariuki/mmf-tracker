@@ -419,8 +419,8 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .alias-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-bottom:8px;}
 .alias-grid-inline{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 0 16px;}
 .alias-pick-hdr{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:14px;margin-top:4px;}
-.change-alias{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:var(--ibg);border:1px solid var(--br2);border-radius:20px;font-size:.72rem;font-weight:700;color:var(--t2);cursor:pointer;margin-bottom:12px;transition:background .15s,color .15s;}
-.change-alias:hover{background:var(--acl);color:var(--ac);border-color:var(--ac);}
+.change-alias{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:var(--ibg);border:1px solid rgba(212,170,60,.35);border-radius:20px;font-size:.72rem;font-weight:700;color:#c9a227;cursor:pointer;margin-bottom:12px;transition:background .15s,color .15s,border-color .15s;}
+.change-alias:hover{background:rgba(212,170,60,.12);color:#e0b830;border-color:rgba(212,170,60,.6);}
 .alias-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px 8px;border-radius:16px;background:var(--ibg);border:1px solid var(--br);cursor:pointer;transition:all .15s;text-align:center;}
 .alias-cell:active{transform:scale(.95);}
 .alias-cell.sel{background:var(--acl);border-color:var(--ac);}
@@ -1382,12 +1382,13 @@ function App() {
   .page{max-width:660px;margin:0 auto;background:${page};border-radius:20px;overflow:hidden;border:1px solid ${border};}
 
   /* ── Header bar ── */
-  .hdr{padding:28px 36px 22px;border-bottom:1px solid ${border};display:flex;justify-content:space-between;align-items:flex-start;}
-  .brand{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:${green};}
-  .brand-sub{font-size:.7rem;color:${t3};margin-top:3px;letter-spacing:.06em;text-transform:uppercase;}
+  .hdr{padding:28px 36px 22px;border-bottom:1px solid ${border};display:flex;justify-content:space-between;align-items:center;gap:24px;}
+  .brand{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:800;color:${green};line-height:1.2;}
+  .brand-sub{font-size:.62rem;color:${t3};margin-top:4px;letter-spacing:.07em;text-transform:uppercase;}
+  .hdr-divider{width:1px;height:36px;background:${border2};flex-shrink:0;}
   .stmt-label{text-align:right;}
-  .stmt-title{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;color:${t1};letter-spacing:-.02em;}
-  .stmt-period{font-size:.75rem;color:${t2};margin-top:4px;}
+  .stmt-title{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:${t1};letter-spacing:-.025em;line-height:1.1;}
+  .stmt-period{font-size:.72rem;color:${t2};margin-top:5px;}
 
   /* ── Member strip ── */
   .member{display:flex;align-items:center;gap:14px;margin:24px 36px;padding:16px 20px;
@@ -1445,7 +1446,6 @@ function App() {
     th:first-child,td:first-child{padding-left:16px;}
     th:last-child,td:last-child{padding-right:12px;}
     .footer{padding:16px 16px 24px;}
-    .footer-note{max-width:100%;}
   }
 </style>
 </head>
@@ -1457,6 +1457,7 @@ function App() {
       <div class="brand">Like-Minded Folks</div>
       <div class="brand-sub">MMF &middot; Etica Unit Trust</div>
     </div>
+    <div class="hdr-divider"></div>
     <div class="stmt-label">
       <div class="stmt-title">Member Statement</div>
       <div class="stmt-period">Year to Date &middot; Jan &ndash; ${actualMonth} ${CUR_YEAR}</div>
@@ -1515,11 +1516,7 @@ function App() {
   </div>
 
   <div class="footer">
-    <div class="footer-note">
-      Interest accrues daily on active balances at 12% p.a.<br>
-      Minimum contribution KES 4,000/month. Figures are indicative —
-      contact admin to confirm final statement.
-    </div>
+    <div></div>
     <div class="footer-right">
       <div class="footer-date">Generated ${genDate}</div>
       <div class="footer-conf">Confidential &middot; Members Only</div>
