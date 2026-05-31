@@ -1326,34 +1326,52 @@ function App() {
 
   const generateStatement = () => {
     if (!alias || !data) return;
-    const idx = MONTHS.indexOf(balanceMonth);
-    const f = n => n.toLocaleString('en-KE', {minimumFractionDigits:2, maximumFractionDigits:2});
-    const f0 = n => n.toLocaleString('en-KE', {maximumFractionDigits:0});
 
-    // Year-to-date rows
+    // Always show full YTD up to the real current month — ignore balanceMonth
+    const actualMonth = curMonth();
+    const idx  = MONTHS.indexOf(actualMonth);
+    const isDark = theme === 'dark';
+
+    const fmt2 = n => (typeof n === 'number' ? n : 0).toLocaleString('en-KE', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const fmt0 = n => (typeof n === 'number' ? n : 0).toLocaleString('en-KE', {maximumFractionDigits:0});
+
+    // Build YTD rows
     let ytdTopups = 0, ytdInterest = 0;
     const rows = [];
     for (let i = 0; i <= idx; i++) {
-      const m = MONTHS[i];
-      const d = data[m]?.[alias] || {openingBalance:0, topups:0, interest:0, daysActive:0, closingBalance:0};
-      ytdTopups   += d.topups;
-      ytdInterest += d.interest;
-      rows.push({month:m, topups:d.topups, interest:d.interest, daysActive:d.daysActive, closing:d.closingBalance});
+      const m  = MONTHS[i];
+      const d  = data[m]?.[alias] || {openingBalance:0, topups:0, interest:0, closingBalance:0};
+      ytdTopups   += d.topups   || 0;
+      ytdInterest += d.interest || 0;
+      rows.push({month:m, opening:d.openingBalance||0, topups:d.topups||0, interest:d.interest||0, closing:d.closingBalance||0});
     }
 
-    const cur = data[balanceMonth]?.[alias] || {openingBalance:0, topups:0, interest:0, daysActive:0, closingBalance:0};
-    const prevClosing = idx > 0 ? (data[MONTHS[idx-1]]?.[alias]?.closingBalance || 0) : 0;
-    const icon = cityIcon[alias] || '👤';
-    const now  = new Date();
-    const printDate = now.toLocaleDateString('en-KE', {day:'2-digit', month:'long', year:'numeric'});
+    const latestClosing = rows[rows.length - 1]?.closing || 0;
+    const icon          = cityIcon[alias] || '👤';
+    const genDate       = new Date().toLocaleDateString('en-KE', {day:'2-digit', month:'long', year:'numeric'});
+
+    // Theme tokens — match the app palette exactly
+    const bg      = isDark ? '#0f1117' : '#f5f7f5';
+    const page    = isDark ? '#1a1e28' : '#ffffff';
+    const border  = isDark ? '#2d3347' : '#e5e7eb';
+    const border2 = isDark ? '#3a4060' : '#d1d5db';
+    const t1      = isDark ? '#e8eaf0' : '#111827';
+    const t2      = isDark ? '#9aa0b8' : '#6b7280';
+    const t3      = isDark ? '#6b7280' : '#9ca3af';
+    const green   = '#00a86b';
+    const greenDim = isDark ? '#0d3326' : '#ecfdf5';
+    const greenBdr = isDark ? '#145940' : '#a7f3d0';
+    const rowAlt  = isDark ? '#1e2233' : '#f9fafb';
+    const rowCur  = isDark ? '#0d2e1f' : '#ecfdf5';
+    const tfoot   = isDark ? '#222638' : '#f3f4f6';
 
     const rowsHTML = rows.map((r, i) => `
-      <tr class="${i === idx ? 'cur' : ''}${i % 2 === 0 ? ' even' : ''}">
-        <td>${r.month}</td>
-        <td class="num">${r.topups > 0 ? f0(r.topups) : '—'}</td>
-        <td class="num int">${r.interest > 0 ? f(r.interest) : '—'}</td>
-        <td class="num">${r.daysActive > 0 ? r.daysActive : '—'}</td>
-        <td class="num bal">${f0(r.closing)}</td>
+      <tr style="background:${i === idx ? rowCur : (i % 2 === 0 ? rowAlt : page)}">
+        <td style="text-align:left;font-weight:700;color:${i === idx ? green : t1}">${r.month}</td>
+        <td>${fmt2(r.opening)}</td>
+        <td style="color:${t2}">${r.topups > 0 ? fmt0(r.topups) : '—'}</td>
+        <td style="color:${i === idx ? green : green}">${fmt2(r.interest)}</td>
+        <td style="font-weight:${i === idx ? '700':'600'};color:${i === idx ? green : t1}">${fmt2(r.closing)}</td>
       </tr>`).join('');
 
     const html = `<!DOCTYPE html>
@@ -1361,166 +1379,143 @@ function App() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MMF Statement · ${alias} · ${balanceMonth} ${CUR_YEAR}</title>
+<title>MMF Statement · ${alias} · ${CUR_YEAR}</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Sora:wght@700;800&family=JetBrains+Mono:wght@500;600&display=swap');
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'DM Sans',sans-serif;background:#f5f7f5;color:#111827;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .page{max-width:680px;margin:0 auto;background:#fff;padding:48px 44px 56px;}
+  body{font-family:'DM Sans',sans-serif;background:${bg};color:${t1};padding:24px 16px 48px;min-height:100vh;}
+  .page{max-width:660px;margin:0 auto;background:${page};border-radius:20px;overflow:hidden;border:1px solid ${border};}
 
-  /* ── Header ── */
-  .hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;border-bottom:2px solid #e5e7eb;}
-  .hdr-left{}
-  .brand{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#00a86b;letter-spacing:-.01em;}
-  .brand-sub{font-size:.75rem;color:#6b7280;margin-top:2px;letter-spacing:.04em;text-transform:uppercase;}
-  .hdr-right{text-align:right;}
-  .stmt-title{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:#111827;letter-spacing:-.02em;}
-  .stmt-period{font-size:.8rem;color:#6b7280;margin-top:3px;}
+  /* ── Header bar ── */
+  .hdr{padding:28px 36px 22px;border-bottom:1px solid ${border};display:flex;justify-content:space-between;align-items:flex-start;}
+  .brand{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:${green};}
+  .brand-sub{font-size:.7rem;color:${t3};margin-top:3px;letter-spacing:.06em;text-transform:uppercase;}
+  .stmt-label{text-align:right;}
+  .stmt-title{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;color:${t1};letter-spacing:-.02em;}
+  .stmt-period{font-size:.75rem;color:${t2};margin-top:4px;}
 
   /* ── Member strip ── */
-  .member-strip{display:flex;align-items:center;gap:16px;margin:28px 0;padding:18px 20px;background:#f0faf5;border:1px solid #d1fae5;border-radius:14px;}
-  .member-ico{font-size:2.2rem;line-height:1;}
-  .member-name{font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:800;color:#111827;}
-  .member-ref{font-size:.78rem;color:#6b7280;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+  .member{display:flex;align-items:center;gap:14px;margin:24px 36px;padding:16px 20px;
+    background:${greenDim};border:1px solid ${greenBdr};border-radius:14px;}
+  .member-ico{font-size:2rem;line-height:1;flex-shrink:0;}
+  .member-name{font-family:'Sora',sans-serif;font-size:1.15rem;font-weight:800;color:${t1};}
+  .member-ref{font-size:.72rem;color:${t2};margin-top:3px;font-family:'JetBrains Mono',monospace;}
 
-  /* ── Month summary cards ── */
-  .cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:32px;}
-  .card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;}
-  .card.green{background:#f0faf5;border-color:#a7f3d0;}
-  .card-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:6px;}
-  .card-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:600;color:#111827;}
-  .card.green .card-val{color:#059669;}
+  /* ── YTD summary row ── */
+  .ytd-strip{display:flex;gap:0;margin:0 36px 24px;border:1px solid ${border};border-radius:12px;overflow:hidden;}
+  .ytd-cell{flex:1;padding:14px 16px;text-align:center;border-right:1px solid ${border};}
+  .ytd-cell:last-child{border-right:none;}
+  .ytd-lbl{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${t3};margin-bottom:6px;}
+  .ytd-val{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:600;color:${t1};}
+  .ytd-val.grn{color:${green};}
 
-  /* ── Divider ── */
-  .section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9ca3af;margin-bottom:10px;margin-top:32px;}
+  /* ── Section label ── */
+  .sec-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${t3};
+    padding:0 36px 10px;margin-top:4px;}
 
-  /* ── Monthly breakdown table ── */
-  table{width:100%;border-collapse:collapse;font-size:.82rem;}
-  thead tr{background:#f3f4f6;}
-  th{padding:9px 10px;text-align:right;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;border-bottom:2px solid #e5e7eb;}
-  th:first-child{text-align:left;}
-  td{padding:9px 10px;text-align:right;border-bottom:1px solid #f3f4f6;color:#374151;}
-  td:first-child{text-align:left;font-weight:600;color:#111827;}
-  tr.even td{background:#fafafa;}
-  tr.cur td{background:#ecfdf5 !important;font-weight:700;}
-  tr.cur td:first-child{color:#059669;}
-  .num{font-family:'JetBrains Mono',monospace;}
-  .int{color:#6b7280;}
-  tr.cur .int{color:#059669;}
-  .bal{color:#111827;font-weight:600;}
-  tr.cur .bal{color:#059669;}
-  .tfoot td{padding:11px 10px;border-top:2px solid #e5e7eb;border-bottom:none;font-weight:700;color:#111827;background:#f9fafb;}
-  .tfoot .int{color:#059669;}
+  /* ── Table ── */
+  table{width:100%;border-collapse:collapse;}
+  th{padding:10px 14px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+    color:${t2};border-bottom:2px solid ${border2};background:${isDark ? '#1f2435' : '#f3f4f6'};text-align:right;}
+  th:first-child{text-align:left;padding-left:36px;}
+  th:last-child{padding-right:36px;}
+  td{padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:.82rem;text-align:right;
+    border-bottom:1px solid ${border};color:${t2};}
+  td:first-child{font-family:'DM Sans',sans-serif;text-align:left;padding-left:36px;}
+  td:last-child{padding-right:36px;}
+  .tfoot-row td{background:${tfoot};border-top:2px solid ${border2};border-bottom:none;
+    font-weight:700;color:${t1};font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+  .tfoot-row td:first-child{font-family:'DM Sans',sans-serif;color:${t1};}
+  .tfoot-row .grn{color:${green};}
 
   /* ── Footer ── */
-  .footer{margin-top:40px;padding-top:20px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-end;}
-  .footer-note{font-size:.7rem;color:#9ca3af;line-height:1.6;max-width:60%;}
-  .footer-right{text-align:right;}
-  .footer-date{font-size:.7rem;color:#9ca3af;}
-  .footer-confidential{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#d1d5db;margin-top:2px;}
-
-  /* ── Print button (screen only) ── */
-  .print-bar{position:fixed;bottom:0;left:0;right:0;padding:14px 24px;background:#fff;border-top:1px solid #e5e7eb;display:flex;gap:10px;justify-content:center;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
-  .btn-print{padding:11px 28px;background:#00a86b;color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;}
-  .btn-close{padding:11px 20px;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;}
-  @media print{.print-bar{display:none;} body{background:#fff;} .page{padding:32px;}}
+  .footer{padding:20px 36px 28px;margin-top:8px;border-top:1px solid ${border};
+    display:flex;justify-content:space-between;align-items:flex-end;gap:16px;}
+  .footer-note{font-size:.68rem;color:${t3};line-height:1.7;max-width:58%;}
+  .footer-right{text-align:right;flex-shrink:0;}
+  .footer-date{font-size:.68rem;color:${t3};}
+  .footer-conf{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${border2};margin-top:3px;}
 </style>
 </head>
 <body>
 <div class="page">
 
   <div class="hdr">
-    <div class="hdr-left">
+    <div>
       <div class="brand">Like-Minded Folks</div>
-      <div class="brand-sub">MMF · Etica Unit Trust</div>
+      <div class="brand-sub">MMF &middot; Etica Unit Trust</div>
     </div>
-    <div class="hdr-right">
+    <div class="stmt-label">
       <div class="stmt-title">Member Statement</div>
-      <div class="stmt-period">${balanceMonth} ${CUR_YEAR}</div>
+      <div class="stmt-period">Year to Date &middot; Jan &ndash; ${actualMonth} ${CUR_YEAR}</div>
     </div>
   </div>
 
-  <div class="member-strip">
+  <div class="member">
     <div class="member-ico">${icon}</div>
     <div>
       <div class="member-name">${alias}</div>
-      <div class="member-ref">Ref: 308398M &nbsp;·&nbsp; Etica MMF &nbsp;·&nbsp; ${CUR_YEAR}</div>
+      <div class="member-ref">Ref&nbsp;308398M &nbsp;&middot;&nbsp; Etica MMF &nbsp;&middot;&nbsp; ${CUR_YEAR}</div>
     </div>
   </div>
 
-  <div class="section-title">${balanceMonth} Summary</div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-lbl">Opening Balance</div>
-      <div class="card-val">KES ${f(cur.openingBalance)}</div>
+  <div class="ytd-strip">
+    <div class="ytd-cell">
+      <div class="ytd-lbl">YTD Deposits</div>
+      <div class="ytd-val">KES ${fmt0(ytdTopups)}</div>
     </div>
-    <div class="card">
-      <div class="card-lbl">Deposits</div>
-      <div class="card-val">KES ${f0(cur.topups)}</div>
+    <div class="ytd-cell">
+      <div class="ytd-lbl">YTD Interest</div>
+      <div class="ytd-val grn">KES ${fmt2(ytdInterest)}</div>
     </div>
-    <div class="card green">
-      <div class="card-lbl">Closing Balance</div>
-      <div class="card-val">KES ${f(cur.closingBalance)}</div>
-    </div>
-    <div class="card">
-      <div class="card-lbl">Interest Earned</div>
-      <div class="card-val">KES ${f(cur.interest)}</div>
-    </div>
-    <div class="card">
-      <div class="card-lbl">Days Active</div>
-      <div class="card-val">${cur.daysActive || 0} days</div>
-    </div>
-    <div class="card">
-      <div class="card-lbl">Min. Contribution</div>
-      <div class="card-val" style="color:${cur.topups >= 4000 ? '#059669' : cur.topups > 0 ? '#d97706' : '#ef4444'}">${cur.topups >= 4000 ? '✓ Met' : cur.topups > 0 ? 'Partial' : '✗ None'}</div>
+    <div class="ytd-cell">
+      <div class="ytd-lbl">Current Balance</div>
+      <div class="ytd-val grn">KES ${fmt2(latestClosing)}</div>
     </div>
   </div>
 
-  <div class="section-title">Year-to-Date Breakdown · Jan – ${balanceMonth} ${CUR_YEAR}</div>
+  <div class="sec-lbl">Monthly Breakdown</div>
   <table>
     <thead>
       <tr>
         <th>Month</th>
-        <th>Deposits (KES)</th>
-        <th>Interest (KES)</th>
-        <th>Days Active</th>
-        <th>Balance (KES)</th>
+        <th>Opening Bal</th>
+        <th>Top-Ups</th>
+        <th>Interest</th>
+        <th>Closing Bal</th>
       </tr>
     </thead>
     <tbody>${rowsHTML}</tbody>
     <tfoot>
-      <tr class="tfoot">
-        <td>YTD Total</td>
-        <td class="num">${f0(ytdTopups)}</td>
-        <td class="num int">${f(ytdInterest)}</td>
+      <tr class="tfoot-row">
+        <td>Total ${CUR_YEAR}</td>
         <td>—</td>
-        <td class="num bal">${f(cur.closingBalance)}</td>
+        <td>${fmt0(ytdTopups)}</td>
+        <td class="grn">${fmt2(ytdInterest)}</td>
+        <td class="grn">${fmt2(latestClosing)}</td>
       </tr>
     </tfoot>
   </table>
 
   <div class="footer">
     <div class="footer-note">
-      Interest is calculated daily on active balances. Minimum KES 4,000/month qualifies for interest.
-      This statement is for reference only — contact your admin to confirm final figures.
+      Interest accrues daily on active balances at 12% p.a.<br>
+      Minimum contribution KES 4,000/month. Figures are indicative —
+      contact admin to confirm final statement.
     </div>
     <div class="footer-right">
-      <div class="footer-date">Generated ${printDate}</div>
-      <div class="footer-confidential">Confidential · Members Only</div>
+      <div class="footer-date">Generated ${genDate}</div>
+      <div class="footer-conf">Confidential &middot; Members Only</div>
     </div>
   </div>
-</div>
 
-<div class="print-bar">
-  <button class="btn-print" onclick="window.print()">🖨 Print / Save as PDF</button>
-  <button class="btn-close" onclick="window.close()">Close</button>
 </div>
 </body>
 </html>`;
 
-    const b64 = btoa(unescape(encodeURIComponent(html)));
+    const b64   = btoa(unescape(encodeURIComponent(html)));
     const bytes = atob(b64);
-    const arr = new Uint8Array(bytes.length);
+    const arr   = new Uint8Array(bytes.length);
     for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
     window.open(URL.createObjectURL(new Blob([arr], {type:'text/html'})), '_blank');
   };
