@@ -1368,6 +1368,17 @@ function App() {
         {allView
           ? <AllMembers month={month} rows={getRows(month)} ts={ts} data={data} theme={theme} onBack={() => setAllView(false)} members={members} />
           : <>
+              {/* Month selector — same pill style as My Balance */}
+              <div className="bpad" style={{paddingTop:14,paddingBottom:0}}>
+                <div className="mscroll">
+                  {MONTHS.map(m => (
+                    <button key={m} className={`mpill${month===m?' on':''}`} onClick={() => setMonth(m)}>
+                      {m.slice(0,3)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="hero">
                 <div className="hero-lbl">Group Contributions to Date &middot; Jan &ndash; {month}</div>
                 <div className="hero-num">{st ? f2(st.cumC) : '—'}</div>
@@ -1402,12 +1413,12 @@ function App() {
               {/* Quick-action glass cards — side by side */}
               <div className="qarow">
                 <div className="qac qac1" onClick={openContrib}>
-                  <div className="qac-ico">&#128200;</div>
-                  <div className="qac-lbl">View Group Contributions</div>
+                  <div className="qac-ico">&#129534;</div>
+                  <div className="qac-lbl">View Group Deposit Tracker</div>
                   <div className="qac-arr">&#8599;</div>
                 </div>
                 <div className="qac qac2" onClick={() => setAllView(true)}>
-                  <div className="qac-ico">&#128176;</div>
+                  <div className="qac-ico">&#128202;</div>
                   <div className="qac-lbl">View Group Saving &amp; Interest</div>
                   <div className="qac-arr">&#8594;</div>
                 </div>
