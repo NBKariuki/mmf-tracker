@@ -529,9 +529,7 @@ const MONTH_URLS = {};
 MONTHS.forEach((m,i) => { MONTH_URLS[m] = atob(URLS[i]); });
 
 const MIN_CONTRIB          = 4000;
-const MINIMUM_CONTRIBUTION = 4000;
 const ETICA_MONTHLY        = 0.12 / 12;
-const ETICA_MONTHLY_YIELD  = 0.12 / 12;
 const WARN_START_DAY       = 10;
 const PASSWORD             = 'LikeMinded2026';
 const AUTH_DAYS            = 30;
@@ -541,7 +539,6 @@ const CUR_YEAR             = new Date().getFullYear();
 const WITHDRAWAL_MONTH     = 11;   // 0-indexed: December
 const WITHDRAWAL_OPEN_DAY  = 5;
 const WITHDRAWAL_CLOSE_DAY = 21;
-const ADMIN_WHATSAPP       = '254700000000'; // ← replace with your number (no + or spaces)
 // Default icon/colour lookups — extended automatically for new members via sheet
 // New member? Just add their row to the Members tab. Icon/colour defaults apply if not in these maps.
 
@@ -823,19 +820,19 @@ function calculateMemberArchetype(memberData, allMembersData, currentMonth) {
             const sortedMembers = [...allMembersData].sort((a,b) => b.closingBalance - a.closingBalance);
             const rank = sortedMembers.findIndex(m => m.closingBalance === closingBalance) + 1;
             if (totalTopups === 0) return 'GHOST';
-            if (currentMonthTopup > 0 && currentMonthTopup < MINIMUM_CONTRIBUTION) return 'PARTIAL_CONTRIBUTOR';
+            if (currentMonthTopup > 0 && currentMonthTopup < MIN_CONTRIB) return 'PARTIAL_CONTRIBUTOR';
             if (monthIndex > 0 && previousMonthTopup !== undefined) {
                 const trendChange  = currentMonthTopup - previousMonthTopup;
                 const trendPercent = previousMonthTopup > 0 ? (trendChange / previousMonthTopup) * 100 : 0;
                 if (Math.abs(trendPercent) > 50 && monthIndex > 1) return 'VOLATILE';
                 if (trendChange > 0 && trendPercent > 20) return 'ACCELERATOR';
-                if (trendChange < 0 && trendPercent < -20 && currentMonthTopup >= MINIMUM_CONTRIBUTION) return 'DECELERATOR';
+                if (trendChange < 0 && trendPercent < -20 && currentMonthTopup >= MIN_CONTRIB) return 'DECELERATOR';
             }
             const avgDeposit = monthsElapsed > 0 ? totalTopups / monthsElapsed : 0;
             if (rank <= 3 && closingBalance > 0) return 'OVERACHIEVER';
-            if (daysActive <= 5 && currentMonthTopup >= MINIMUM_CONTRIBUTION) return 'EARLY_BIRD';
-            if (avgDeposit > MINIMUM_CONTRIBUTION * 2) return 'BIG_DEPOSITOR';
-            if (currentMonthTopup >= MINIMUM_CONTRIBUTION) {
+            if (daysActive <= 5 && currentMonthTopup >= MIN_CONTRIB) return 'EARLY_BIRD';
+            if (avgDeposit > MIN_CONTRIB * 2) return 'BIG_DEPOSITOR';
+            if (currentMonthTopup >= MIN_CONTRIB) {
                 const variance = Math.abs(currentMonthTopup - avgDeposit) / (avgDeposit || 1);
                 return variance < 0.15 ? 'STEADY_CONTRIBUTOR' : 'STEADY_CLIMBER';
             }
@@ -863,9 +860,9 @@ function formatArchetypeMessage(archetype, memberData, allMembersData, currentMo
                 const suggestedNext   = Math.round((memberData.currentMonthTopup || 0) * 1.2);
                 const prevTopup       = memberData.previousMonthTopup || 0;
                 const balanceIncrease = prevTopup > 0 ? Math.round(((memberData.currentMonthTopup - prevTopup) / prevTopup) * 100) : 0;
-                const estimatedInterest = ((memberData.closingBalance||0) + (avgDeposit*monthsRemaining)) * ETICA_MONTHLY_YIELD * monthsRemaining;
+                const estimatedInterest = ((memberData.closingBalance||0) + (avgDeposit*monthsRemaining)) * ETICA_MONTHLY * monthsRemaining;
                 const shareOfTotal    = allMembersData.length > 0 ? Math.round(((memberData.closingBalance||0) / allMembersData.reduce((s,m)=>s+(m.closingBalance||0),0))*100) : 0;
-                const lateStart       = MINIMUM_CONTRIBUTION * monthsRemaining + (MINIMUM_CONTRIBUTION * monthsRemaining * ETICA_MONTHLY_YIELD * (monthsRemaining/2));
+                const lateStart       = MIN_CONTRIB * monthsRemaining + (MIN_CONTRIB * monthsRemaining * ETICA_MONTHLY * (monthsRemaining/2));
                 let text = msg.text
                     .replace(/{projected}/g,           `KES ${Math.round(projected).toLocaleString()}`)
                     .replace(/{stretchGoal}/g,         `KES ${Math.round(stretchGoal).toLocaleString()}`)
@@ -876,8 +873,8 @@ function formatArchetypeMessage(archetype, memberData, allMembersData, currentMo
                     .replace(/{currentInterest}/g,     `KES ${(memberData.currentInterest||0).toLocaleString()}`)
                     .replace(/{avgDeposit}/g,          `KES ${Math.round(avgDeposit).toLocaleString()}`)
                     .replace(/{monthsLeft}/g,          monthsRemaining.toString())
-                    .replace(/{minimum}/g,             `KES ${MINIMUM_CONTRIBUTION.toLocaleString()}`)
-                    .replace(/{gapToMinimum}/g,        `KES ${Math.max(0, MINIMUM_CONTRIBUTION-(memberData.currentMonthTopup||0)).toLocaleString()}`)
+                    .replace(/{minimum}/g,             `KES ${MIN_CONTRIB.toLocaleString()}`)
+                    .replace(/{gapToMinimum}/g,        `KES ${Math.max(0, MIN_CONTRIB-(memberData.currentMonthTopup||0)).toLocaleString()}`)
                     .replace(/{currentBalance}/g,      `KES ${(memberData.closingBalance||0).toLocaleString()}`)
                     .replace(/{suggestedNextDeposit}/g,`KES ${suggestedNext.toLocaleString()}`)
                     .replace(/{balanceIncrease}/g,     balanceIncrease.toString())
@@ -885,13 +882,18 @@ function formatArchetypeMessage(archetype, memberData, allMembersData, currentMo
                     .replace(/{similarMembers}/g,      (Math.floor(Math.random()*5)+3).toString())
                     .replace(/{shareOfTotal}/g,        shareOfTotal.toString())
                     .replace(/{projectedInterest}/g,   `KES ${Math.round(estimatedInterest).toLocaleString()}`)
-                    .replace(/{lateStartProjection}/g, `KES ${Math.round(lateStart).toLocaleString()}`)
-                    .replace(/\*\*/g, '');
+                    .replace(/{lateStartProjection}/g, `KES ${Math.round(lateStart).toLocaleString()}`);
                 return { icon: msg.icon, text };
             } catch(e) {
                 return { icon: '📊', text: `You're on track for KES ${Math.round((memberData.closingBalance||0)+40000).toLocaleString()} by December. Keep going!` };
             }
         }
+
+// Renders **text** markers as <strong> elements instead of stripping them
+function renderBold(text) {
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return parts.map((p, i) => i % 2 === 1 ? React.createElement('strong', {key:i}, p) : p);
+}
 
 // ─── PASSWORD ──────────────────────────────────────────────────────────────
 function PwScreen({onOK}) {
@@ -1085,7 +1087,8 @@ function App() {
   const [loading, setLoading]  = useState(true);
   const [error,   setError]    = useState(null);
   const [tab,     setTab]      = useState('overview');
-  const [month,   setMonth]    = useState(curMonth);
+  const [overviewMonth, setOverviewMonth] = useState(curMonth);
+  const [balanceMonth,  setBalanceMonth]  = useState(curMonth);
   const [alias,   setAlias]    = useState('');
   const [allView, setAllView]  = useState(false);
   const [ts,      setTs]       = useState(null);
@@ -1237,11 +1240,11 @@ function App() {
 
   const stats = useCallback(() => {
     if (!data) return null;
-    const rows = getRows(month);
+    const rows = getRows(overviewMonth);
     const mTopups = rows.reduce((s,r)=>s+r.topups,0);
     const mInt    = rows.reduce((s,r)=>s+r.interest,0);
     const totBal  = rows.reduce((s,r)=>s+r.closingBalance,0);
-    const idx = MONTHS.indexOf(month);
+    const idx = MONTHS.indexOf(overviewMonth);
     let cumC=0,cumI=0;
     for (let i=0;i<=idx;i++) {
       if (data[MONTHS[i]]) {
@@ -1251,7 +1254,7 @@ function App() {
       }
     }
     return {mTopups,mInt,cumC,cumI,totBal};
-  }, [data, month, getRows]);
+  }, [data, overviewMonth, getRows]);
 
   if (!auth) return <PwScreen onOK={() => setAuth2(true)} />;
 
@@ -1275,24 +1278,24 @@ function App() {
   const today   = new Date().getDate();
   const wdraw   = withdrawalWindow();
   const decData = data?.['December'];
-  const md      = data?.[month]?.[alias]||{openingBalance:0,topups:0,interest:0,daysActive:0,closingBalance:0};
+  const md      = data?.[balanceMonth]?.[alias]||{openingBalance:0,topups:0,interest:0,daysActive:0,closingBalance:0};
   const partner = pairs[alias];
   const f2 = n => n.toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
   const f0 = n => n.toLocaleString('en-KE',{maximumFractionDigits:0});
 
   let warn='', warnMsg='';
-  if (month===cm && today>=WARN_START_DAY && alias) {
+  if (balanceMonth===cm && today>=WARN_START_DAY && alias) {
     if (partner) {
-      const pd=data[month]?.[partner]||{topups:0};
+      const pd=data[balanceMonth]?.[partner]||{topups:0};
       const comb=md.topups+pd.topups;
-      if (comb===0) { warn=true; warnMsg=`Combined ${month} contribution with ${partner} not recorded yet.`; }
+      if (comb===0) { warn=true; warnMsg=`Combined ${balanceMonth} contribution with ${partner} not recorded yet.`; }
       else if (comb<MIN_CONTRIB) {
         warn=true;
         const fn=PARTIAL_CONTRIBUTION_MESSAGES[Math.floor(Math.random()*PARTIAL_CONTRIBUTION_MESSAGES.length)];
         warnMsg=fn(comb,MIN_CONTRIB-comb)+` (Combined with ${partner})`;
       }
     } else {
-      if (md.topups===0) { warn=true; warnMsg=`${month} contribution not recorded yet. Deposit KES ${MIN_CONTRIB.toLocaleString()} soon.`; }
+      if (md.topups===0) { warn=true; warnMsg=`${balanceMonth} contribution not recorded yet. Deposit KES ${MIN_CONTRIB.toLocaleString()} soon.`; }
       else if (md.topups<MIN_CONTRIB) {
         warn=true;
         const fn=PARTIAL_CONTRIBUTION_MESSAGES[Math.floor(Math.random()*PARTIAL_CONTRIBUTION_MESSAGES.length)];
@@ -1303,7 +1306,7 @@ function App() {
 
   let motiv = {icon:'📊',text:'Keep going!'};
   if (alias && data) {
-    const idx=MONTHS.indexOf(month);
+    const idx=MONTHS.indexOf(balanceMonth);
     const hist={totalTopups:0,totalInterest:0,currentMonthTopup:0,currentInterest:0,previousMonthTopup:0,closingBalance:0,daysActive:0};
     for (let i=0;i<=idx;i++) {
       const m2=data[MONTHS[i]]?.[alias]||{};
@@ -1311,9 +1314,9 @@ function App() {
       if (i===idx) { hist.currentMonthTopup=m2.topups||0; hist.currentInterest=m2.interest||0; hist.closingBalance=m2.closingBalance||0; hist.daysActive=m2.daysActive||0; }
       if (i===idx-1) hist.previousMonthTopup=m2.topups||0;
     }
-    const allMD=members.map(a=>({alias:a,closingBalance:data[month]?.[a]?.closingBalance||0}));
-    const arch=calculateMemberArchetype(hist,allMD,month);
-    motiv=formatArchetypeMessage(arch,hist,allMD,month);
+    const allMD=members.map(a=>({alias:a,closingBalance:data[balanceMonth]?.[a]?.closingBalance||0}));
+    const arch=calculateMemberArchetype(hist,allMD,balanceMonth);
+    motiv=formatArchetypeMessage(arch,hist,allMD,balanceMonth);
   }
 
 
@@ -1366,13 +1369,13 @@ function App() {
       {/* ══ OVERVIEW ══ */}
       <div className={`panel${tab==='overview'?' on':''}`}>
         {allView
-          ? <AllMembers month={month} rows={getRows(month)} ts={ts} data={data} theme={theme} onBack={() => setAllView(false)} members={members} />
+          ? <AllMembers month={overviewMonth} rows={getRows(overviewMonth)} ts={ts} data={data} theme={theme} onBack={() => setAllView(false)} members={members} />
           : <>
               {/* Month selector — same pill style as My Balance */}
               <div className="bpad" style={{paddingTop:14,paddingBottom:0}}>
                 <div className="mscroll">
                   {MONTHS.map(m => (
-                    <button key={m} className={`mpill${month===m?' on':''}`} onClick={() => setMonth(m)}>
+                    <button key={m} className={`mpill${overviewMonth===m?' on':''}`} onClick={() => setOverviewMonth(m)}>
                       {m.slice(0,3)}
                     </button>
                   ))}
@@ -1380,7 +1383,7 @@ function App() {
               </div>
 
               <div className="hero">
-                <div className="hero-lbl">Group Contributions to Date &middot; Jan &ndash; {month}</div>
+                <div className="hero-lbl">Group Contributions to Date &middot; Jan &ndash; {overviewMonth}</div>
                 <div className="hero-num">{st ? f2(st.cumC) : '—'}</div>
                 <div className="hero-sub">
                   <span style={{color:'var(--t3)'}}>This month:</span>
@@ -1453,7 +1456,7 @@ function App() {
         <div className="bpad">
           <div className="mscroll">
             {MONTHS.map(m => (
-              <button key={m} className={`mpill${month===m?' on':''}`} onClick={() => setMonth(m)}>
+              <button key={m} className={`mpill${balanceMonth===m?' on':''}`} onClick={() => setBalanceMonth(m)}>
                 {m.slice(0,3)}
               </button>
             ))}
@@ -1506,7 +1509,7 @@ function App() {
           {alias ? <>
             <div className="scrd">
               <div className="s-alias">{alias}</div>
-              <div className="s-month">{month} {CUR_YEAR}</div>
+              <div className="s-month">{balanceMonth} {CUR_YEAR}</div>
               <div className="srow">
                 <span className="slbl">Opening Balance</span>
                 <span className="sval">{f2(md.openingBalance)}</span>
@@ -1662,11 +1665,11 @@ function App() {
                     <span style={{color:'#00c87a'}}>&#9135;</span> Balance &nbsp;
                     <span style={{color:'#3b82f6'}}>&#8213;</span> Projected
                   </div>
-                  <MemberChart alias={alias} data={data} month={month} theme={theme} />
+                  <MemberChart alias={alias} data={data} month={balanceMonth} theme={theme} />
                 </div>
                 <div className="mcrd">
                   <div className="mico">{motiv.icon}</div>
-                  <div className="mtxt">{motiv.text}</div>
+                  <div className="mtxt">{renderBold(motiv.text)}</div>
                 </div>
               </>
             )}
