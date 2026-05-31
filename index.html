@@ -417,6 +417,10 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .modal-sheet.alias-sheet{max-height:82svh;display:flex;flex-direction:column;}
 .alias-grid-wrap{overflow-y:auto;flex:1;padding:4px 12px 0;}
 .alias-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-bottom:8px;}
+.alias-grid-inline{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 0 16px;}
+.alias-pick-hdr{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:14px;margin-top:4px;}
+.change-alias{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:var(--ibg);border:1px solid var(--br2);border-radius:20px;font-size:.72rem;font-weight:700;color:var(--t2);cursor:pointer;margin-bottom:12px;transition:background .15s,color .15s;}
+.change-alias:hover{background:var(--acl);color:var(--ac);border-color:var(--ac);}
 .alias-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px 8px;border-radius:16px;background:var(--ibg);border:1px solid var(--br);cursor:pointer;transition:all .15s;text-align:center;}
 .alias-cell:active{transform:scale(.95);}
 .alias-cell.sel{background:var(--acl);border-color:var(--ac);}
@@ -460,57 +464,48 @@ const CITY_ICON = {
 };
 
 const CITY_COLOR = {
-  Tokyo:      'rgba(239,68,68,.15)',
-  Berlin:     'rgba(168,85,247,.15)',
-  Gandia:     'rgba(245,158,11,.15)',
-  Denver:     'rgba(59,130,246,.15)',
-  Helsinki:   'rgba(20,184,166,.15)',
-  Oslo:       'rgba(16,185,129,.15)',
-  Moscow:     'rgba(99,102,241,.15)',
-  California: 'rgba(251,146,60,.15)',
-  Lisbon:     'rgba(236,72,153,.15)',
-  Stockholm:  'rgba(234,179,8,.15)',
-  Paris:      'rgba(59,130,246,.15)',
-  Marseille:  'rgba(14,165,233,.15)',
-  Rio:        'rgba(6,182,212,.15)',
-  Nairobi:    'rgba(132,204,22,.15)',
-  'Tel Aviv': 'rgba(168,85,247,.15)',
-  Valencia:   'rgba(249,115,22,.15)',
-  Havana:     'rgba(239,68,68,.15)',
-  Manilla:    'rgba(236,72,153,.15)',
-  Scofield:   'rgba(100,116,139,.15)',
-  Bogota:     'rgba(20,184,166,.15)',
-  Emirates:   'rgba(234,179,8,.15)',
-  Dublin:     'rgba(34,197,94,.15)',
-  Doha:       'rgba(99,102,241,.15)',
-  Bern:       'rgba(14,165,233,.15)'
+  // ── cool tones: teals · icy blues · grey-blues ──────────────
+  Berlin:     'rgba( 55,105,165,.18)',   // steel blue
+  Denver:     'rgba( 42, 95,130,.18)',   // slate teal
+  Oslo:       'rgba( 38,108,102,.18)',   // sea green
+  Stockholm:  'rgba( 58, 80,115,.18)',   // pewter blue
+  Paris:      'rgba( 60, 88,148,.18)',   // indigo blue
+  Rio:        'rgba( 38,100,110,.18)',   // ocean teal
+  Dublin:     'rgba( 42, 98, 88,.18)',   // moss teal
+  Bern:       'rgba( 62, 95,128,.18)',   // glacier blue
+  // ── warm tones: terracotta · sunset orange · golden amber ───
+  Tokyo:      'rgba(172, 68, 45,.18)',   // terracotta
+  Gandia:     'rgba(188,132, 42,.18)',   // golden sand
+  California: 'rgba(198, 88, 40,.18)',   // sunset orange
+  Marseille:  'rgba(182,112, 38,.18)',   // warm amber
+  Nairobi:    'rgba(162, 62, 30,.18)',   // burnt sienna
+  Valencia:   'rgba(178, 82, 42,.18)',   // cinnamon
+  Havana:     'rgba(168, 95, 32,.18)',   // bronze
+  Emirates:   'rgba(198,145, 38,.18)',   // desert gold
+  // ── neutral anchors: beige · sand · slate ───────────────────
+  Helsinki:   'rgba( 88,112,108,.18)',   // sage grey
+  Moscow:     'rgba( 88, 90, 98,.18)',   // cool slate
+  Lisbon:     'rgba(148,125, 90,.18)',   // warm sand
+  'Tel Aviv': 'rgba( 95,108,118,.18)',   // stone blue
+  Manilla:    'rgba(142,118, 88,.18)',   // pale beige
+  Scofield:   'rgba(100,108,115,.18)',   // pebble grey
+  Bogota:     'rgba(128, 98, 72,.18)',   // clay
+  Doha:       'rgba(132,118, 90,.18)',   // driftwood
 };
 
 const CITY_BORDER = {
-  Tokyo:      'rgba(239,68,68,.3)',
-  Berlin:     'rgba(168,85,247,.3)',
-  Gandia:     'rgba(245,158,11,.3)',
-  Denver:     'rgba(59,130,246,.3)',
-  Helsinki:   'rgba(20,184,166,.3)',
-  Oslo:       'rgba(16,185,129,.3)',
-  Moscow:     'rgba(99,102,241,.3)',
-  California: 'rgba(251,146,60,.3)',
-  Lisbon:     'rgba(236,72,153,.3)',
-  Stockholm:  'rgba(234,179,8,.3)',
-  Paris:      'rgba(59,130,246,.3)',
-  Marseille:  'rgba(14,165,233,.3)',
-  Rio:        'rgba(6,182,212,.3)',
-  Nairobi:    'rgba(132,204,22,.3)',
-  'Tel Aviv': 'rgba(168,85,247,.3)',
-  Valencia:   'rgba(249,115,22,.3)',
-  Havana:     'rgba(239,68,68,.3)',
-  Manilla:    'rgba(236,72,153,.3)',
-  Scofield:   'rgba(100,116,139,.3)',
-  Bogota:     'rgba(20,184,166,.3)',
-  Emirates:   'rgba(234,179,8,.3)',
-  Dublin:     'rgba(34,197,94,.3)',
-  Doha:       'rgba(99,102,241,.3)',
-  Bern:       'rgba(14,165,233,.3)'
+  Berlin:     'rgba( 55,105,165,.32)',  Denver:     'rgba( 42, 95,130,.32)',
+  Oslo:       'rgba( 38,108,102,.32)',  Stockholm:  'rgba( 58, 80,115,.32)',
+  Paris:      'rgba( 60, 88,148,.32)',  Rio:        'rgba( 38,100,110,.32)',
+  Dublin:     'rgba( 42, 98, 88,.32)',  Bern:       'rgba( 62, 95,128,.32)',
+  Tokyo:      'rgba(172, 68, 45,.32)',  Gandia:     'rgba(188,132, 42,.32)',
+  California: 'rgba(198, 88, 40,.32)',  Marseille:  'rgba(182,112, 38,.32)',
+  Nairobi:    'rgba(162, 62, 30,.32)',  Valencia:   'rgba(178, 82, 42,.32)',
+  Havana:     'rgba(168, 95, 32,.32)',  Emirates:   'rgba(198,145, 38,.32)',
+  Helsinki:   'rgba( 88,112,108,.32)',  Moscow:     'rgba( 88, 90, 98,.32)',
+  Lisbon:     'rgba(148,125, 90,.32)',  'Tel Aviv': 'rgba( 95,108,118,.32)',
+  Manilla:    'rgba(142,118, 88,.32)',  Scofield:   'rgba(100,108,115,.32)',
+  Bogota:     'rgba(128, 98, 72,.32)',  Doha:       'rgba(132,118, 90,.32)',
 };
 const MONTHS = ['January','February','March','April','May','June',
   'July','August','September','October','November','December'];
@@ -1403,38 +1398,55 @@ function App() {
 
   /* ── YTD summary row ── */
   .ytd-strip{display:flex;gap:0;margin:0 36px 24px;border:1px solid ${border};border-radius:12px;overflow:hidden;}
-  .ytd-cell{flex:1;padding:14px 16px;text-align:center;border-right:1px solid ${border};}
+  .ytd-cell{flex:1;padding:14px 12px;text-align:center;border-right:1px solid ${border};}
   .ytd-cell:last-child{border-right:none;}
-  .ytd-lbl{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${t3};margin-bottom:6px;}
-  .ytd-val{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:600;color:${t1};}
-  .ytd-val.grn{color:${green};}
+  .ytd-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:${t3};margin-bottom:5px;}
+  .ytd-kes{display:block;font-size:.62rem;font-weight:600;color:${t3};letter-spacing:.04em;margin-bottom:2px;}
+  .ytd-amt{display:block;font-family:'JetBrains Mono',monospace;font-size:.92rem;font-weight:700;color:${t1};word-break:break-all;}
+  .ytd-amt.grn{color:${green};}
 
   /* ── Section label ── */
   .sec-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${t3};
     padding:0 36px 10px;margin-top:4px;}
 
+  /* ── Table wrapper scrolls on narrow screens ── */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
   /* ── Table ── */
-  table{width:100%;border-collapse:collapse;}
-  th{padding:10px 14px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
-    color:${t2};border-bottom:2px solid ${border2};background:${isDark ? '#1f2435' : '#f3f4f6'};text-align:right;}
+  table{width:100%;border-collapse:collapse;min-width:440px;}
+  th{padding:10px 10px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    color:${t2};border-bottom:2px solid ${border2};background:${isDark ? '#1f2435' : '#f3f4f6'};text-align:right;white-space:nowrap;}
   th:first-child{text-align:left;padding-left:36px;}
-  th:last-child{padding-right:36px;}
-  td{padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:.82rem;text-align:right;
+  th:last-child{padding-right:20px;}
+  td{padding:10px 10px;font-family:'JetBrains Mono',monospace;font-size:.8rem;text-align:right;
     border-bottom:1px solid ${border};color:${t2};}
-  td:first-child{font-family:'DM Sans',sans-serif;text-align:left;padding-left:36px;}
-  td:last-child{padding-right:36px;}
+  td:first-child{font-family:'DM Sans',sans-serif;text-align:left;padding-left:36px;font-size:.84rem;}
+  td:last-child{padding-right:20px;}
   .tfoot-row td{background:${tfoot};border-top:2px solid ${border2};border-bottom:none;
-    font-weight:700;color:${t1};font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+    font-weight:700;color:${t1};font-family:'JetBrains Mono',monospace;font-size:.8rem;}
   .tfoot-row td:first-child{font-family:'DM Sans',sans-serif;color:${t1};}
   .tfoot-row .grn{color:${green};}
 
   /* ── Footer ── */
   .footer{padding:20px 36px 28px;margin-top:8px;border-top:1px solid ${border};
-    display:flex;justify-content:space-between;align-items:flex-end;gap:16px;}
+    display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;}
   .footer-note{font-size:.68rem;color:${t3};line-height:1.7;max-width:58%;}
   .footer-right{text-align:right;flex-shrink:0;}
   .footer-date{font-size:.68rem;color:${t3};}
   .footer-conf{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${border2};margin-top:3px;}
+  @media(max-width:480px){
+    body{padding:0;}
+    .page{border-radius:0;border-left:none;border-right:none;}
+    .hdr,.member,.ytd-strip,.sec-lbl,.footer{margin-left:0;margin-right:0;}
+    .hdr{padding:20px 20px 16px;}
+    .member{margin:16px 0;}
+    .ytd-strip{margin:0 0 20px;border-radius:0;border-left:none;border-right:none;}
+    .sec-lbl{padding:0 0 8px;}
+    th:first-child,td:first-child{padding-left:16px;}
+    th:last-child,td:last-child{padding-right:12px;}
+    .footer{padding:16px 16px 24px;}
+    .footer-note{max-width:100%;}
+  }
 </style>
 </head>
 <body>
@@ -1462,19 +1474,23 @@ function App() {
   <div class="ytd-strip">
     <div class="ytd-cell">
       <div class="ytd-lbl">YTD Deposits</div>
-      <div class="ytd-val">KES ${fmt0(ytdTopups)}</div>
+      <span class="ytd-kes">KES</span>
+      <span class="ytd-amt">${fmt0(ytdTopups)}</span>
     </div>
     <div class="ytd-cell">
       <div class="ytd-lbl">YTD Interest</div>
-      <div class="ytd-val grn">KES ${fmt2(ytdInterest)}</div>
+      <span class="ytd-kes">KES</span>
+      <span class="ytd-amt grn">${fmt2(ytdInterest)}</span>
     </div>
     <div class="ytd-cell">
       <div class="ytd-lbl">Current Balance</div>
-      <div class="ytd-val grn">KES ${fmt2(latestClosing)}</div>
+      <span class="ytd-kes">KES</span>
+      <span class="ytd-amt grn">${fmt2(latestClosing)}</span>
     </div>
   </div>
 
   <div class="sec-lbl">Monthly Breakdown</div>
+  <div class="tbl-wrap">
   <table>
     <thead>
       <tr>
@@ -1496,6 +1512,7 @@ function App() {
       </tr>
     </tfoot>
   </table>
+  </div>
 
   <div class="footer">
     <div class="footer-note">
@@ -1654,59 +1671,40 @@ function App() {
       {/* ══ MY BALANCE ══ */}
       <div className={`panel${tab==='balance'?' on':''}`}>
         <div className="bpad">
-          <div className="mscroll">
-            {MONTHS.map(m => (
-              <button key={m} className={`mpill${balanceMonth===m?' on':''}`} onClick={() => setBalanceMonth(m)}>
-                {m.slice(0,3)}
-              </button>
-            ))}
-          </div>
 
-          <div className="acrd">
-            <div className="albl">Who are you?</div>
-            <button className="cdrop-btn asel-btn" style={{width:'100%'}} onClick={() => setOpenDrop('alias')}>
-              {alias
-                ? <span className="alias-sel-display">
-                    <span className="alias-sel-ico">{cityIcon[alias]}</span>
-                    <span style={{color:'var(--t1)'}}>{alias}</span>
-                  </span>
-                : <span style={{color:'var(--t3)'}}>Select your alias&hellip;</span>
-              }
-              <span style={{fontSize:'.65rem',opacity:.55}}>&#9660;</span>
-            </button>
-          </div>
-
-          {/* ALIAS MODAL */}
-          {openDrop === 'alias' && (
+          {!alias ? (
+            /* ── No alias yet: show inline grid ── */
             <>
-              <div className="modal-blur" onClick={() => setOpenDrop(null)} />
-              <div className="modal-overlay" onClick={() => setOpenDrop(null)}>
-                <div className="modal-sheet alias-sheet" onClick={e => e.stopPropagation()}>
-                  <div className="modal-handle" />
-                  <div className="modal-title">&#128100; Who are you?</div>
-                  <div className="alias-grid-wrap">
-                    <div className="alias-grid">
-                      {members.map(a => (
-                        <div key={a}
-                          className={'alias-cell' + (alias === a ? ' sel' : '')}
-                          style={{
-                            background: alias === a ? 'var(--acl)' : cityColor[a] || 'var(--ibg)',
-                            borderColor: alias === a ? 'var(--ac)'  : cityBorder[a] || 'var(--br)'
-                          }}
-                          onClick={() => { setAlias(a); setOpenDrop(null); }}>
-                          <span className="alias-cell-ico">{cityIcon[a] || '👤'}</span>
-                          <span className="alias-cell-lbl">{a}</span>
-                        </div>
-                      ))}
-                    </div>
+              <div className="alias-pick-hdr">&#128100; Who are you?</div>
+              <div className="alias-grid-inline">
+                {members.map(a => (
+                  <div key={a}
+                    className="alias-cell"
+                    style={{
+                      background:   cityColor[a]  || 'var(--ibg)',
+                      borderColor:  cityBorder[a] || 'var(--br)'
+                    }}
+                    onClick={() => setAlias(a)}>
+                    <span className="alias-cell-ico">{cityIcon[a] || '👤'}</span>
+                    <span className="alias-cell-lbl">{a}</span>
                   </div>
-                  <button className="modal-cancel" onClick={() => setOpenDrop(null)}>Cancel</button>
-                </div>
+                ))}
               </div>
             </>
-          )}
+          ) : (
+            /* ── Alias selected: show balance content ── */
+            <>
+              <div className="mscroll">
+                {MONTHS.map(m => (
+                  <button key={m} className={`mpill${balanceMonth===m?' on':''}`} onClick={() => setBalanceMonth(m)}>
+                    {m.slice(0,3)}
+                  </button>
+                ))}
+              </div>
 
-          {alias ? <>
+              <button className="change-alias" onClick={() => setAlias('')}>
+                &#9998; Change
+              </button>
             <div className="scrd">
               <div className="s-alias">{alias}</div>
               <div className="s-month">{balanceMonth} {CUR_YEAR}</div>
@@ -1877,11 +1875,7 @@ function App() {
                 </div>
               </>
             )}
-          </> : (
-            <div className="empty">
-              <div style={{fontSize:'2rem',marginBottom:10}}>&#128070;</div>
-              Select your alias above to see your balance and projection
-            </div>
+          </>
           )}
         </div>
       </div>
