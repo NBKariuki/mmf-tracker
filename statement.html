@@ -7,589 +7,294 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* ── Theme tokens ─────────────────────────────────────────────────────── */
-:root {
-  --bg:      #f5f7f5; --page:   #ffffff; --t1:  #111827; --t2:   #6b7280;
-  --t3:      #9ca3af; --br:     #e5e7eb; --br2: #d1d5db; --row:  #f9fafb;
-  --row-alt: #ffffff; --cur:    #ecfdf5; --tfoot:#f3f4f6; --th:  #f3f4f6;
-  --green:   #00a86b; --green-d:#ecfdf5; --green-b:#a7f3d0;
-  --daily-bg:#f0f9ff; --daily-br:#bae6fd;
-}
-[data-theme="dark"] {
-  --bg:      #0f1117; --page:   #1a1e28; --t1:  #e8eaf0; --t2:   #9aa0b8;
-  --t3:      #6b7280; --br:     #2d3347; --br2: #3a4060; --row:  #1e2233;
-  --row-alt: #1a1e28; --cur:    #0d2e1f; --tfoot:#222638; --th:  #1f2435;
-  --green:   #00a86b; --green-d:#0d3326; --green-b:#145940;
-  --daily-bg:#0d1f2d; --daily-br:#1e3a52;
-}
-
-/* ── Base ──────────────────────────────────────────────────────────────── */
+:root{--bg:#f5f7f5;--page:#ffffff;--t1:#111827;--t2:#6b7280;--t3:#9ca3af;--br:#e5e7eb;--br2:#d1d5db;--row0:#f9fafb;--row1:#ffffff;--cur:#ecfdf5;--foot:#f3f4f6;--th:#f3f4f6;--ac:#00a86b;--ac-d:#ecfdf5;--ac-b:#a7f3d0;--dd-bg:#f0f9ff;--dd-b:#bae6fd;}
+[data-theme="dark"]{--bg:#0f1117;--page:#1a1e28;--t1:#e8eaf0;--t2:#9aa0b8;--t3:#6b7280;--br:#2d3347;--br2:#3a4060;--row0:#1e2233;--row1:#1a1e28;--cur:#0d2e1f;--foot:#222638;--th:#1f2435;--ac:#00a86b;--ac-d:#0d3326;--ac-b:#145940;--dd-bg:#0d1f2d;--dd-b:#1e3a52;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);
-  padding:24px 16px 56px;min-height:100vh;transition:background .2s;}
-a{color:var(--green);text-decoration:none;}
-a:hover{text-decoration:underline;}
-
-/* ── Page card ─────────────────────────────────────────────────────────── */
-.page{max-width:680px;margin:0 auto;background:var(--page);border-radius:20px;
-  overflow:hidden;border:1px solid var(--br);}
-
-/* ── Header ─────────────────────────────────────────────────────────────── */
-.hdr{padding:26px 36px 20px;border-bottom:1px solid var(--br);
-  display:flex;justify-content:space-between;align-items:center;gap:20px;}
-.brand{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:800;
-  color:var(--green);line-height:1.2;}
-.brand-sub{font-size:.62rem;color:var(--t3);margin-top:4px;
-  letter-spacing:.07em;text-transform:uppercase;}
-.hdr-div{width:1px;height:34px;background:var(--br2);flex-shrink:0;}
-.stmt-label{text-align:right;}
-.stmt-title{font-family:'Sora',sans-serif;font-size:1.45rem;font-weight:800;
-  color:var(--t1);letter-spacing:-.025em;}
-.stmt-period{font-size:.72rem;color:var(--t2);margin-top:4px;}
-
-/* ── Member strip ──────────────────────────────────────────────────────── */
-.member{display:flex;align-items:center;gap:14px;margin:24px 36px;
-  padding:16px 20px;background:var(--green-d);border:1px solid var(--green-b);
-  border-radius:14px;}
-.member-ico{font-size:2rem;line-height:1;flex-shrink:0;}
-.member-name{font-family:'Sora',sans-serif;font-size:1.15rem;font-weight:800;
-  color:var(--t1);}
-.member-ref{font-size:.72rem;color:var(--t2);margin-top:3px;
-  font-family:'JetBrains Mono',monospace;}
-
-/* ── YTD strip ──────────────────────────────────────────────────────────── */
-.ytd{display:flex;margin:0 36px 24px;border:1px solid var(--br);
-  border-radius:12px;overflow:hidden;}
-.ytd-cell{flex:1;padding:14px 12px;text-align:center;
-  border-right:1px solid var(--br);}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);padding:20px 12px 56px;}
+.page{max-width:680px;margin:0 auto;background:var(--page);border-radius:18px;border:1px solid var(--br);overflow:hidden;}
+.hdr{padding:24px 32px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:20px;}
+.brand{flex:1;}
+.brand-name{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:800;color:var(--ac);}
+.brand-sub{font-size:.6rem;color:var(--t3);margin-top:3px;letter-spacing:.07em;text-transform:uppercase;}
+.hdr-div{width:1px;height:32px;background:var(--br2);flex-shrink:0;}
+.stmt-r{text-align:right;}
+.stmt-title{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;color:var(--t1);letter-spacing:-.02em;}
+.stmt-sub{font-size:.7rem;color:var(--t2);margin-top:4px;}
+.member{display:flex;align-items:center;gap:12px;margin:20px 28px;padding:14px 18px;background:var(--ac-d);border:1px solid var(--ac-b);border-radius:12px;}
+.m-ico{font-size:1.8rem;line-height:1;flex-shrink:0;}
+.m-name{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--t1);}
+.m-ref{font-size:.68rem;color:var(--t2);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.ytd{display:flex;margin:0 28px 20px;border:1px solid var(--br);border-radius:10px;overflow:hidden;}
+.ytd-cell{flex:1;padding:12px 10px;text-align:center;border-right:1px solid var(--br);}
 .ytd-cell:last-child{border-right:none;}
-.ytd-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:var(--t3);margin-bottom:5px;}
-.ytd-kes{display:block;font-size:.62rem;font-weight:600;color:var(--t3);
-  letter-spacing:.04em;margin-bottom:2px;}
-.ytd-amt{display:block;font-family:'JetBrains Mono',monospace;font-size:.92rem;
-  font-weight:700;color:var(--t1);word-break:break-all;}
-.ytd-amt.grn{color:var(--green);}
-
-/* ── Section label ──────────────────────────────────────────────────────── */
-.sec-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--t3);padding:0 36px 10px;}
-
-/* ── Summary table ──────────────────────────────────────────────────────── */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-table.summary{width:100%;border-collapse:collapse;min-width:420px;}
-table.summary th{padding:10px 10px;font-size:.62rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--t2);
-  border-bottom:2px solid var(--br2);background:var(--th);text-align:right;
-  white-space:nowrap;}
-table.summary th:first-child{text-align:left;padding-left:14px;}
-table.summary th:last-child{padding-right:14px;}
-table.summary td{padding:0;border-bottom:1px solid var(--br);}
-table.summary .tfoot-row td{background:var(--tfoot);border-top:2px solid var(--br2);
-  border-bottom:none;font-weight:700;}
-
-/* ── Month row (the clickable outer row) ───────────────────────────────── */
-.month-row{display:flex;align-items:center;width:100%;
-  cursor:pointer;transition:background .12s;}
-.month-row:hover{background:rgba(0,168,107,.06);}
-.month-row td, table.summary tr.mrow > td{padding:0;}
-.mrow-inner{display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr;
-  width:100%;padding:11px 10px;align-items:center;gap:0;}
-.mrow-name{display:flex;align-items:center;gap:7px;font-weight:700;
-  font-size:.84rem;padding-left:4px;}
-.mrow-toggle{font-size:.6rem;color:var(--t3);transition:transform .2s;display:inline-block;}
-.mrow-toggle.open{transform:rotate(90deg);}
-.mrow-num{font-family:'JetBrains Mono',monospace;font-size:.8rem;
-  text-align:right;color:var(--t2);}
-.mrow-num.grn{color:var(--green);}
-.mrow-num.bold{font-weight:700;color:var(--t1);}
-.mrow-cur .mrow-name{color:var(--green);}
-.mrow-cur .mrow-num.bold{color:var(--green);}
-
-/* ── Daily detail panel ──────────────────────────────────────────────────── */
-.daily-panel{display:none;background:var(--daily-bg);border-top:1px solid var(--daily-br);}
-.daily-panel.open{display:block;}
-.daily-loading{padding:16px 36px;font-size:.78rem;color:var(--t3);
-  display:flex;align-items:center;gap:8px;}
-.spin-sm{width:14px;height:14px;border:2px solid var(--br2);
-  border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;}
-
-table.daily{width:100%;border-collapse:collapse;min-width:480px;}
-table.daily th{padding:8px 10px;font-size:.6rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--t2);
-  border-bottom:1px solid var(--daily-br);background:transparent;
-  text-align:right;white-space:nowrap;}
-table.daily th:first-child{text-align:left;padding-left:36px;}
-table.daily th:last-child{padding-right:14px;}
-table.daily td{padding:8px 10px;font-family:'JetBrains Mono',monospace;
-  font-size:.76rem;text-align:right;border-bottom:1px solid var(--br);
-  color:var(--t2);}
-table.daily td:first-child{font-family:'DM Sans',sans-serif;text-align:left;
-  padding-left:36px;color:var(--t1);font-size:.78rem;}
-table.daily td:last-child{padding-right:14px;}
-table.daily tr:last-child td{border-bottom:none;}
-.daily-link{display:block;padding:10px 36px 14px;font-size:.72rem;color:var(--green);}
-.daily-err{padding:12px 36px;font-size:.76rem;color:var(--t3);}
-.daily-note{font-size:.72rem;color:var(--t3);padding:8px 36px 12px;
-  font-style:italic;}
-
-/* ── Totals row ─────────────────────────────────────────────────────────── */
-.tfoot-row td{padding:11px 10px !important;}
-.tfoot-inner{display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr;
-  width:100%;padding:0;align-items:center;}
-.tfoot-lbl{padding-left:14px;font-weight:700;font-size:.84rem;}
-.tfoot-num{font-family:'JetBrains Mono',monospace;font-size:.8rem;
-  text-align:right;font-weight:700;color:var(--t1);}
-.tfoot-num.grn{color:var(--green);}
-
-/* ── Footer ──────────────────────────────────────────────────────────────── */
-.footer{padding:20px 36px 28px;margin-top:8px;border-top:1px solid var(--br);
-  display:flex;justify-content:flex-end;align-items:flex-end;flex-wrap:wrap;gap:8px;}
-.footer-date{font-size:.68rem;color:var(--t3);}
-.footer-conf{font-size:.6rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--br2);}
-
-/* ── Loading screen ──────────────────────────────────────────────────────── */
-#loading{display:flex;flex-direction:column;align-items:center;
-  justify-content:center;min-height:60vh;gap:14px;}
-.spin{width:32px;height:32px;border:3px solid var(--br);
-  border-top-color:var(--green);border-radius:50%;
-  animation:spin .8s linear infinite;}
+.ytd-lbl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px;}
+.ytd-kes{display:block;font-size:.58rem;font-weight:600;color:var(--t3);margin-bottom:1px;}
+.ytd-amt{display:block;font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:700;color:var(--t1);word-break:break-all;}
+.ytd-amt.g{color:var(--ac);}
+.sec{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);padding:0 28px 8px;}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.sum{width:100%;border-collapse:collapse;table-layout:fixed;}
+table.sum col.c-mo{width:22%;}
+table.sum col.c-n{width:19.5%;}
+table.sum thead th{padding:9px 12px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);border-bottom:2px solid var(--br2);background:var(--th);text-align:right;white-space:nowrap;}
+table.sum thead th.tl{text-align:left;padding-left:28px;}
+table.sum thead th.tr{padding-right:20px;}
+table.sum tbody tr.mrow{cursor:pointer;}
+table.sum tbody tr.mrow:hover td{background:rgba(0,168,107,.07)!important;}
+table.sum tbody tr.mrow td{padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:.8rem;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);transition:background .1s;}
+table.sum tbody tr.mrow td.tdl{font-family:'DM Sans',sans-serif;text-align:left;padding-left:28px;font-size:.84rem;font-weight:700;color:var(--t1);}
+table.sum tbody tr.mrow td.tdr{padding-right:20px;font-weight:700;color:var(--t1);}
+table.sum tbody tr.mrow.cur td{background:var(--cur);}
+table.sum tbody tr.mrow.cur td.tdl,table.sum tbody tr.mrow.cur td.tdr{color:var(--ac);}
+table.sum tbody tr.mrow td.g{color:var(--ac);}
+table.sum tbody tr.mrow td.ev{background:var(--row0);}
+.tog{display:inline-block;font-size:.55rem;color:var(--t3);margin-right:6px;transition:transform .2s;vertical-align:middle;}
+.tog.open{transform:rotate(90deg);}
+table.sum tbody tr.drow{display:none;}
+table.sum tbody tr.drow.open{display:table-row;}
+table.sum tbody tr.drow td{padding:0;border-bottom:1px solid var(--br);}
+.dp{background:var(--dd-bg);border-top:1px solid var(--dd-b);}
+.dp-spin{padding:14px 28px;display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--t3);}
+.spin{width:13px;height:13px;border:2px solid var(--br2);border-top-color:var(--ac);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.load-txt{font-size:.82rem;color:var(--t2);}
-
-/* ── Mobile tweaks ──────────────────────────────────────────────────────── */
-@media(max-width:480px){
+table.daily{width:100%;border-collapse:collapse;table-layout:fixed;}
+table.daily col.dc-dt{width:20%;}
+table.daily col.dc-nr{width:22%;}
+table.daily col.dc-n{width:14.5%;}
+table.daily thead th{padding:8px 10px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);border-bottom:1px solid var(--dd-b);background:transparent;text-align:right;white-space:nowrap;}
+table.daily thead th.tl{text-align:left;padding-left:28px;}
+table.daily tbody td{padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:.74rem;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);}
+table.daily tbody td.tdl{font-family:'DM Sans',sans-serif;text-align:left;padding-left:28px;color:var(--t1);font-size:.76rem;}
+table.daily tbody td.tdr{padding-right:20px;font-weight:600;color:var(--t1);}
+table.daily tbody td.g{color:var(--ac);}
+table.daily tbody tr:last-child td{border-bottom:none;}
+table.daily tbody tr.alt td{background:rgba(0,0,0,.025);}
+[data-theme="dark"] table.daily tbody tr.alt td{background:rgba(255,255,255,.02);}
+.dp-note{font-size:.66rem;color:var(--t3);padding:8px 28px 12px;font-style:italic;}
+.dp-err{padding:12px 28px;font-size:.74rem;color:var(--t3);}
+table.sum tfoot tr td{padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;text-align:right;border-top:2px solid var(--br2);background:var(--foot);color:var(--t1);}
+table.sum tfoot tr td.tdl{font-family:'DM Sans',sans-serif;text-align:left;padding-left:28px;font-size:.84rem;}
+table.sum tfoot tr td.tdr{padding-right:20px;}
+table.sum tfoot tr td.g{color:var(--ac);}
+.footer{padding:18px 28px 24px;border-top:1px solid var(--br);display:flex;justify-content:flex-end;}
+.f-date{font-size:.65rem;color:var(--t3);text-align:right;}
+.f-conf{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--br2);margin-top:2px;text-align:right;}
+#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:14px;}
+.spin-lg{width:30px;height:30px;border:3px solid var(--br);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite;}
+.load-msg{font-size:.8rem;color:var(--t2);}
+@media(max-width:460px){
   body{padding:0;}
   .page{border-radius:0;border-left:none;border-right:none;}
-  .hdr{padding:18px 16px 14px;}
-  .member{margin:16px;}
-  .ytd{margin:0 0 20px;border-radius:0;border-left:none;border-right:none;}
-  .sec-lbl{padding:0 16px 8px;}
-  table.summary th:first-child,table.summary td .mrow-name{padding-left:8px;}
-  table.daily th:first-child,table.daily td:first-child{padding-left:16px;}
-  .daily-link,.daily-err,.daily-note{padding-left:16px;}
-  .footer{padding:16px 16px 28px;}
-  .tfoot-lbl{padding-left:8px;}
+  .hdr{padding:16px 14px 14px;}
+  .member{margin:14px;}
+  .ytd{margin:0 0 16px;border-radius:0;border-left:none;border-right:none;}
+  .sec{padding:0 14px 6px;}
+  table.sum thead th.tl,table.sum tbody tr.mrow td.tdl,table.sum tfoot tr td.tdl{padding-left:14px;}
+  table.daily thead th.tl,table.daily tbody td.tdl{padding-left:14px;}
+  .dp-spin,.dp-note,.dp-err{padding-left:14px;}
+  .footer{padding:14px 14px 24px;}
 }
 </style>
 </head>
 <body>
-
-<div id="loading">
-  <div class="spin"></div>
-  <div class="load-txt">Loading your statement…</div>
-</div>
-
+<div id="loading"><div class="spin-lg"></div><div class="load-msg">Loading your statement…</div></div>
 <div id="statement" style="display:none">
   <div class="page">
     <div class="hdr">
-      <div>
-        <div class="brand">Like-Minded Folks</div>
+      <div class="brand">
+        <div class="brand-name">Like-Minded Folks</div>
         <div class="brand-sub">MMF · Etica Unit Trust</div>
       </div>
       <div class="hdr-div"></div>
-      <div class="stmt-label">
+      <div class="stmt-r">
         <div class="stmt-title">Member Statement</div>
-        <div class="stmt-period" id="stmt-period"></div>
+        <div class="stmt-sub" id="stmt-period"></div>
       </div>
     </div>
-
     <div class="member">
-      <div class="member-ico" id="m-ico"></div>
-      <div>
-        <div class="member-name" id="m-name"></div>
-        <div class="member-ref" id="m-ref"></div>
-      </div>
+      <div class="m-ico" id="m-ico"></div>
+      <div><div class="m-name" id="m-name"></div><div class="m-ref" id="m-ref"></div></div>
     </div>
-
-    <div class="ytd" id="ytd-strip"></div>
-
-    <div class="sec-lbl">Monthly Breakdown</div>
-    <div class="tbl-wrap">
-      <table class="summary" id="summary-table">
-        <thead>
-          <tr>
-            <th style="text-align:left;padding-left:14px;">Month</th>
-            <th>Opening Bal</th>
-            <th>Top-Ups</th>
-            <th>Interest</th>
-            <th>Closing Bal</th>
-          </tr>
-        </thead>
-        <tbody id="summary-body"></tbody>
-        <tfoot id="summary-foot"></tfoot>
+    <div class="ytd" id="ytd"></div>
+    <div class="sec">Monthly Breakdown</div>
+    <div class="tscroll">
+      <table class="sum" id="tbl">
+        <colgroup><col class="c-mo"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-n"></colgroup>
+        <thead><tr>
+          <th class="tl">Month</th>
+          <th>Opening Bal</th><th>Top-Ups</th><th>Interest</th>
+          <th class="tr">Closing Bal</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+        <tfoot id="tfoot"></tfoot>
       </table>
     </div>
-
-    <div class="footer">
-      <div style="text-align:right">
-        <div class="footer-date" id="footer-date"></div>
-        <div class="footer-conf">Confidential · Members Only</div>
-      </div>
-    </div>
+    <div class="footer"><div>
+      <div class="f-date" id="f-date"></div>
+      <div class="f-conf">Confidential · Members Only</div>
+    </div></div>
   </div>
 </div>
-
 <script>
 'use strict';
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const CUR_YEAR=new Date().getFullYear();
+const MEMBERS_URL=atob('aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlFmUWRCVmwwMWN4c0lvR25mSkxsdEdEdU9rSVZERnFqLXJOZzNLd0ZWWjgtR0diVXFrMURTc19DVmF5Z2lzamFMaGczMGcxZ2p6SXNkQy9wdWI/Z2lkPTE4MDc5MjY5NzMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==');
+const URLS=["aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTE4ODE3NjExNTQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExODIwNzc2Mjcmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExNDkyMjYwMjQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTk2MjExMTcwNCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTUxNDQ5Mjc4MiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTU5OTQ2MTg1NyZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTcwMzc5MjUzMCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTIwOTM3MDg5Nzkmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwNzkyMzcwNDMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM2MjM4OTY0MCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM1MDMxNTkyMiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwMTY1NjE3OTgmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg=="];
+const MONTH_URLS={};MONTHS.forEach((m,i)=>{MONTH_URLS[m]=atob(URLS[i]);});
 
-// ── Shared constants (mirrors index.html) ─────────────────────────────────
-const MONTHS = ['January','February','March','April','May','June',
-  'July','August','September','October','November','December'];
-const CUR_YEAR = new Date().getFullYear();
+// Distribution sheet — single fund-level CSV (Date,Narration,Inflow,Withdrawal,Net Interest,Running Balance)
+const DIST_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pub?output=csv';
 
-const MEMBERS_URL = atob('aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlFmUWRCVmwwMWN4c0lvR25mSkxsdEdEdU9rSVZERnFqLXJOZzNLd0ZWWjgtR0diVXFrMURTc19DVmF5Z2lzamFMaGczMGcxZ2p6SXNkQy9wdWI/Z2lkPTE4MDc5MjY5NzMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==');
+const CITY_ICON={Tokyo:'🗼',Berlin:'🐻',Gandia:'🏖️',Denver:'🏔️',Helsinki:'🇫🇮',Oslo:'🫎',Moscow:'🏛️',California:'🌴',Lisbon:'🛸',Stockholm:'👑',Paris:'🗽',Marseille:'⚓',Rio:'🌊',Nairobi:'🦁','Tel Aviv':'✡️',Valencia:'🍊',Havana:'🎺',Manilla:'🌺',Scofield:'🔑',Bogota:'☁️',Emirates:'🌇',Dublin:'🍀',Doha:'🌙',Bern:'🐻‍❄️'};
 
-const URLS = [
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTE4ODE3NjExNTQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExODIwNzc2Mjcmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExNDkyMjYwMjQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTk2MjExMTcwNCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTUxNDQ5Mjc4MiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTU5OTQ2MTg1NyZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTcwMzc5MjUzMCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTIwOTM3MDg5Nzkmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwNzkyMzcwNDMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM2MjM4OTY0MCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM1MDMxNTkyMiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2",
-  "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwMTY1NjE3OTgmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg=="
-];
-const MONTH_URLS = {};
-MONTHS.forEach((m, i) => { MONTH_URLS[m] = atob(URLS[i]); });
+function parseRow(line){const r=[];let cur='',inQ=false;for(const ch of line){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){r.push(cur);cur='';}else cur+=ch;}r.push(cur);return r;}
+const nv=s=>parseFloat((s||'').replace(/["',\s]/g,''))||0;
+const f2=v=>(v||0).toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
+const f0=v=>(v||0).toLocaleString('en-KE',{maximumFractionDigits:0});
+const el=id=>document.getElementById(id);
 
-// Distribution sheet — pubhtml URL for tab discovery, pub base for CSV fetch
-const DIST_PUBHTML  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pubhtml';
-const DIST_CSV_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pub';
-const CORS_PROXY    = 'https://api.allorigins.win/raw?url=';
+const params=new URLSearchParams(location.search);
+const alias=params.get('alias')||'';
+const theme=params.get('theme')||'dark';
+document.documentElement.setAttribute('data-theme',theme);
+document.title=`Statement · ${alias} · ${CUR_YEAR}`;
 
-const CITY_ICON = {
-  Tokyo:'🗼', Berlin:'🐻', Gandia:'🏖️', Denver:'🏔️', Helsinki:'🇫🇮',
-  Oslo:'🫎', Moscow:'🏛️', California:'🌴', Lisbon:'🛸', Stockholm:'👑',
-  Paris:'🗽', Marseille:'⚓', Rio:'🌊', Nairobi:'🦁', 'Tel Aviv':'✡️',
-  Valencia:'🍊', Havana:'🎺', Manilla:'🌺', Scofield:'🔑', Bogota:'☁️',
-  Emirates:'🌇', Dublin:'🍀', Doha:'🌙', Bern:'🐻‍❄️'
-};
-
-// ── Utility functions ─────────────────────────────────────────────────────
-function parseRow(line) {
-  const r=[]; let cur='', inQ=false;
-  for (const ch of line) {
-    if (ch==='"') inQ=!inQ;
-    else if (ch===',' && !inQ) { r.push(cur); cur=''; }
-    else cur+=ch;
-  }
-  r.push(cur); return r;
-}
-const n = s => parseFloat((s||'').replace(/["',\s]/g,'')) || 0;
-const fmt2 = v => (v||0).toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmt0 = v => (v||0).toLocaleString('en-KE',{maximumFractionDigits:0});
-
-// ── URL params ────────────────────────────────────────────────────────────
-const params  = new URLSearchParams(location.search);
-const alias   = params.get('alias') || '';
-const theme   = params.get('theme') || 'dark';
-
-document.documentElement.setAttribute('data-theme', theme);
-document.title = `MMF Statement · ${alias} · ${CUR_YEAR}`;
-
-// ── Data loading ──────────────────────────────────────────────────────────
-async function fetchMonthlyData() {
-  // Fetch all month CSVs in parallel
-  const curMonthIdx = new Date().getMonth(); // 0-based
-  const results = {};
-  await Promise.all(MONTHS.slice(0, curMonthIdx + 1).map(async (m) => {
-    try {
-      const resp = await fetch(MONTH_URLS[m] + '&_=' + Date.now(), {cache:'no-store'});
-      if (!resp.ok) return;
-      const txt  = await resp.text();
-      const ls   = txt.split('\n').filter(l => l.trim());
-      for (let i = 3; i < ls.length; i++) {
-        const cols = parseRow(ls[i]);
-        const name = cols[0]?.trim().replace(/"/g,'');
-        if (name === alias) {
-          results[m] = {
-            openingBalance: n(cols[1]),
-            topups:         n(cols[2]),
-            interest:       n(cols[3]),
-            daysActive:     parseInt((cols[4]||'').replace(/[",\s]/g,'')) || 0,
-            closingBalance: n(cols[5])
-          };
+async function fetchMonthly(){
+  const curIdx=new Date().getMonth();
+  const out={};
+  await Promise.all(MONTHS.slice(0,curIdx+1).map(async m=>{
+    try{
+      const r=await fetch(MONTH_URLS[m]+'&_='+Date.now(),{cache:'no-store'});
+      if(!r.ok)return;
+      const lines=(await r.text()).split('\n').filter(l=>l.trim());
+      for(let i=3;i<lines.length;i++){
+        const c=parseRow(lines[i]);
+        if(c[0]?.trim().replace(/"/g,'')=== alias){
+          out[m]={openingBalance:nv(c[1]),topups:nv(c[2]),interest:nv(c[3]),
+            daysActive:parseInt((c[4]||'').replace(/[",\s]/g,''))||0,closingBalance:nv(c[5])};
           break;
         }
       }
-    } catch(e) { /* month not published yet */ }
+    }catch{}
   }));
-  return results;
+  return out;
 }
 
-// Discover tab GIDs from the distribution sheet pubhtml
-let _tabGids = null;
-async function discoverTabGids() {
-  if (_tabGids) return _tabGids;
-  try {
-    const proxyUrl = CORS_PROXY + encodeURIComponent(DIST_PUBHTML);
-    const resp = await fetch(proxyUrl, {cache:'force-cache'});
-    if (!resp.ok) throw new Error('proxy failed');
-    const html = await resp.text();
-    const doc  = new DOMParser().parseFromString(html, 'text/html');
-    const gids = {};
-    // Google Sheets pubhtml: tab buttons have id="sheet-button-GID"
-    // and contain the sheet name as text
-    doc.querySelectorAll('[id^="sheet-button-"]').forEach(el => {
-      const gid  = el.id.replace('sheet-button-', '');
-      const name = el.textContent.trim();
-      if (gid && name) gids[name.toLowerCase()] = gid;
-    });
-    _tabGids = gids;
-    return gids;
-  } catch(e) {
-    console.warn('Tab discovery failed:', e);
-    return {};
-  }
+let _distByMonth=null,_distPromise=null;
+async function fetchDist(){
+  if(_distByMonth)return _distByMonth;
+  if(_distPromise)return _distPromise;
+  _distPromise=(async()=>{
+    try{
+      const r=await fetch(DIST_CSV+'&_='+Date.now(),{cache:'no-store'});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const lines=(await r.text()).split('\n').filter(l=>l.trim());
+      if(lines.length<2)return(_distByMonth={});
+      const hdrs=parseRow(lines[0]).map(h=>h.toLowerCase().replace(/["\s]/g,''));
+      const iDt=hdrs.findIndex(h=>h.includes('date'));
+      const iNr=hdrs.findIndex(h=>h.includes('narr')||h.includes('desc')||h.includes('part'));
+      const iIn=hdrs.findIndex(h=>h.includes('inflow')||h==='in'||h.includes('deposit'));
+      const iWd=hdrs.findIndex(h=>h.includes('withdr')||h==='out'||h.includes('debit'));
+      const iNt=hdrs.findIndex(h=>h.includes('interest')||h.includes('netint'));
+      const iBl=hdrs.findIndex(h=>h.includes('balance')||h.includes('running'));
+      const dt=iDt>=0?iDt:0,nr=iNr>=0?iNr:1,iv=iIn>=0?iIn:2;
+      const wd=iWd>=0?iWd:3,nt=iNt>=0?iNt:4,bl=iBl>=0?iBl:5;
+      const byM={};
+      for(let i=1;i<lines.length;i++){
+        const c=parseRow(lines[i]);
+        const date=c[dt]?.trim().replace(/"/g,'');
+        if(!date)continue;
+        const mo=MONTHS.find(m=>date.toLowerCase().includes(m.toLowerCase()));
+        if(!mo)continue;
+        (byM[mo]=byM[mo]||[]).push({
+          date,narr:c[nr]?.trim().replace(/"/g,'')||'',
+          inflow:nv(c[iv]),withdrawal:nv(c[wd]),interest:nv(c[nt]),balance:nv(c[bl])
+        });
+      }
+      return(_distByMonth=byM);
+    }catch(e){console.warn('Dist CSV failed:',e);return(_distByMonth={});}
+  })();
+  return _distPromise;
 }
 
-// Fetch daily rows for alias from the distribution sheet
-async function fetchDailyRows(monthName) {
-  try {
-    const gids     = await discoverTabGids();
-    const aliasKey = alias.toLowerCase();
-    const gid      = gids[aliasKey];
-
-    if (!gid) {
-      // No matching tab — check if there's a single sheet with all members
-      return { rows: null, noTab: true };
-    }
-
-    const csvUrl = `${DIST_CSV_BASE}?gid=${gid}&single=true&output=csv&_=${Date.now()}`;
-    const resp   = await fetch(csvUrl, {cache:'no-store'});
-    if (!resp.ok) throw new Error('CSV fetch failed');
-    const txt    = await resp.text();
-    const lines  = txt.split('\n').filter(l => l.trim());
-    if (lines.length < 2) return { rows: [], noTab: false };
-
-    // Parse header row to find columns
-    const headers = parseRow(lines[0]).map(h => h.trim().toLowerCase().replace(/"/g,''));
-    const iDate   = headers.findIndex(h => h.includes('date'));
-    const iNarr   = headers.findIndex(h => h.includes('narr') || h.includes('desc') || h.includes('type'));
-    const iIn     = headers.findIndex(h => h.includes('inflow') || h.includes('in') || h.includes('debit') || h.includes('deposit'));
-    const iOut    = headers.findIndex(h => h.includes('withdraw') || h.includes('out') || h.includes('credit'));
-    const iInt    = headers.findIndex(h => h.includes('interest') || h.includes('net int'));
-    const iBal    = headers.findIndex(h => h.includes('balance') || h.includes('running'));
-
-    const allRows = [];
-    for (let i = 1; i < lines.length; i++) {
-      const cols = parseRow(lines[i]);
-      const date = cols[iDate >= 0 ? iDate : 0]?.trim().replace(/"/g,'');
-      if (!date) continue;
-      allRows.push({
-        date:    date,
-        narr:    cols[iNarr >= 0 ? iNarr : 1]?.trim().replace(/"/g,'') || '',
-        inflow:  n(cols[iIn  >= 0 ? iIn   : 2]),
-        withdrawal: n(cols[iOut >= 0 ? iOut : 3]),
-        interest:   n(cols[iInt >= 0 ? iInt : 4]),
-        balance: n(cols[iBal >= 0 ? iBal  : 5]),
-      });
-    }
-
-    // Filter to the requested month
-    const rows = monthName
-      ? allRows.filter(r => r.date.toLowerCase().includes(monthName.toLowerCase()))
-      : allRows;
-
-    return { rows, noTab: false };
-  } catch(e) {
-    console.warn('Daily fetch failed:', e);
-    return { rows: null, noTab: false, error: e.message };
-  }
-}
-
-// ── Render ────────────────────────────────────────────────────────────────
-async function renderStatement(monthlyData) {
-  const curMonthIdx = new Date().getMonth();
-  const curMonth    = MONTHS[curMonthIdx];
-  const icon        = CITY_ICON[alias] || '👤';
-  const genDate     = new Date().toLocaleDateString('en-KE',
-    {day:'2-digit', month:'long', year:'numeric'});
-
-  // YTD totals
-  let ytdTopups = 0, ytdInterest = 0, latestClosing = 0;
-  MONTHS.slice(0, curMonthIdx + 1).forEach(m => {
-    const d = monthlyData[m];
-    if (!d) return;
-    ytdTopups   += d.topups;
-    ytdInterest += d.interest;
-    latestClosing = d.closingBalance;
+function renderSummary(monthly){
+  const curIdx=new Date().getMonth(),curMonth=MONTHS[curIdx];
+  let ytdTop=0,ytdInt=0,lastBal=0;
+  MONTHS.slice(0,curIdx+1).forEach(m=>{const d=monthly[m];if(!d)return;ytdTop+=d.topups;ytdInt+=d.interest;lastBal=d.closingBalance;});
+  el('stmt-period').textContent=`Year to Date · Jan – ${curMonth} ${CUR_YEAR}`;
+  el('m-ico').textContent=CITY_ICON[alias]||'👤';
+  el('m-name').textContent=alias;
+  el('m-ref').textContent=`Ref 308398M · Etica MMF · ${CUR_YEAR}`;
+  el('f-date').textContent=`Generated ${new Date().toLocaleDateString('en-KE',{day:'2-digit',month:'long',year:'numeric'})}`;
+  el('ytd').innerHTML=`
+    <div class="ytd-cell"><div class="ytd-lbl">YTD Deposits</div><span class="ytd-kes">KES</span><span class="ytd-amt">${f0(ytdTop)}</span></div>
+    <div class="ytd-cell"><div class="ytd-lbl">YTD Interest</div><span class="ytd-kes">KES</span><span class="ytd-amt g">${f2(ytdInt)}</span></div>
+    <div class="ytd-cell"><div class="ytd-lbl">Current Balance</div><span class="ytd-kes">KES</span><span class="ytd-amt g">${f2(lastBal)}</span></div>`;
+  const tbody=el('tbody');tbody.innerHTML='';
+  MONTHS.slice(0,curIdx+1).forEach((m,idx)=>{
+    const d=monthly[m]||{openingBalance:0,topups:0,interest:0,closingBalance:0};
+    const cur=m===curMonth,ev=idx%2===0;
+    const mrow=document.createElement('tr');
+    mrow.className='mrow'+(cur?' cur':'');
+    mrow.innerHTML=`
+      <td class="tdl${ev&&!cur?' ev':''}"><span class="tog" id="tog-${m}">▶</span>${m}</td>
+      <td class="${ev&&!cur?'ev':''}">${f2(d.openingBalance)}</td>
+      <td class="${ev&&!cur?'ev':''}">${d.topups>0?f0(d.topups):'—'}</td>
+      <td class="g${ev&&!cur?' ev':''}">${f2(d.interest)}</td>
+      <td class="tdr${ev&&!cur?' ev':''}">${f2(d.closingBalance)}</td>`;
+    mrow.addEventListener('click',()=>toggleDaily(m));
+    tbody.appendChild(mrow);
+    const drow=document.createElement('tr');
+    drow.className='drow';drow.id='drow-'+m;
+    drow.innerHTML=`<td colspan="5"><div class="dp" id="dp-${m}"></div></td>`;
+    tbody.appendChild(drow);
   });
-
-  // Header
-  document.getElementById('stmt-period').textContent =
-    `Year to Date · Jan – ${curMonth} ${CUR_YEAR}`;
-  document.getElementById('m-ico').textContent  = icon;
-  document.getElementById('m-name').textContent = alias;
-  document.getElementById('m-ref').textContent  =
-    `Ref 308398M · Etica MMF · ${CUR_YEAR}`;
-  document.getElementById('footer-date').textContent = `Generated ${genDate}`;
-
-  // YTD strip
-  document.getElementById('ytd-strip').innerHTML = `
-    <div class="ytd-cell">
-      <div class="ytd-lbl">YTD Deposits</div>
-      <span class="ytd-kes">KES</span>
-      <span class="ytd-amt">${fmt0(ytdTopups)}</span>
-    </div>
-    <div class="ytd-cell">
-      <div class="ytd-lbl">YTD Interest</div>
-      <span class="ytd-kes">KES</span>
-      <span class="ytd-amt grn">${fmt2(ytdInterest)}</span>
-    </div>
-    <div class="ytd-cell">
-      <div class="ytd-lbl">Current Balance</div>
-      <span class="ytd-kes">KES</span>
-      <span class="ytd-amt grn">${fmt2(latestClosing)}</span>
-    </div>`;
-
-  // Summary table body
-  const tbody = document.getElementById('summary-body');
-  tbody.innerHTML = '';
-  MONTHS.slice(0, curMonthIdx + 1).forEach((m, i) => {
-    const d   = monthlyData[m] || {openingBalance:0,topups:0,interest:0,closingBalance:0};
-    const cur = (m === curMonth);
-
-    // Outer row containing the month row + daily panel
-    const wrap = document.createElement('tr');
-    wrap.className = 'month-wrap' + (cur ? ' mrow-cur' : '');
-    wrap.innerHTML = `<td colspan="5" style="padding:0;border-bottom:1px solid var(--br)">
-      <div class="mrow-inner${cur ? ' mrow-cur' : ''}"
-           style="padding:11px 10px;display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr;align-items:center;cursor:pointer;transition:background .12s;"
-           data-month="${m}" role="button" aria-expanded="false">
-        <span class="mrow-name">
-          <span class="mrow-toggle" id="tog-${m}">▶</span>
-          ${m}
-        </span>
-        <span class="mrow-num" style="text-align:right">${fmt2(d.openingBalance)}</span>
-        <span class="mrow-num" style="text-align:right;color:var(--t2)">${d.topups > 0 ? fmt0(d.topups) : '—'}</span>
-        <span class="mrow-num grn" style="text-align:right">${fmt2(d.interest)}</span>
-        <span class="mrow-num bold" style="text-align:right">${fmt2(d.closingBalance)}</span>
-      </div>
-      <div class="daily-panel" id="panel-${m}"></div>
-    </td>`;
-    tbody.appendChild(wrap);
-
-    // Wire toggle
-    const inner = wrap.querySelector('[data-month]');
-    inner.addEventListener('click', () => toggleDaily(m));
-    inner.addEventListener('mouseover', () => { inner.style.background = 'rgba(0,168,107,.06)'; });
-    inner.addEventListener('mouseout',  () => { inner.style.background = ''; });
-  });
-
-  // Totals footer
-  document.getElementById('summary-foot').innerHTML = `
-    <tr class="tfoot-row">
-      <td style="padding:11px 14px 11px 10px;font-weight:700;">Total ${CUR_YEAR}</td>
-      <td style="text-align:right;padding:11px 10px;font-family:'JetBrains Mono',monospace;font-weight:700;">—</td>
-      <td style="text-align:right;padding:11px 10px;font-family:'JetBrains Mono',monospace;font-weight:700;">${fmt0(ytdTopups)}</td>
-      <td style="text-align:right;padding:11px 10px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green)">${fmt2(ytdInterest)}</td>
-      <td style="text-align:right;padding:11px 10px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green)">${fmt2(latestClosing)}</td>
-    </tr>`;
-
-  // Show
-  document.getElementById('loading').style.display   = 'none';
-  document.getElementById('statement').style.display = 'block';
+  el('tfoot').innerHTML=`<tr>
+    <td class="tdl">Total ${CUR_YEAR}</td>
+    <td>—</td><td>${f0(ytdTop)}</td>
+    <td class="g">${f2(ytdInt)}</td>
+    <td class="tdr g">${f2(lastBal)}</td></tr>`;
 }
 
-// ── Toggle daily panel ────────────────────────────────────────────────────
-const _loaded = {};
-async function toggleDaily(month) {
-  const panel = document.getElementById(`panel-${month}`);
-  const tog   = document.getElementById(`tog-${month}`);
-  if (!panel) return;
-
-  const isOpen = panel.classList.contains('open');
-  if (isOpen) {
-    panel.classList.remove('open');
-    tog.classList.remove('open');
-    return;
-  }
-
-  panel.classList.add('open');
-  tog.classList.add('open');
-
-  if (_loaded[month]) return; // already fetched
-  _loaded[month] = true;
-
-  // Show spinner
-  panel.innerHTML = `
-    <div class="daily-loading">
-      <div class="spin-sm"></div>
-      Loading daily breakdown for ${month}…
-    </div>`;
-
-  const { rows, noTab, error } = await fetchDailyRows(month);
-
-  if (noTab) {
-    panel.innerHTML = `
-      <div class="daily-err">No individual tab found for <strong>${alias}</strong> in the distribution sheet.</div>
-      <a class="daily-link" href="${DIST_PUBHTML}" target="_blank" rel="noopener">
-        ↗ View full distribution sheet
-      </a>`;
-    return;
-  }
-
-  if (!rows || rows.length === 0) {
-    panel.innerHTML = `
-      <div class="daily-err">${error ? 'Could not load daily data.' : 'No rows found for ' + month + '.'}</div>
-      <a class="daily-link" href="${DIST_PUBHTML}" target="_blank" rel="noopener">
-        ↗ View distribution sheet
-      </a>`;
-    return;
-  }
-
-  const rowsHTML = rows.map((r, i) => `
-    <tr style="background:${i%2===0 ? 'var(--daily-bg)' : 'transparent'}">
-      <td>${r.date}</td>
-      <td>${r.narr}</td>
-      <td>${r.inflow  > 0 ? fmt2(r.inflow)   : '—'}</td>
-      <td>${r.withdrawal > 0 ? fmt2(r.withdrawal) : '—'}</td>
-      <td style="color:var(--green)">${r.interest > 0 ? fmt2(r.interest) : '—'}</td>
-      <td style="font-weight:600">${fmt2(r.balance)}</td>
-    </tr>`).join('');
-
-  panel.innerHTML = `
-    <div class="tbl-wrap">
-      <table class="daily">
-        <thead>
-          <tr>
-            <th style="text-align:left;padding-left:36px">Date</th>
-            <th style="text-align:left">Narration</th>
-            <th>Inflow</th>
-            <th>Withdrawal</th>
-            <th>Net Interest</th>
-            <th>Running Balance</th>
-          </tr>
-        </thead>
-        <tbody>${rowsHTML}</tbody>
-      </table>
-    </div>
-    <div class="daily-note">Figures from Etica daily distribution sheet.</div>`;
+const _shown={};
+async function toggleDaily(month){
+  const drow=el('drow-'+month),tog=el('tog-'+month),dp=el('dp-'+month);
+  if(!drow)return;
+  if(drow.classList.contains('open')){drow.classList.remove('open');tog.classList.remove('open');return;}
+  drow.classList.add('open');tog.classList.add('open');
+  if(_shown[month])return;
+  _shown[month]=true;
+  dp.innerHTML=`<div class="dp-spin"><div class="spin"></div>Loading ${month} detail…</div>`;
+  const byM=await fetchDist();
+  const rows=(byM[month])||[];
+  if(!rows.length){dp.innerHTML=`<div class="dp-err">No distribution data for ${month} yet.</div>`;return;}
+  const rowsHTML=rows.map((r,i)=>`<tr class="${i%2?'alt':''}">
+    <td class="tdl">${r.date}</td>
+    <td class="tdl" style="padding-left:10px">${r.narr}</td>
+    <td>${r.inflow>0?f2(r.inflow):'—'}</td>
+    <td>${r.withdrawal>0?f2(r.withdrawal):'—'}</td>
+    <td class="g">${r.interest>0?f2(r.interest):'—'}</td>
+    <td class="tdr">${f2(r.balance)}</td></tr>`).join('');
+  dp.innerHTML=`<div class="tscroll"><table class="daily">
+    <colgroup><col class="dc-dt"><col class="dc-nr"><col class="dc-n"><col class="dc-n"><col class="dc-n"><col class="dc-n"></colgroup>
+    <thead><tr>
+      <th class="tl">Date</th><th class="tl" style="padding-left:10px">Narration</th>
+      <th>Inflow</th><th>Withdrawal</th><th>Net Interest</th><th class="tr" style="padding-right:20px">Running Bal</th>
+    </tr></thead>
+    <tbody>${rowsHTML}</tbody>
+  </table></div>
+  <div class="dp-note">Group fund activity — Etica account · updated monthly.</div>`;
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────
-(async () => {
-  if (!alias) {
-    document.getElementById('loading').innerHTML =
-      '<div class="load-txt" style="color:#ef4444">No alias specified. Open this page from the main app.</div>';
-    return;
-  }
-  try {
-    const monthlyData = await fetchMonthlyData();
-    await renderStatement(monthlyData);
-    // Kick off tab discovery in background so first click is instant
-    discoverTabGids();
-  } catch(e) {
-    document.getElementById('loading').innerHTML =
-      `<div class="load-txt" style="color:#ef4444">Failed to load statement.<br><small>${e.message}</small></div>`;
-  }
+(async()=>{
+  if(!alias){el('loading').innerHTML='<div class="load-msg" style="color:#ef4444">No alias specified. Open from the main app.</div>';return;}
+  try{
+    const[monthly]=await Promise.all([fetchMonthly(),fetchDist()]);
+    renderSummary(monthly);
+    el('loading').style.display='none';
+    el('statement').style.display='block';
+  }catch(e){el('loading').innerHTML=`<div class="load-msg" style="color:#ef4444">Failed to load.<br><small>${e.message}</small></div>`;}
 })();
 </script>
 </body>
