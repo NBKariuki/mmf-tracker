@@ -213,17 +213,36 @@ async function fetchDist(){
       if(!r.ok)throw new Error('HTTP '+r.status);
       const lines=(await r.text()).split('\n').filter(l=>l.trim());
       if(lines.length<2)return(_distByMonth={});
-      const hdrs=parseRow(lines[0]).map(h=>h.toLowerCase().replace(/["\s]/g,''));
-      const iDt=hdrs.findIndex(h=>h.includes('date'));
-      const iNr=hdrs.findIndex(h=>h.includes('narr')||h.includes('desc')||h.includes('part'));
-      const iIn=hdrs.findIndex(h=>h.includes('inflow')||h==='in'||h.includes('deposit'));
+
+      // Find the real header row — scan first 6 rows for one containing "date"
+      let hdrIdx=0;
+      for(let i=0;i<Math.min(6,lines.length);i++){
+        const cells=parseRow(lines[i]).map(c=>c.toLowerCase().replace(/["\s]/g,''));
+        if(cells.some(c=>c==='date'||c==='transactiondate')){hdrIdx=i;break;}
+      }
+      const hdrs=parseRow(lines[hdrIdx]).map(h=>h.toLowerCase().replace(/["\s]/g,''));
+
+      // Locate each column — explicit names first, then positional fallback
+      const iDt=hdrs.findIndex(h=>h==='date'||h.includes('date'));
+      const iNr=hdrs.findIndex(h=>h.includes('narr')||h.includes('desc')||h.includes('part')||h.includes('detail'));
+      const iIn=hdrs.findIndex(h=>h.includes('inflow')||h==='in'||h.includes('deposit')||h.includes('credit'));
       const iWd=hdrs.findIndex(h=>h.includes('withdr')||h==='out'||h.includes('debit'));
-      const iNt=hdrs.findIndex(h=>h.includes('interest')||h.includes('netint'));
+      const iNt=hdrs.findIndex(h=>h.includes('interest')||h.includes('netint')||h.includes('net'));
       const iBl=hdrs.findIndex(h=>h.includes('balance')||h.includes('running'));
-      const dt=iDt>=0?iDt:0,nr=iNr>=0?iNr:1,iv=iIn>=0?iIn:2;
-      const wd=iWd>=0?iWd:3,nt=iNt>=0?iNt:4,bl=iBl>=0?iBl:5;
+
+      // Positional fallback assumes: Date, Narration, Inflow, Withdrawal, Net Interest, Balance
+      // Offset past any leading non-data columns (row #, member alias, etc.)
+      const offset=iDt>=0?iDt:0;
+      const dt=iDt>=0?iDt:offset+0;
+      const nr=iNr>=0?iNr:offset+1;
+      const iv=iIn>=0?iIn:offset+2;
+      const wd=iWd>=0?iWd:offset+3;
+      const nt=iNt>=0?iNt:offset+4;
+      const bl=iBl>=0?iBl:offset+5;
+
       const byM={};
-      for(let i=1;i<lines.length;i++){
+      // Data rows start immediately after the detected header row
+      for(let i=hdrIdx+1;i<lines.length;i++){
         const c=parseRow(lines[i]);
         const date=c[dt]?.trim().replace(/"/g,'');
         if(!date)continue;
