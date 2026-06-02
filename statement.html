@@ -34,8 +34,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);paddi
 .sec{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);padding:0 28px 8px;}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 table.sum{width:100%;border-collapse:collapse;table-layout:fixed;}
-table.sum col.c-mo{width:22%;}
-table.sum col.c-n{width:19.5%;}
+table.sum col.c-mo{width:27%;}
+table.sum col.c-n{width:18.25%;}
 table.sum thead th{padding:9px 12px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);border-bottom:2px solid var(--br2);background:var(--th);text-align:right;white-space:nowrap;}
 table.sum thead th.tl{text-align:left;padding-left:28px;}
 table.sum thead th.tr{padding-right:20px;}
@@ -143,8 +143,8 @@ const MEMBERS_URL=atob('aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8y
 const URLS=["aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTE4ODE3NjExNTQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExODIwNzc2Mjcmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExNDkyMjYwMjQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTk2MjExMTcwNCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTUxNDQ5Mjc4MiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTU5OTQ2MTg1NyZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTcwMzc5MjUzMCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTIwOTM3MDg5Nzkmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwNzkyMzcwNDMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM2MjM4OTY0MCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM1MDMxNTkyMiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwMTY1NjE3OTgmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg=="];
 const MONTH_URLS={};MONTHS.forEach((m,i)=>{MONTH_URLS[m]=atob(URLS[i]);});
 
-// Distribution sheet — single fund-level CSV (Date,Narration,Inflow,Withdrawal,Net Interest,Running Balance)
-const DIST_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pub?output=csv';
+// Distribution sheet — single=true ensures we get the first sheet as CSV
+const DIST_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pub?single=true&output=csv';
 
 const CITY_ICON={Tokyo:'🗼',Berlin:'🐻',Gandia:'🏖️',Denver:'🏔️',Helsinki:'🇫🇮',Oslo:'🫎',Moscow:'🏛️',California:'🌴',Lisbon:'🛸',Stockholm:'👑',Paris:'🗽',Marseille:'⚓',Rio:'🌊',Nairobi:'🦁','Tel Aviv':'✡️',Valencia:'🍊',Havana:'🎺',Manilla:'🌺',Scofield:'🔑',Bogota:'☁️',Emirates:'🌇',Dublin:'🍀',Doha:'🌙',Bern:'🐻‍❄️'};
 
@@ -153,6 +153,28 @@ const nv=s=>parseFloat((s||'').replace(/["',\s]/g,''))||0;
 const f2=v=>(v||0).toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
 const f0=v=>(v||0).toLocaleString('en-KE',{maximumFractionDigits:0});
 const el=id=>document.getElementById(id);
+
+// Robust month extractor — handles all Google Sheets CSV date formats:
+//  "4/1/2026"    M/D/YYYY  (Google default)
+//  "01/04/2026"  D/M/YYYY  (Kenya locale)
+//  "2026-04-01"  ISO
+//  "April 1, 2026" or "1 April 2026"  text
+function monthFromDate(d) {
+  if (!d) return null;
+  // Text month name anywhere in string
+  const named = MONTHS.find(m => d.toLowerCase().includes(m.toLowerCase()));
+  if (named) return named;
+  // M/D/YYYY or M/D/YY — Google Sheets default CSV export
+  const mdy = d.match(/^(\d{1,2})\/\d{1,2}\/\d{2,4}$/);
+  if (mdy) { const m=parseInt(mdy[1]); if(m>=1&&m<=12) return MONTHS[m-1]; }
+  // YYYY-MM-DD ISO
+  const iso = d.match(/^\d{4}-(\d{2})-\d{2}/);
+  if (iso) { const m=parseInt(iso[1]); if(m>=1&&m<=12) return MONTHS[m-1]; }
+  // Last resort: JS Date (handles many formats)
+  const p = new Date(d);
+  if (!isNaN(p)) return MONTHS[p.getMonth()];
+  return null;
+}
 
 const params=new URLSearchParams(location.search);
 const alias=params.get('alias')||'';
@@ -205,7 +227,7 @@ async function fetchDist(){
         const c=parseRow(lines[i]);
         const date=c[dt]?.trim().replace(/"/g,'');
         if(!date)continue;
-        const mo=MONTHS.find(m=>date.toLowerCase().includes(m.toLowerCase()));
+        const mo=monthFromDate(date);
         if(!mo)continue;
         (byM[mo]=byM[mo]||[]).push({
           date,narr:c[nr]?.trim().replace(/"/g,'')||'',
