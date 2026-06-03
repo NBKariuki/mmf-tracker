@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f7f5;--page:#ffffff;--t1:#111827;--t2:#6b7280;--t3:#9ca3af;--br:#e5e7eb;--br2:#d1d5db;--row0:#f9fafb;--row1:#ffffff;--cur:#ecfdf5;--foot:#f3f4f6;--th:#f3f4f6;--ac:#00a86b;--ac-d:#ecfdf5;--ac-b:#a7f3d0;--dd-bg:#f0f9ff;--dd-b:#bae6fd;}
-[data-theme="dark"]{--bg:#0f1117;--page:#1a1e28;--t1:#e8eaf0;--t2:#9aa0b8;--t3:#6b7280;--br:#2d3347;--br2:#3a4060;--row0:#1e2233;--row1:#1a1e28;--cur:#0d2e1f;--foot:#222638;--th:#1f2435;--ac:#00a86b;--ac-d:#0d3326;--ac-b:#145940;--dd-bg:#0d1f2d;--dd-b:#1e3a52;}
+:root{--bg:#f5f7f5;--page:#ffffff;--t1:#111827;--t2:#6b7280;--t3:#9ca3af;--br:#e5e7eb;--br2:#d1d5db;--row0:#f9fafb;--cur:#ecfdf5;--foot:#f3f4f6;--th:#f3f4f6;--ac:#00a86b;--ac-d:#ecfdf5;--ac-b:#a7f3d0;--dd-bg:#f0f9ff;--dd-b:#bae6fd;}
+[data-theme="dark"]{--bg:#0f1117;--page:#1a1e28;--t1:#e8eaf0;--t2:#9aa0b8;--t3:#6b7280;--br:#2d3347;--br2:#3a4060;--row0:#1e2233;--cur:#0d2e1f;--foot:#222638;--th:#1f2435;--ac:#00a86b;--ac-d:#0d3326;--ac-b:#145940;--dd-bg:#0d1f2d;--dd-b:#1e3a52;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);padding:20px 12px 56px;}
 .page{max-width:680px;margin:0 auto;background:var(--page);border-radius:18px;border:1px solid var(--br);overflow:hidden;}
@@ -33,6 +33,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);paddi
 .ytd-amt.g{color:var(--ac);}
 .sec{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);padding:0 28px 8px;}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+/* ── Summary table ── */
 table.sum{width:100%;border-collapse:collapse;table-layout:fixed;}
 table.sum col.c-mo{width:27%;}
 table.sum col.c-n{width:18.25%;}
@@ -53,29 +54,35 @@ table.sum tbody tr.mrow td.ev{background:var(--row0);}
 table.sum tbody tr.drow{display:none;}
 table.sum tbody tr.drow.open{display:table-row;}
 table.sum tbody tr.drow td{padding:0;border-bottom:1px solid var(--br);}
+/* ── Daily panel ── */
 .dp{background:var(--dd-bg);border-top:1px solid var(--dd-b);}
 .dp-spin{padding:14px 28px;display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--t3);}
 .spin{width:13px;height:13px;border:2px solid var(--br2);border-top-color:var(--ac);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg)}}
 table.daily{width:100%;border-collapse:collapse;table-layout:fixed;}
 table.daily col.dc-dt{width:20%;}
-table.daily col.dc-nr{width:22%;}
-table.daily col.dc-n{width:14.5%;}
+table.daily col.dc-nr{width:28%;}
+table.daily col.dc-am{width:26%;}
+table.daily col.dc-bl{width:26%;}
 table.daily thead th{padding:8px 10px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);border-bottom:1px solid var(--dd-b);background:transparent;text-align:right;white-space:nowrap;}
 table.daily thead th.tl{text-align:left;padding-left:28px;}
-table.daily tbody td{padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:.74rem;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);}
+table.daily thead th.tr{padding-right:20px;}
+table.daily tbody td{padding:9px 10px;font-family:'JetBrains Mono',monospace;font-size:.76rem;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);}
 table.daily tbody td.tdl{font-family:'DM Sans',sans-serif;text-align:left;padding-left:28px;color:var(--t1);font-size:.76rem;}
-table.daily tbody td.tdr{padding-right:20px;font-weight:600;color:var(--t1);}
+table.daily tbody td.tdr{padding-right:20px;}
 table.daily tbody td.g{color:var(--ac);}
+table.daily tbody td.inv{color:var(--t1);font-weight:600;}
 table.daily tbody tr:last-child td{border-bottom:none;}
-table.daily tbody tr.alt td{background:rgba(0,0,0,.025);}
-[data-theme="dark"] table.daily tbody tr.alt td{background:rgba(255,255,255,.02);}
+table.daily tbody tr.alt td{background:rgba(0,0,0,.02);}
+[data-theme="dark"] table.daily tbody tr.alt td{background:rgba(255,255,255,.015);}
 .dp-note{font-size:.66rem;color:var(--t3);padding:8px 28px 12px;font-style:italic;}
 .dp-err{padding:12px 28px;font-size:.74rem;color:var(--t3);}
+/* ── Totals ── */
 table.sum tfoot tr td{padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;text-align:right;border-top:2px solid var(--br2);background:var(--foot);color:var(--t1);}
 table.sum tfoot tr td.tdl{font-family:'DM Sans',sans-serif;text-align:left;padding-left:28px;font-size:.84rem;}
 table.sum tfoot tr td.tdr{padding-right:20px;}
 table.sum tfoot tr td.g{color:var(--ac);}
+/* ── Footer ── */
 .footer{padding:18px 28px 24px;border-top:1px solid var(--br);display:flex;justify-content:flex-end;}
 .f-date{font-size:.65rem;color:var(--t3);text-align:right;}
 .f-conf{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--br2);margin-top:2px;text-align:right;}
@@ -89,9 +96,8 @@ table.sum tfoot tr td.g{color:var(--ac);}
   .member{margin:14px;}
   .ytd{margin:0 0 16px;border-radius:0;border-left:none;border-right:none;}
   .sec{padding:0 14px 6px;}
-  table.sum thead th.tl,table.sum tbody tr.mrow td.tdl,table.sum tfoot tr td.tdl{padding-left:14px;}
-  table.daily thead th.tl,table.daily tbody td.tdl{padding-left:14px;}
-  .dp-spin,.dp-note,.dp-err{padding-left:14px;}
+  table.sum thead th.tl,table.sum tbody tr.mrow td.tdl,table.sum tfoot tr td.tdl,
+  table.daily thead th.tl,table.daily tbody td.tdl,.dp-spin,.dp-note,.dp-err{padding-left:14px;}
   .footer{padding:14px 14px 24px;}
 }
 </style>
@@ -118,12 +124,11 @@ table.sum tfoot tr td.g{color:var(--ac);}
     <div class="ytd" id="ytd"></div>
     <div class="sec">Monthly Breakdown</div>
     <div class="tscroll">
-      <table class="sum" id="tbl">
+      <table class="sum">
         <colgroup><col class="c-mo"><col class="c-n"><col class="c-n"><col class="c-n"><col class="c-n"></colgroup>
         <thead><tr>
           <th class="tl">Month</th>
-          <th>Opening Bal</th><th>Top-Ups</th><th>Interest</th>
-          <th class="tr">Closing Bal</th>
+          <th>Opening Bal</th><th>Top-Ups</th><th>Interest</th><th class="tr">Closing Bal</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
         <tfoot id="tfoot"></tfoot>
@@ -143,38 +148,40 @@ const MEMBERS_URL=atob('aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8y
 const URLS=["aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTE4ODE3NjExNTQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExODIwNzc2Mjcmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTExNDkyMjYwMjQmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTk2MjExMTcwNCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTUxNDQ5Mjc4MiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTU5OTQ2MTg1NyZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTcwMzc5MjUzMCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTIwOTM3MDg5Nzkmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwNzkyMzcwNDMmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM2MjM4OTY0MCZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTM1MDMxNTkyMiZzaW5nbGU9dHJ1ZSZvdXRwdXQ9Y3N2","aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlN2RXUzZVhzd0FRSXZ6Y2dZVE5ZSkFNTEhad0F6Z0REOExxVWl1MHRtQzhTalRXVWlfWjFZQkowWlJoeW93ZkpBNUJJT1VQVkp5N3R2ai9wdWI/Z2lkPTEwMTY1NjE3OTgmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg=="];
 const MONTH_URLS={};MONTHS.forEach((m,i)=>{MONTH_URLS[m]=atob(URLS[i]);});
 
-// Distribution sheet — single=true ensures we get the first sheet as CSV
-const DIST_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pub?single=true&output=csv';
+// ── Distribution sheet (MMF Interest Distribution workbook) ──────────────
+// Wide-matrix format: rows=members, columns=daily dates with Yield + Top up entries
+// Each monthly sheet needs its GID from the published workbook.
+// To get a GID: open the sheet → File → Publish to web → select the month tab → copy URL → extract ?gid=XXXXXXXX
+const DIST_BASE='https://docs.google.com/spreadsheets/d/e/2PACX-1vRa3_EHeyinakX8bnI8gNnsrOI839tYl2i2-D2lAZCvCRja02_7708k4EbNwtP85r2kVcjLxPh-nBFi/pub';
+const DIST_GIDS={
+  January:   '',   // ← paste gid here, e.g. '0' or '123456789'
+  February:  '',
+  March:     '',
+  April:     '',
+  May:       '',
+  June:      '',
+  July:      '',
+  August:    '',
+  September: '',
+  October:   '',
+  November:  '',
+  December:  '',
+};
+
+function distUrl(month){
+  const gid=DIST_GIDS[month];
+  const base=DIST_BASE+'?single=true&output=csv';
+  return gid ? `${DIST_BASE}?gid=${gid}&single=true&output=csv` : base;
+}
 
 const CITY_ICON={Tokyo:'🗼',Berlin:'🐻',Gandia:'🏖️',Denver:'🏔️',Helsinki:'🇫🇮',Oslo:'🫎',Moscow:'🏛️',California:'🌴',Lisbon:'🛸',Stockholm:'👑',Paris:'🗽',Marseille:'⚓',Rio:'🌊',Nairobi:'🦁','Tel Aviv':'✡️',Valencia:'🍊',Havana:'🎺',Manilla:'🌺',Scofield:'🔑',Bogota:'☁️',Emirates:'🌇',Dublin:'🍀',Doha:'🌙',Bern:'🐻‍❄️'};
 
 function parseRow(line){const r=[];let cur='',inQ=false;for(const ch of line){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){r.push(cur);cur='';}else cur+=ch;}r.push(cur);return r;}
-const nv=s=>parseFloat((s||'').replace(/["',\s]/g,''))||0;
+const cv=s=>s?.trim().replace(/"/g,'')||'';
+const nv=s=>parseFloat((s||'').replace(/[",\s]/g,''))||0;
 const f2=v=>(v||0).toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
 const f0=v=>(v||0).toLocaleString('en-KE',{maximumFractionDigits:0});
 const el=id=>document.getElementById(id);
-
-// Robust month extractor — handles all Google Sheets CSV date formats:
-//  "4/1/2026"    M/D/YYYY  (Google default)
-//  "01/04/2026"  D/M/YYYY  (Kenya locale)
-//  "2026-04-01"  ISO
-//  "April 1, 2026" or "1 April 2026"  text
-function monthFromDate(d) {
-  if (!d) return null;
-  // Text month name anywhere in string
-  const named = MONTHS.find(m => d.toLowerCase().includes(m.toLowerCase()));
-  if (named) return named;
-  // M/D/YYYY or M/D/YY — Google Sheets default CSV export
-  const mdy = d.match(/^(\d{1,2})\/\d{1,2}\/\d{2,4}$/);
-  if (mdy) { const m=parseInt(mdy[1]); if(m>=1&&m<=12) return MONTHS[m-1]; }
-  // YYYY-MM-DD ISO
-  const iso = d.match(/^\d{4}-(\d{2})-\d{2}/);
-  if (iso) { const m=parseInt(iso[1]); if(m>=1&&m<=12) return MONTHS[m-1]; }
-  // Last resort: JS Date (handles many formats)
-  const p = new Date(d);
-  if (!isNaN(p)) return MONTHS[p.getMonth()];
-  return null;
-}
 
 const params=new URLSearchParams(location.search);
 const alias=params.get('alias')||'';
@@ -182,6 +189,7 @@ const theme=params.get('theme')||'dark';
 document.documentElement.setAttribute('data-theme',theme);
 document.title=`Statement · ${alias} · ${CUR_YEAR}`;
 
+// ── Fetch monthly summary (from main tracker CSVs) ───────────────────────
 async function fetchMonthly(){
   const curIdx=new Date().getMonth();
   const out={};
@@ -192,9 +200,8 @@ async function fetchMonthly(){
       const lines=(await r.text()).split('\n').filter(l=>l.trim());
       for(let i=3;i<lines.length;i++){
         const c=parseRow(lines[i]);
-        if(c[0]?.trim().replace(/"/g,'')=== alias){
-          out[m]={openingBalance:nv(c[1]),topups:nv(c[2]),interest:nv(c[3]),
-            daysActive:parseInt((c[4]||'').replace(/[",\s]/g,''))||0,closingBalance:nv(c[5])};
+        if(cv(c[0])===alias){
+          out[m]={openingBalance:nv(c[1]),topups:nv(c[2]),interest:nv(c[3]),closingBalance:nv(c[5])};
           break;
         }
       }
@@ -203,66 +210,98 @@ async function fetchMonthly(){
   return out;
 }
 
-let _distByMonth=null,_distPromise=null;
-async function fetchDist(){
-  if(_distByMonth)return _distByMonth;
-  if(_distPromise)return _distPromise;
-  _distPromise=(async()=>{
-    try{
-      const r=await fetch(DIST_CSV+'&_='+Date.now(),{cache:'no-store'});
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      const lines=(await r.text()).split('\n').filter(l=>l.trim());
-      if(lines.length<2)return(_distByMonth={});
+// ── Parse wide-matrix distribution CSV for a single member ───────────────
+// Sheet layout (rows are 0-indexed after splitting):
+//   Row 0  : Title  "JANUARY 2026 – MMF Tracker"
+//   Row 1  : empty
+//   Row 2  : Date headers — col D+ has "DATE", then "1-Jan","2-Jan",…
+//   Row 3  : NET INTEREST totals per day (skip)
+//   Row 4  : Column labels — col B="Alias", col C+ = "Yield","Top up 1",…
+//   Row 5+ : Member rows — col B = alias name, col C+ = daily values
+async function parseDistSheet(month){
+  try{
+    const url=distUrl(month)+'&_='+Date.now();
+    const r=await fetch(url,{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const raw=(await r.text()).split('\n');
+    // Keep ALL lines including blanks (we use row indices directly)
+    const grid=raw.map(l=>parseRow(l).map(cv));
 
-      // Find the real header row — scan first 6 rows for one containing "date"
-      let hdrIdx=0;
-      for(let i=0;i<Math.min(6,lines.length);i++){
-        const cells=parseRow(lines[i]).map(c=>c.toLowerCase().replace(/["\s]/g,''));
-        if(cells.some(c=>c==='date'||c==='transactiondate')){hdrIdx=i;break;}
+    // ── Step 1: locate the "Alias" row (row 4 in spec, but scan to be safe) ──
+    let aliasRowIdx=-1;
+    for(let i=0;i<Math.min(8,grid.length);i++){
+      if(grid[i].some(c=>c.toLowerCase()==='alias')){aliasRowIdx=i;break;}
+    }
+    if(aliasRowIdx===-1)return{err:'Could not find Alias row in sheet.'};
+
+    // ── Step 2: locate the Date row (one row above the Alias row, or scan) ──
+    let dateRowIdx=-1;
+    for(let i=0;i<aliasRowIdx;i++){
+      if(grid[i].some(c=>c.toLowerCase()==='date')){dateRowIdx=i;break;}
+    }
+    if(dateRowIdx===-1)dateRowIdx=Math.max(0,aliasRowIdx-2);
+
+    const dateRow =grid[dateRowIdx]; // "","","","DATE","1-Jan","2-Jan",…
+    const labelRow=grid[aliasRowIdx]; // "No.","Alias","","Yield","Yield","Top up 1",…
+
+    // ── Step 3: find alias column index ──
+    const aliasCol=labelRow.findIndex(c=>c.toLowerCase()==='alias');
+    if(aliasCol===-1)return{err:'Alias column not found.'};
+
+    // ── Step 4: find the member's data row ──
+    let memberRow=null;
+    for(let i=aliasRowIdx+1;i<grid.length;i++){
+      if(grid[i][aliasCol]?.toLowerCase()===alias.toLowerCase()){
+        memberRow=grid[i];break;
       }
-      const hdrs=parseRow(lines[hdrIdx]).map(h=>h.toLowerCase().replace(/["\s]/g,''));
+    }
+    if(!memberRow)return{err:`${alias} not found in this sheet.`};
 
-      // Locate each column — explicit names first, then positional fallback
-      const iDt=hdrs.findIndex(h=>h==='date'||h.includes('date'));
-      const iNr=hdrs.findIndex(h=>h.includes('narr')||h.includes('desc')||h.includes('part')||h.includes('detail'));
-      const iIn=hdrs.findIndex(h=>h.includes('inflow')||h==='in'||h.includes('deposit')||h.includes('credit'));
-      const iWd=hdrs.findIndex(h=>h.includes('withdr')||h==='out'||h.includes('debit'));
-      const iNt=hdrs.findIndex(h=>h.includes('interest')||h.includes('netint')||h.includes('net'));
-      const iBl=hdrs.findIndex(h=>h.includes('balance')||h.includes('running'));
+    // ── Step 5: build date map — fill forward from dateRow ──
+    // Google Sheets: the date label only appears in the FIRST column for that date.
+    // "Top up" columns that share the same date have blank in the date row.
+    let lastDate='';
+    const colDates=dateRow.map(d=>{
+      const v=d.trim();
+      if(v&&v.toLowerCase()!=='date'&&v.toLowerCase()!=='net interest')lastDate=v;
+      return lastDate;
+    });
 
-      // Positional fallback assumes: Date, Narration, Inflow, Withdrawal, Net Interest, Balance
-      // Offset past any leading non-data columns (row #, member alias, etc.)
-      const offset=iDt>=0?iDt:0;
-      const dt=iDt>=0?iDt:offset+0;
-      const nr=iNr>=0?iNr:offset+1;
-      const iv=iIn>=0?iIn:offset+2;
-      const wd=iWd>=0?iWd:offset+3;
-      const nt=iNt>=0?iNt:offset+4;
-      const bl=iBl>=0?iBl:offset+5;
+    // ── Step 6: walk columns, collect non-zero entries ──
+    const transactions=[];
+    for(let col=0;col<labelRow.length;col++){
+      const label=labelRow[col].trim();
+      const date=colDates[col];
+      if(!label||!date)continue;
 
-      const byM={};
-      // Data rows start immediately after the detected header row
-      for(let i=hdrIdx+1;i<lines.length;i++){
-        const c=parseRow(lines[i]);
-        const date=c[dt]?.trim().replace(/"/g,'');
-        if(!date)continue;
-        const mo=monthFromDate(date);
-        if(!mo)continue;
-        (byM[mo]=byM[mo]||[]).push({
-          date,narr:c[nr]?.trim().replace(/"/g,'')||'',
-          inflow:nv(c[iv]),withdrawal:nv(c[wd]),interest:nv(c[nt]),balance:nv(c[bl])
-        });
-      }
-      return(_distByMonth=byM);
-    }catch(e){console.warn('Dist CSV failed:',e);return(_distByMonth={});}
-  })();
-  return _distPromise;
+      const isYield  =label.toLowerCase()==='yield';
+      const isTopup  =label.toLowerCase().startsWith('top up')||label.toLowerCase().startsWith('topup');
+      if(!isYield&&!isTopup)continue;
+
+      const val=nv(memberRow[col]);
+      if(!val||memberRow[col]==='-')continue;
+
+      transactions.push({
+        date,
+        narration: isYield ? 'Interest' : 'Investment',
+        amount:    val,
+        isTopup
+      });
+    }
+    return{transactions};
+  }catch(e){
+    return{err:e.message};
+  }
 }
 
+// ── Render monthly summary ───────────────────────────────────────────────
 function renderSummary(monthly){
   const curIdx=new Date().getMonth(),curMonth=MONTHS[curIdx];
   let ytdTop=0,ytdInt=0,lastBal=0;
-  MONTHS.slice(0,curIdx+1).forEach(m=>{const d=monthly[m];if(!d)return;ytdTop+=d.topups;ytdInt+=d.interest;lastBal=d.closingBalance;});
+  MONTHS.slice(0,curIdx+1).forEach(m=>{
+    const d=monthly[m];if(!d)return;
+    ytdTop+=d.topups;ytdInt+=d.interest;lastBal=d.closingBalance;
+  });
   el('stmt-period').textContent=`Year to Date · Jan – ${curMonth} ${CUR_YEAR}`;
   el('m-ico').textContent=CITY_ICON[alias]||'👤';
   el('m-name').textContent=alias;
@@ -284,7 +323,7 @@ function renderSummary(monthly){
       <td class="${ev&&!cur?'ev':''}">${d.topups>0?f0(d.topups):'—'}</td>
       <td class="g${ev&&!cur?' ev':''}">${f2(d.interest)}</td>
       <td class="tdr${ev&&!cur?' ev':''}">${f2(d.closingBalance)}</td>`;
-    mrow.addEventListener('click',()=>toggleDaily(m));
+    mrow.addEventListener('click',()=>toggleDaily(m,monthly[m]));
     tbody.appendChild(mrow);
     const drow=document.createElement('tr');
     drow.className='drow';drow.id='drow-'+m;
@@ -292,50 +331,75 @@ function renderSummary(monthly){
     tbody.appendChild(drow);
   });
   el('tfoot').innerHTML=`<tr>
-    <td class="tdl">Total ${CUR_YEAR}</td>
-    <td>—</td><td>${f0(ytdTop)}</td>
+    <td class="tdl">Total ${CUR_YEAR}</td><td>—</td>
+    <td>${f0(ytdTop)}</td>
     <td class="g">${f2(ytdInt)}</td>
     <td class="tdr g">${f2(lastBal)}</td></tr>`;
 }
 
+// ── Toggle daily panel ───────────────────────────────────────────────────
 const _shown={};
-async function toggleDaily(month){
+async function toggleDaily(month,monthlySummary){
   const drow=el('drow-'+month),tog=el('tog-'+month),dp=el('dp-'+month);
   if(!drow)return;
-  if(drow.classList.contains('open')){drow.classList.remove('open');tog.classList.remove('open');return;}
+  if(drow.classList.contains('open')){
+    drow.classList.remove('open');tog.classList.remove('open');return;
+  }
   drow.classList.add('open');tog.classList.add('open');
   if(_shown[month])return;
   _shown[month]=true;
-  dp.innerHTML=`<div class="dp-spin"><div class="spin"></div>Loading ${month} detail…</div>`;
-  const byM=await fetchDist();
-  const rows=(byM[month])||[];
-  if(!rows.length){dp.innerHTML=`<div class="dp-err">No distribution data for ${month} yet.</div>`;return;}
-  const rowsHTML=rows.map((r,i)=>`<tr class="${i%2?'alt':''}">
-    <td class="tdl">${r.date}</td>
-    <td class="tdl" style="padding-left:10px">${r.narr}</td>
-    <td>${r.inflow>0?f2(r.inflow):'—'}</td>
-    <td>${r.withdrawal>0?f2(r.withdrawal):'—'}</td>
-    <td class="g">${r.interest>0?f2(r.interest):'—'}</td>
-    <td class="tdr">${f2(r.balance)}</td></tr>`).join('');
+  dp.innerHTML=`<div class="dp-spin"><div class="spin"></div>Loading ${month} daily detail…</div>`;
+
+  const{transactions,err}=await parseDistSheet(month);
+  if(err){
+    dp.innerHTML=`<div class="dp-err">${err}</div>`;
+    return;
+  }
+  if(!transactions||!transactions.length){
+    dp.innerHTML=`<div class="dp-err">No daily entries found for ${month} yet.</div>`;
+    return;
+  }
+
+  // Compute running balance starting from opening balance
+  let running=(monthlySummary?.openingBalance)||0;
+  const rowsHTML=transactions.map((t,i)=>{
+    running+=t.amount;
+    const cls=i%2?'alt':'';
+    return`<tr class="${cls}">
+      <td class="tdl">${t.date}</td>
+      <td class="tdl" style="padding-left:10px">${t.narration}</td>
+      <td class="${t.isTopup?'inv':'g'}">${f2(t.amount)}</td>
+      <td class="tdr">${f2(running)}</td>
+    </tr>`;
+  }).join('');
+
   dp.innerHTML=`<div class="tscroll"><table class="daily">
-    <colgroup><col class="dc-dt"><col class="dc-nr"><col class="dc-n"><col class="dc-n"><col class="dc-n"><col class="dc-n"></colgroup>
+    <colgroup><col class="dc-dt"><col class="dc-nr"><col class="dc-am"><col class="dc-bl"></colgroup>
     <thead><tr>
-      <th class="tl">Date</th><th class="tl" style="padding-left:10px">Narration</th>
-      <th>Inflow</th><th>Withdrawal</th><th>Net Interest</th><th class="tr" style="padding-right:20px">Running Bal</th>
+      <th class="tl">Date</th>
+      <th class="tl" style="padding-left:10px">Narration</th>
+      <th>Amount (KES)</th>
+      <th class="tr" style="padding-right:20px">Running Bal</th>
     </tr></thead>
     <tbody>${rowsHTML}</tbody>
   </table></div>
-  <div class="dp-note">Group fund activity — Etica account · updated monthly.</div>`;
+  <div class="dp-note">Daily detail from Etica distribution sheet · ${month} ${CUR_YEAR}</div>`;
 }
 
+// ── Init ─────────────────────────────────────────────────────────────────
 (async()=>{
-  if(!alias){el('loading').innerHTML='<div class="load-msg" style="color:#ef4444">No alias specified. Open from the main app.</div>';return;}
+  if(!alias){
+    el('loading').innerHTML='<div class="load-msg" style="color:#ef4444">No alias specified. Open from the main app.</div>';
+    return;
+  }
   try{
-    const[monthly]=await Promise.all([fetchMonthly(),fetchDist()]);
+    const monthly=await fetchMonthly();
     renderSummary(monthly);
     el('loading').style.display='none';
     el('statement').style.display='block';
-  }catch(e){el('loading').innerHTML=`<div class="load-msg" style="color:#ef4444">Failed to load.<br><small>${e.message}</small></div>`;}
+  }catch(e){
+    el('loading').innerHTML=`<div class="load-msg" style="color:#ef4444">Failed to load.<br><small>${e.message}</small></div>`;
+  }
 })();
 </script>
 </body>
