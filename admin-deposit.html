@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0c0c0c">
+<title>LMF · Log Deposit</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #0c0c0c;
+  --card:  #161616;
+  --well:  #1d1d1d;
+  --ink:   #f0eeea;
+  --ink2:  rgba(240,238,234,.55);
+  --ink3:  rgba(240,238,234,.26);
+  --edge:  rgba(240,238,234,.07);
+  --edge2: rgba(240,238,234,.14);
+  --gr:    #00e5a0;
+  --grl:   rgba(0,229,160,.09);
+  --grl2:  rgba(0,229,160,.18);
+  --red:   #ff6b6b;
+  --redl:  rgba(255,107,107,.10);
+  --gold:  #f5c842;
+  --goldl: rgba(245,200,66,.10);
+  --blue:  #5ba3f5;
+  --bluel: rgba(91,163,245,.10);
+  --r:     11px;
+  --r2:    18px;
+  --r3:    22px;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { font-size:16px; }
+body {
+  font-family:'Bricolage Grotesque',sans-serif;
+  background:var(--bg); color:var(--ink);
+  min-height:100svh; padding-bottom:40px;
+  overscroll-behavior:none;
+}
+
+/* ── DESKTOP CENTERING ────────────────────────────── */
+.page-shell {
+  max-width:480px;
+  margin:0 auto;
+}
+
+/* Desktop: subtle ambient glow behind the centered column */
+@media (min-width:600px) {
+  body {
+    background-image:
+      radial-gradient(ellipse 50% 35% at 50% 0%, rgba(0,229,160,.04) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 28% at 50% 100%, rgba(0,229,160,.025) 0%, transparent 70%);
+  }
+  .page-shell {
+    padding-top: 4px;
+  }
+}
+
+/* ─── HEADER ─────────────────────────────────────── */
+.hdr {
+  position:sticky; top:0; z-index:100;
+  background:rgba(12,12,12,.96); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--edge);
+  padding:10px 14px;
+}
+.hdr-inner {
+  max-width:480px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.hdr-l    { display:flex; align-items:center; gap:8px; }
+.hdr-pill { background:var(--ink); color:var(--bg); font-size:.55rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; padding:4px 9px; border-radius:20px; flex-shrink:0; }
+.hdr-name { font-size:.92rem; font-weight:700; letter-spacing:-.02em; }
+.hdr-tag  { font-size:.55rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(245,200,66,.3); padding:3px 8px; border-radius:20px; }
+
+/* ─── LOCK ───────────────────────────────────────── */
+#lockScreen {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:calc(100svh - 48px); padding:0 20px;
+}
+.lock-eye  { font-size:.56rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+.lock-h    { font-size:2.8rem; font-weight:800; letter-spacing:-.04em; line-height:.94; text-align:center; margin-bottom:8px; }
+.lock-h em { font-style:italic; font-weight:400; color:var(--ink2); }
+.lock-s    { font-size:.78rem; color:var(--gold); margin-bottom:44px; text-align:center; }
+.pin-dots  { display:flex; gap:13px; margin-bottom:32px; }
+.pin-dot   { width:12px; height:12px; border-radius:50%; border:1.5px solid var(--edge2); background:transparent; transition:all .15s; }
+.pin-dot.on{ background:var(--gr); border-color:var(--gr); transform:scale(1.15); box-shadow:0 0 10px rgba(0,229,160,.4); }
+.numpad    { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:100%; max-width:270px; }
+.nk        { height:66px; border-radius:var(--r2); background:var(--card); border:1px solid var(--edge2); color:var(--ink); font-family:'Bricolage Grotesque',sans-serif; font-size:1.45rem; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .1s; user-select:none; touch-action:manipulation; }
+.nk:active { background:var(--ink); color:var(--bg); transform:scale(.93); }
+.nk.del   { font-size:1rem; color:var(--ink2); }
+.nk.blank { background:transparent; border:none; pointer-events:none; }
+.pin-err  { color:var(--red); font-size:.74rem; margin-top:14px; min-height:18px; text-align:center; }
+
+/* ─── MAIN ───────────────────────────────────────── */
+#mainForm { display:none; padding:12px 12px 0; }
+
+/* ─── 3 BIG CARDS ────────────────────────────────── */
+.card {
+  background:var(--card);
+  border:1px solid var(--edge2);
+  border-radius:var(--r3);
+  margin-bottom:10px;
+  overflow:hidden;
+}
+
+/* Card header strip */
+.card-hd {
+  padding:12px 14px 11px;
+  border-bottom:1px solid var(--edge);
+  display:flex; align-items:center; gap:8px;
+}
+.card-icon {
+  width:28px; height:28px; border-radius:8px;
+  background:var(--grl); border:1px solid var(--grl2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; flex-shrink:0;
+}
+.card-title {
+  font-size:.7rem; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--gr);
+  line-height:1;
+}
+.card-sub {
+  font-size:.6rem; color:var(--gold); margin-top:1px;
+}
+
+/* Card body */
+.card-b { padding:13px 13px; }
+
+/* ─── SECTION LABELS (inside card 2) ─────────────── */
+.sl {
+  display:flex; align-items:center; gap:7px;
+  font-size:.58rem; font-weight:800; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--gr);
+  margin:16px 0 8px;
+}
+.sl:first-child { margin-top:0; }
+.sl-dot {
+  width:16px; height:16px; border-radius:5px; flex-shrink:0;
+  background:var(--grl); border:1px solid var(--grl2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.5rem; font-weight:800; color:var(--gr);
+}
+.sl::after { content:''; flex:1; height:1px; background:var(--edge); }
+
+/* ─── INPUTS ─────────────────────────────────────── */
+.ig { position:relative; margin-bottom:7px; }
+.ig:last-of-type { margin-bottom:0; }
+.ii { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:.84rem; pointer-events:none; color:var(--ink3); z-index:2; }
+input, select, textarea {
+  width:100%; background:var(--well); border:1px solid var(--edge2);
+  border-radius:var(--r); color:var(--ink);
+  font-family:'Bricolage Grotesque',sans-serif; font-size:.9rem; font-weight:500;
+  padding:12px 11px 12px 38px; outline:none; -webkit-appearance:none;
+  transition:border-color .15s, box-shadow .15s; touch-action:manipulation;
+}
+input:focus, select:focus, textarea:focus { border-color:var(--gr); box-shadow:0 0 0 2px var(--grl2); }
+input::placeholder { color:var(--ink3); }
+select option { background:#1a1a1a; }
+.mono { font-family:'DM Mono',monospace; font-weight:500; }
+.amt-in {
+  font-size:1.45rem; font-weight:800; letter-spacing:-.02em;
+  padding-left:54px; font-family:'Bricolage Grotesque',sans-serif;
+}
+.kpfx { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-family:'DM Mono',monospace; font-size:.58rem; font-weight:500; color:var(--gr); z-index:2; letter-spacing:.04em; }
+.code-in { font-family:'DM Mono',monospace; font-size:.88rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; }
+textarea { resize:none; padding-left:11px; font-size:.82rem; line-height:1.6; min-height:74px; }
+
+/* ─── CARD 1: PASTE ──────────────────────────────── */
+.pwrap { position:relative; }
+.pbox {
+  width:100%; min-height:84px; background:var(--well);
+  border:1px solid var(--edge2); border-radius:var(--r);
+  color:var(--ink); font-family:'Bricolage Grotesque',sans-serif;
+  font-size:.82rem; line-height:1.6;
+  padding:11px 11px 42px; resize:none; outline:none;
+  -webkit-appearance:none; transition:border-color .15s;
+}
+.pbox:focus { border-color:var(--gr); box-shadow:0 0 0 2px var(--grl2); }
+.pbox::placeholder { color:var(--ink3); font-size:.74rem; }
+.pbox.dup { border-color:var(--red); background:var(--redl); text-decoration:line-through; color:var(--ink2); }
+.pbtn {
+  position:absolute; bottom:8px; right:8px;
+  background:var(--gr); color:#0c0c0c;
+  border:none; border-radius:8px;
+  font-family:'Bricolage Grotesque',sans-serif; font-size:.7rem; font-weight:800;
+  padding:7px 14px; cursor:pointer; touch-action:manipulation;
+}
+.pbtn:active { opacity:.82; }
+
+.dup-ban { display:none; margin-top:7px; padding:9px 12px; background:var(--redl); border:1px solid rgba(255,107,107,.2); border-radius:var(--r); font-size:.76rem; color:var(--red); line-height:1.5; }
+.dup-ban.show { display:block; }
+
+.excard { display:none; margin-top:7px; background:var(--grl); border:1px solid var(--grl2); border-radius:var(--r); padding:10px 12px; }
+.excard.show { display:block; }
+.exrow { display:flex; justify-content:space-between; align-items:center; padding:3px 0; border-bottom:1px solid rgba(240,238,234,.05); }
+.exrow:last-of-type { border-bottom:none; }
+.exlbl { font-size:.6rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+.exval { font-family:'DM Mono',monospace; font-size:.78rem; color:var(--gr); }
+.exwarn { font-size:.68rem; color:var(--gold); margin-top:6px; }
+
+/* ─── METHOD BUTTONS ─────────────────────────────── */
+.mrow { display:flex; gap:7px; }
+.mbtn {
+  flex:1; padding:13px 6px;
+  background:var(--well); border:1.5px solid var(--edge2); border-radius:var(--r);
+  color:var(--ink2); font-family:'Bricolage Grotesque',sans-serif;
+  font-size:.82rem; font-weight:700; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  transition:all .15s; touch-action:manipulation;
+}
+.mbtn .mi { font-size:1.3rem; }
+.mbtn.on  { background:var(--ink); border-color:var(--ink); color:var(--bg); box-shadow:0 4px 16px rgba(0,0,0,.35); }
+
+/* ─── CREDIT TOGGLE ──────────────────────────────── */
+.ctoggle { display:flex; border-radius:var(--r); overflow:hidden; border:1.5px solid var(--edge2); margin-bottom:7px; }
+.ctbtn { flex:1; padding:11px 6px; background:var(--well); border:none; color:var(--ink2); font-family:'Bricolage Grotesque',sans-serif; font-size:.82rem; font-weight:700; cursor:pointer; transition:all .15s; touch-action:manipulation; border-right:1px solid var(--edge2); }
+.ctbtn:last-child { border-right:none; }
+.ctbtn.on { background:var(--ink); color:var(--bg); }
+
+/* ─── SPLIT ──────────────────────────────────────── */
+.srow { display:flex; gap:6px; align-items:center; margin-bottom:6px; }
+.ssw  { flex:1; position:relative; }
+.ssw .ii { font-size:.8rem; }
+.ssw select { font-size:.84rem; padding:11px 8px 11px 34px; }
+.saw  { width:108px; flex-shrink:0; position:relative; }
+.saw .kpfx { font-size:.56rem; }
+.saw input { font-size:.86rem; padding:11px 8px 11px 42px; }
+.sdel { width:36px; height:43px; flex-shrink:0; background:var(--redl); border:1px solid rgba(255,107,107,.18); border-radius:var(--r); color:var(--red); font-size:.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; }
+.sdel:active { background:var(--red); color:#fff; }
+.addbtn { width:100%; padding:11px; background:transparent; border:1.5px dashed var(--edge2); border-radius:var(--r); color:var(--ink3); font-family:'Bricolage Grotesque',sans-serif; font-size:.8rem; font-weight:700; cursor:pointer; margin-top:2px; touch-action:manipulation; transition:all .15s; }
+.addbtn:active { border-color:var(--gr); color:var(--gr); }
+.balbar { margin-top:8px; padding:10px 13px; background:var(--well); border-radius:var(--r); border:1px solid var(--edge); display:flex; justify-content:space-between; align-items:center; }
+.ballbl { font-size:.6rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+.balval { font-family:'DM Mono',monospace; font-size:.86rem; }
+.bok { color:var(--gr); } .bover { color:var(--red); } .bund { color:var(--gold); }
+
+/* ─── GREEN SUBMIT PILL ──────────────────────────── */
+.subbtn {
+  width:100%; padding:16px;
+  background:var(--gr); color:#0c0c0c;
+  border:none; border-radius:50px;
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:.98rem; font-weight:800; letter-spacing:.01em;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;
+  transition:all .18s; touch-action:manipulation;
+  box-shadow:0 6px 24px rgba(0,229,160,.22);
+  margin-top:14px;
+}
+.subbtn:disabled { background:var(--well); color:var(--ink3); box-shadow:none; cursor:not-allowed; border:1px solid var(--edge); border-radius:50px; }
+.subbtn:not(:disabled):active { transform:scale(.97); opacity:.9; }
+
+/* ─── STATUS ─────────────────────────────────────── */
+.stat { display:none; margin-top:9px; padding:12px 14px; border-radius:var(--r); font-size:.8rem; line-height:1.6; white-space:pre-line; text-align:center; }
+.ok   { display:block; background:var(--grl); border:1px solid var(--grl2); color:var(--gr); }
+.err  { display:block; background:var(--redl); border:1px solid rgba(255,107,107,.2); color:var(--red); }
+.wait { display:block; background:var(--well); border:1px solid var(--edge); color:var(--ink2); }
+
+/* ─── CARD 3: LOG ────────────────────────────────── */
+.log-hd { display:flex; justify-content:space-between; align-items:center; padding:12px 14px 11px; border-bottom:1px solid var(--edge); }
+.log-title { font-size:.9rem; font-weight:800; letter-spacing:-.02em; }
+.log-title em { font-style:italic; font-weight:400; color:var(--ink2); }
+.log-cnt { font-size:.55rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); background:var(--well); padding:3px 8px; border-radius:20px; border:1px solid var(--edge); }
+.log-b { padding:9px 11px; }
+.loge { background:var(--well); border:1px solid var(--edge); border-radius:var(--r2); padding:11px 13px; margin-bottom:6px; }
+.loge:last-child { margin-bottom:0; }
+.logt  { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.loga  { font-size:.86rem; font-weight:800; letter-spacing:-.01em; }
+.logamt { font-size:.96rem; font-weight:800; color:var(--gr); letter-spacing:-.01em; }
+.logm  { font-size:.66rem; color:var(--ink3); line-height:1.55; }
+.badge { display:inline-block; font-size:.5rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:2px 6px; border-radius:20px; margin-left:5px; vertical-align:middle; }
+.bm { background:var(--grl); color:var(--gr); border:1px solid var(--grl2); }
+.bb { background:var(--bluel); color:var(--blue); border:1px solid rgba(91,163,245,.2); }
+.bs { background:var(--goldl); color:var(--gold); border:1px solid rgba(245,200,66,.2); }
+.noent { color:var(--ink3); font-size:.76rem; text-align:center; padding:18px 0; }
+
+/* ─── MODAL — bottom sheet ───────────────────────── */
+.modal-ov { display:flex; position:fixed; inset:0; z-index:999; background:rgba(0,0,0,.84); backdrop-filter:blur(14px); align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .22s; }
+.modal-ov.show { opacity:1; pointer-events:all; }
+.modal { background:var(--card); border:1px solid var(--edge2); border-radius:24px 24px 0 0; padding:0 20px 48px; width:100%; max-width:440px; display:flex; flex-direction:column; align-items:center; transform:translateY(36px); transition:transform .26s cubic-bezier(.2,.8,.3,1); }
+.modal-ov.show .modal { transform:translateY(0); }
+.modal-handle { width:34px; height:4px; border-radius:2px; background:var(--edge2); margin:12px auto 18px; }
+.modal-eye   { font-size:.56rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.modal-title { font-size:1.8rem; font-weight:800; letter-spacing:-.04em; line-height:1; margin-bottom:3px; text-align:center; }
+.modal-title em { font-style:italic; font-weight:400; color:var(--ink2); }
+.modal-sub   { font-size:.74rem; color:var(--gold); margin-bottom:22px; text-align:center; line-height:1.45; max-width:200px; }
+.modal-dots  { display:flex; gap:13px; margin-bottom:22px; }
+.modal-dot   { width:11px; height:11px; border-radius:50%; border:1.5px solid var(--edge2); background:transparent; transition:all .14s; }
+.modal-dot.on { background:var(--gr); border-color:var(--gr); transform:scale(1.12); box-shadow:0 0 8px rgba(0,229,160,.4); }
+.modal-npad  { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; width:100%; }
+.mnk    { height:56px; border-radius:var(--r); background:var(--well); border:1px solid var(--edge); color:var(--ink); font-family:'Bricolage Grotesque',sans-serif; font-size:1.3rem; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .1s; touch-action:manipulation; }
+.mnk:active { background:var(--ink); color:var(--bg); transform:scale(.93); }
+.mnk.mdel   { font-size:.88rem; color:var(--ink2); }
+.mnk.mblank { background:transparent; border:none; pointer-events:none; }
+.modal-err  { color:var(--red); font-size:.72rem; margin-top:10px; min-height:17px; text-align:center; }
+.modal-cancel { margin-top:12px; background:transparent; border:none; color:var(--gold); font-family:'Bricolage Grotesque',sans-serif; font-size:.78rem; font-weight:700; cursor:pointer; padding:7px 14px; }
+
+@keyframes spin { to { transform:rotate(360deg); } }
+.spin { width:15px; height:15px; flex-shrink:0; border:2px solid rgba(12,12,12,.22); border-top-color:var(--bg); border-radius:50%; animation:spin .6s linear infinite; }
+@keyframes up { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+.up { animation:up .26s ease both; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-inner">
+  <div class="hdr-l">
+    <div class="hdr-pill">LMF</div>
+    <div class="hdr-name">Deposit Log</div>
+  </div>
+  <div class="hdr-tag">Admin &middot; Private</div>
+  </div><!-- /hdr-inner -->
+</div>
+
+<div class="page-shell">
+<!-- ══════════════ LOCK SCREEN ══════════════ -->
+<div id="lockScreen">
+  <div class="lock-eye">Restricted Area</div>
+  <div class="lock-h">Enter<br><em>your PIN</em></div>
+  <div class="lock-s">Admin only &mdash; all actions are logged</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="numpad">
+    <button class="nk" onclick="nk('1')">1</button>
+    <button class="nk" onclick="nk('2')">2</button>
+    <button class="nk" onclick="nk('3')">3</button>
+    <button class="nk" onclick="nk('4')">4</button>
+    <button class="nk" onclick="nk('5')">5</button>
+    <button class="nk" onclick="nk('6')">6</button>
+    <button class="nk" onclick="nk('7')">7</button>
+    <button class="nk" onclick="nk('8')">8</button>
+    <button class="nk" onclick="nk('9')">9</button>
+    <button class="nk blank"></button>
+    <button class="nk" onclick="nk('0')">0</button>
+    <button class="nk del" onclick="nkDel()">&#9003;</button>
+  </div>
+  <div class="pin-err" id="pinErr"></div>
+</div>
+
+<!-- ══════════════ MAIN FORM ══════════════ -->
+<div id="mainForm" class="up">
+
+  <!-- ▓▓▓ CARD 1 — M-PESA Message ▓▓▓ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-icon">📲</div>
+      <div>
+        <div class="card-title">M-PESA Message</div>
+        <div class="card-sub">Paste SMS &amp; auto-extract details</div>
+      </div>
+    </div>
+    <div class="card-b">
+      <div class="pwrap">
+        <textarea class="pbox" id="msgBox" rows="4"
+          placeholder="Paste forwarded M-PESA SMS here&#10;&#10;e.g. UAKES4BCMP Confirmed. Ksh6,000.00 sent to ETICA CAPITAL LTD for account 308398M on 20/1/26 at 2:26 PM&#8230;"
+          oninput="chkDup()"></textarea>
+        <button class="pbtn" onclick="parseMsg()">Extract &#10022;</button>
+      </div>
+      <div class="dup-ban" id="dupBan">&#9940; Already logged &mdash; duplicate blocked.</div>
+      <div class="excard" id="excard">
+        <div class="exrow"><span class="exlbl">Code</span><span class="exval" id="exCode">&mdash;</span></div>
+        <div class="exrow"><span class="exlbl">Amount</span><span class="exval" id="exAmt">&mdash;</span></div>
+        <div class="exrow"><span class="exlbl">Date</span><span class="exval" id="exDate">&mdash;</span></div>
+        <div class="exrow"><span class="exlbl">Account ref</span><span class="exval" id="exAcct">&mdash;</span></div>
+        <div class="exwarn" id="exWarn"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▓▓▓ CARD 2 — Deposit Details + Submit ▓▓▓ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-icon">📋</div>
+      <div>
+        <div class="card-title">Deposit Details</div>
+        <div class="card-sub">Complete sections 2 – 6 below</div>
+      </div>
+    </div>
+    <div class="card-b">
+
+      <!-- § 2 Payment Method -->
+      <div class="sl"><span class="sl-dot">2</span>Payment Method</div>
+      <div class="mrow">
+        <button class="mbtn on" id="btnM" onclick="setMethod('MPESA')"><span class="mi">📱</span>M-PESA</button>
+        <button class="mbtn"    id="btnB" onclick="setMethod('BANK')"><span class="mi">🏦</span>Bank</button>
+      </div>
+
+      <!-- § 3 Received From -->
+      <div class="sl"><span class="sl-dot">3</span>Received From</div>
+      <div class="ig">
+        <span class="ii">👤</span>
+        <select id="fromMember" onchange="onFrom()">
+          <option value="" disabled selected>Who made this deposit?</option>
+        </select>
+      </div>
+
+      <!-- § 4 Amount / Date / Code -->
+      <div class="sl"><span class="sl-dot">4</span>Amount, Date &amp; Code</div>
+      <div class="ig">
+        <span class="kpfx">KES</span>
+        <input type="number" class="amt-in mono" id="totalAmt" placeholder="0" min="1" inputmode="decimal" oninput="updBal()">
+      </div>
+      <div class="ig">
+        <span class="ii">📅</span>
+        <input type="date" id="depDate">
+      </div>
+      <div class="ig">
+        <span class="ii">🔑</span>
+        <input type="text" class="code-in" id="refCode" placeholder="e.g. UAKES4BCMP" maxlength="20" autocapitalize="characters" autocomplete="off" oninput="onCode()">
+      </div>
+
+      <!-- § 5 Credit To -->
+      <div class="sl"><span class="sl-dot">5</span>Credit To</div>
+      <div class="ctoggle">
+        <button class="ctbtn on" id="ctS"  onclick="setCredit('single')">👤 Single Member</button>
+        <button class="ctbtn"    id="ctSp" onclick="setCredit('split')">🔀 Split</button>
+      </div>
+      <div id="singDiv">
+        <div class="ig">
+          <span class="ii">🎯</span>
+          <select id="creditMem">
+            <option value="" disabled selected>Member to credit</option>
+          </select>
+        </div>
+      </div>
+      <div id="splitDiv" style="display:none">
+        <div id="splitRows"></div>
+        <button class="addbtn" onclick="addRow()">＋ Add Member</button>
+        <div class="balbar">
+          <span class="ballbl">Unallocated</span>
+          <span class="balval bund" id="balVal">&mdash;</span>
+        </div>
+      </div>
+
+      <!-- § 6 Notes -->
+      <div class="sl"><span class="sl-dot">6</span>Notes <span style="color:var(--gold);text-transform:none;letter-spacing:0;font-weight:500;font-size:.66rem;margin-left:2px">(optional)</span></div>
+      <div class="ig">
+        <textarea id="notes" placeholder="e.g. Second deposit this week, partial top-up&#8230;"></textarea>
+      </div>
+
+      <!-- GREEN SUBMIT PILL -->
+      <button class="subbtn" id="subBtn" onclick="triggerSubmit()">
+        <span id="subLbl">Log Deposit &nbsp;&#8594;</span>
+      </button>
+      <div class="stat" id="statBox"></div>
+
+    </div>
+  </div>
+
+  <!-- ▓▓▓ CARD 3 — Recent Entries ▓▓▓ -->
+  <div class="card">
+    <div class="log-hd">
+      <div class="log-title">Recent <em>Entries</em></div>
+      <div class="log-cnt" id="logCnt">0 this session</div>
+    </div>
+    <div class="log-b">
+      <div id="logList"></div>
+      <div class="noent" id="noEnt">No entries logged yet this session</div>
+    </div>
+  </div>
+
+</div><!-- /mainForm -->
+
+</div><!-- /page-shell -->
+
+<script>
+// ── CONFIG (unchanged from original) ──────────────────────────────
+const ADMIN_PIN       = '1234';
+const SERVER_PIN      = '4040';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqEfsYI_8AKAlYfuUyzoiYbLRYXTQJVYgVygEXysGlwE5cMwQVDcsdI_c9LyYJOLXy/exec';
+
+const CLIENT_TOKEN = (()=>{
+  try { let t=localStorage.getItem('lmf_token'); if(!t){t='dev_'+Math.random().toString(36).slice(2,10)+'_'+Date.now();localStorage.setItem('lmf_token',t);} return t; }
+  catch(e){ return 'dev_'+Math.random().toString(36).slice(2,10); }
+})();
+const DEVICE_INFO = navigator.userAgent.slice(0,150);
+
+let method='MPESA', creditMode='single', splitCnt=0, log=[], usedCodes=new Set(), pin='';
+
+let MEMBERS = []; // populated dynamically from sheet
+
+const MEMBERS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQfQdBVl01cxsIoGnfJLltGDuOkIVDFqj-rNg3KwFVZ8-GGbUqk1DSs_CVaygisjaLhg30g1gjzIsdC/pub?output=csv&sheet=Members';
+
+function populateSelects(list) {
+  const opts = list.map(m => `<option value="${m}">${m}</option>`).join('');
+  const addTo = id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Keep the placeholder, replace the rest
+    el.innerHTML = el.querySelector('option[disabled]').outerHTML + opts;
+  };
+  addTo('fromMember');
+  addTo('creditMem');
+  // Re-render any existing split rows with updated list
+  document.querySelectorAll('.s-sel').forEach(sel => {
+    const cur = sel.value;
+    sel.innerHTML = `<option value="" disabled selected>Member</option>` + opts;
+    if (cur) sel.value = cur;
+  });
+}
+
+async function loadMembers() {
+  try {
+    const res  = await fetch(MEMBERS_URL + '&_=' + Date.now(), {cache:'no-store'});
+    const text = await res.text();
+    const lines = text.split('\n').filter(l => l.trim());
+    if (lines.length < 2) throw new Error('Empty');
+    // Detect Alias column from header (col A = index 0 by default)
+    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,'').toLowerCase());
+    const col = headers.findIndex(h => h.includes('alias') || h.includes('name'));
+    const iA  = col >= 0 ? col : 0;
+    const parsed = lines.slice(1).map(l => l.split(',')[iA]?.trim().replace(/"/g,'')).filter(Boolean);
+    if (parsed.length > 0) MEMBERS = parsed;
+  } catch(e) {
+    console.warn('Members sheet fetch failed, using fallback:', e);
+  }
+  populateSelects(MEMBERS);
+}
+
+document.addEventListener('DOMContentLoaded', () => { setToday(); loadMembers().then(() => { addRow(); addRow(); }); });
+
+function setToday(){
+  const d=new Date();
+  document.getElementById('depDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+/* ── PIN NUMPAD ── */
+function nk(d){ if(pin.length>=4)return; pin+=d; dots(); if(pin.length===4)setTimeout(checkPin,130); }
+function nkDel(){ pin=pin.slice(0,-1); dots(); }
+function dots(){ for(let i=0;i<4;i++) document.getElementById('d'+i).classList.toggle('on',i<pin.length); }
+function checkPin(){
+  if(pin===ADMIN_PIN){
+    document.getElementById('lockScreen').style.display='none';
+    document.getElementById('mainForm').style.display='block';
+  } else {
+    document.getElementById('pinErr').textContent='Wrong PIN \u2014 try again';
+    pin=''; dots(); setTimeout(()=>document.getElementById('pinErr').textContent='',2000);
+  }
+}
+
+/* ── DUPE CHECK ── */
+function extractCode(t){ const m=t.match(/^([A-Z0-9]{10})\s+Confirmed/i); return m?m[1].toUpperCase():null; }
+function markDup(d){ document.getElementById('dupBan').classList.toggle('show',d); document.getElementById('msgBox').classList.toggle('dup',d); }
+function chkDup(){ const c=extractCode(document.getElementById('msgBox').value); markDup(c?usedCodes.has(c):false); }
+function onCode(){ const el=document.getElementById('refCode'); const p=el.selectionStart; el.value=el.value.toUpperCase(); el.setSelectionRange(p,p); const c=el.value.trim(); if(c.length===10)markDup(usedCodes.has(c)); }
+
+/* ── M-PESA PARSER ── */
+function parseMsg(){
+  const msg=document.getElementById('msgBox').value.trim();
+  const warn=document.getElementById('exWarn'); warn.textContent='';
+  if(!msg){ stat('err','Paste an M-PESA message first.'); return; }
+  const codeM=msg.match(/^([A-Z0-9]{10})\s+Confirmed/i);
+  const amtM =msg.match(/Ksh([\d,]+(?:\.\d+)?)\s+sent/i);
+  const dateM=msg.match(/on\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})/i);
+  const acctM=msg.match(/for account\s+(\S+)/i);
+  if(!codeM&&!amtM){ warn.textContent='\u26a0\ufe0f Cannot read \u2014 check format.'; document.getElementById('excard').classList.add('show'); return; }
+  if(codeM){ const code=codeM[1].toUpperCase(); if(usedCodes.has(code)){ markDup(true); return; } document.getElementById('refCode').value=code; document.getElementById('exCode').textContent=code; }
+  if(amtM){ const amt=Math.round(parseFloat(amtM[1].replace(/,/g,''))); document.getElementById('totalAmt').value=amt; document.getElementById('exAmt').textContent='KES '+amt.toLocaleString(); updBal(); }
+  if(dateM){ let yr=parseInt(dateM[3]); if(yr<100)yr+=2000; const iso=`${yr}-${String(dateM[2]).padStart(2,'0')}-${String(dateM[1]).padStart(2,'0')}`; document.getElementById('depDate').value=iso; document.getElementById('exDate').textContent=new Date(iso).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}); }
+  else { document.getElementById('exDate').textContent='Not found \u2014 using today'; warn.textContent='\u26a0\ufe0f Date missing \u2014 confirm below.'; }
+  document.getElementById('exAcct').textContent=acctM?acctM[1]:'—';
+  document.getElementById('excard').classList.add('show');
+  setMethod('MPESA');
+  setTimeout(()=>document.getElementById('fromMember').focus(),200);
+}
+
+/* ── FORM CONTROLS ── */
+function onFrom(){ const f=document.getElementById('fromMember').value; if(!f)return; const cm=document.getElementById('creditMem'); if(cm.value==='')cm.value=f; const fs=document.querySelector('.s-sel'); if(fs&&fs.value==='')fs.value=f; }
+function setMethod(m){ method=m; document.getElementById('btnM').classList.toggle('on',m==='MPESA'); document.getElementById('btnB').classList.toggle('on',m==='BANK'); }
+function setCredit(mode){ creditMode=mode; document.getElementById('ctS').classList.toggle('on',mode==='single'); document.getElementById('ctSp').classList.toggle('on',mode==='split'); document.getElementById('singDiv').style.display=mode==='single'?'block':'none'; document.getElementById('splitDiv').style.display=mode==='split'?'block':'none'; updBal(); }
+
+/* ── SPLIT ROWS ── */
+function addRow(){
+  splitCnt++; const id='sr'+splitCnt; const div=document.createElement('div'); div.className='srow'; div.id=id;
+  div.innerHTML=`<div class="ssw"><span class="ii">👤</span><select class="s-sel" onchange="updBal()"><option value="" disabled selected>Member</option>${MEMBERS.map(m=>`<option>${m}</option>`).join('')}</select></div><div class="saw"><span class="kpfx">KES</span><input type="number" class="s-amt mono" placeholder="0" min="0" inputmode="decimal" oninput="updBal()"></div><button class="sdel" onclick="delRow('${id}')">✕</button>`;
+  document.getElementById('splitRows').appendChild(div); updBal();
+}
+function delRow(id){ const el=document.getElementById(id); if(el)el.remove(); updBal(); }
+function updBal(){
+  if(creditMode!=='split')return;
+  const total=parseFloat(document.getElementById('totalAmt').value)||0;
+  const alloc=Array.from(document.querySelectorAll('.s-amt')).reduce((s,i)=>s+(parseFloat(i.value)||0),0);
+  const rem=total-alloc; const el=document.getElementById('balVal');
+  el.className='balval '+(rem===0?'bok':rem<0?'bover':'bund');
+  el.textContent=(rem===0?'\u2705 ':'')+'KES '+Math.abs(rem).toLocaleString()+(rem>0?' remaining':rem<0?' OVER!':' balanced');
+}
+
+/* ── SUBMIT ── */
+function triggerSubmit(){
+  handleSubmit().catch(function(err){ console.error(err); stat('err','\u274c Error: '+err.message); document.getElementById('subBtn').disabled=false; document.getElementById('subLbl').innerHTML='Log Deposit &nbsp;\u2192'; });
+}
+async function handleSubmit(){
+  const from=document.getElementById('fromMember').value;
+  const amt=parseFloat(document.getElementById('totalAmt').value);
+  const code=document.getElementById('refCode').value.trim().toUpperCase();
+  const date=document.getElementById('depDate').value;
+  const notes=document.getElementById('notes').value.trim();
+  if(!from) return stat('err','Select who made the deposit.');
+  if(!amt||amt<=0) return stat('err','Enter the deposit amount.');
+  if(!code) return stat('err','Enter the reference code.');
+  if(!date) return stat('err','Confirm the deposit date.');
+  if(usedCodes.has(code)) return stat('err','\u26d4 Code already logged this session.');
+  let credits=[];
+  if(creditMode==='single'){
+    const to=document.getElementById('creditMem').value; if(!to)return stat('err','Select a member to credit.'); credits=[{alias:to,amount:amt}];
+  } else {
+    document.querySelectorAll('.srow').forEach(r=>{ const a=r.querySelector('.s-sel').value; const v=parseFloat(r.querySelector('.s-amt').value)||0; if(a&&v>0)credits.push({alias:a,amount:v}); });
+    if(!credits.length)return stat('err','Add at least one member to the split.');
+    const tot=credits.reduce((s,c)=>s+c.amount,0);
+    if(Math.abs(tot-amt)>0.01)return stat('err',`Split total KES ${tot.toLocaleString()} \u2260 KES ${amt.toLocaleString()}.`);
+  }
+  const payload={timestamp:new Date().toISOString(),date,week:weekNum(new Date(date)),from,method,totalAmount:amt,refCode:code,notes,credits,isSplit:creditMode==='split',clientToken:CLIENT_TOKEN,deviceInfo:DEVICE_INFO};
+  openConfirm(payload);
+}
+
+function done(p){
+  usedCodes.add(p.refCode);
+  const cd=p.isSplit?p.credits.map(c=>`${c.alias} KES ${c.amount.toLocaleString()}`).join(' \u00b7 '):p.credits[0].alias;
+  stat('ok',`\u2705 Logged!\n${p.refCode} \u00b7 KES ${p.totalAmount.toLocaleString()}\nFrom: ${p.from} \u2192 ${cd}`);
+  log.unshift(p); renderLog();
+  ['fromMember','totalAmt','refCode','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('msgBox').value=''; document.getElementById('msgBox').classList.remove('dup');
+  document.getElementById('excard').classList.remove('show'); document.getElementById('dupBan').classList.remove('show');
+  document.getElementById('creditMem').value='';
+  document.querySelectorAll('.s-amt').forEach(i=>i.value=''); document.querySelectorAll('.s-sel').forEach(s=>s.selectedIndex=0);
+  updBal(); setToday();
+  document.getElementById('subBtn').disabled=false; document.getElementById('subLbl').innerHTML='Log Deposit &nbsp;\u2192';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderLog(){
+  const list=document.getElementById('logList'), none=document.getElementById('noEnt');
+  document.getElementById('logCnt').textContent=log.length+' this session';
+  if(!log.length){ none.style.display='block'; list.innerHTML=''; return; }
+  none.style.display='none';
+  list.innerHTML=log.slice(0,10).map(e=>{
+    const badge=e.isSplit?`<span class="badge bs">SPLIT</span>`:`<span class="badge bm">${e.method}</span>`;
+    const cr=e.credits.map(c=>`<span style="color:var(--ink2)">${c.alias}</span> <span class="mono" style="color:var(--gr);font-size:.72rem">+${c.amount.toLocaleString()}</span>`).join(' \u00b7 ');
+    return `<div class="loge"><div class="logt"><div class="loga">${e.from}${badge}</div><div class="logamt">KES ${e.totalAmount.toLocaleString()}</div></div><div class="logm">${e.date} \u00b7 ${e.refCode}<br>\u2192 ${cr}</div></div>`;
+  }).join('');
+}
+
+/* ── CONFIRM MODAL ── */
+let confirmPin='', pendingPayload=null;
+function openConfirm(payload){
+  pendingPayload=payload; confirmPin=''; updateModalDots();
+  document.getElementById('confirmErr').textContent='';
+  const creds=payload.isSplit?payload.credits.map(c=>c.alias+' KES '+c.amount.toLocaleString()).join(', '):payload.credits[0].alias+' \u00b7 KES '+payload.totalAmount.toLocaleString();
+  document.getElementById('confirmSub').textContent=creds;
+  document.getElementById('confirmOv').classList.add('show');
+}
+function closeConfirm(){
+  document.getElementById('confirmOv').classList.remove('show');
+  pendingPayload=null; confirmPin=''; updateModalDots();
+  document.getElementById('subBtn').disabled=false;
+  document.getElementById('subLbl').innerHTML='Log Deposit &nbsp;\u2192';
+  const s=document.getElementById('statBox'); s.className='stat'; s.textContent='';
+}
+function mnk(d){ if(confirmPin.length>=4)return; confirmPin+=d; updateModalDots(); if(confirmPin.length===4)setTimeout(function(){ fireSubmit().catch(function(e){console.error(e);}); },130); }
+function mnkDel(){ confirmPin=confirmPin.slice(0,-1); updateModalDots(); }
+function updateModalDots(){ for(let i=0;i<4;i++) document.getElementById('md'+i).classList.toggle('on',i<confirmPin.length); }
+async function fireSubmit(){
+  if(confirmPin!==ADMIN_PIN){ document.getElementById('confirmErr').textContent='Wrong PIN \u2014 try again'; confirmPin=''; updateModalDots(); return; }
+  document.getElementById('confirmOv').classList.remove('show');
+  pendingPayload.pin=SERVER_PIN;
+  await sendPayload(pendingPayload);
+}
+async function sendPayload(payload){
+  const btn=document.getElementById('subBtn'), lbl=document.getElementById('subLbl');
+  btn.disabled=true; lbl.innerHTML='<div class="spin"></div> Logging\u2026'; stat('wait','Sending to Google Sheets\u2026');
+  try {
+    try {
+      const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const r=await resp.json();
+      if(r.status==='wrong_pin'){ stat('err','\u274c Wrong server PIN'); btn.disabled=false; lbl.innerHTML='Log Deposit &nbsp;\u2192'; return; }
+      if(r.status==='locked')   { stat('err','\ud83d\udd12 '+r.message); btn.disabled=false; lbl.innerHTML='Log Deposit &nbsp;\u2192'; return; }
+      if(r.status==='error')    { stat('err','\u274c Server error: '+r.message); btn.disabled=false; lbl.innerHTML='Log Deposit &nbsp;\u2192'; return; }
+    } catch(corsErr) {
+      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    }
+    done(payload);
+  } catch(e) {
+    stat('err','\u274c Failed \u2014 check connection.\n'+e.message);
+    btn.disabled=false; lbl.innerHTML='Log Deposit &nbsp;\u2192';
+  }
+}
+function stat(type,msg){ const el=document.getElementById('statBox'); el.className='stat '+type; el.textContent=msg; }
+function weekNum(d){ const u=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const dw=u.getUTCDay()||7; u.setUTCDate(u.getUTCDate()+4-dw); const y=new Date(Date.UTC(u.getUTCFullYear(),0,1)); return 'W'+Math.ceil((((u-y)/86400000)+1)/7); }
+</script>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-ov" id="confirmOv">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-eye">Confirm Action</div>
+    <div class="modal-title">Confirm<br><em>Deposit</em></div>
+    <div class="modal-sub" id="confirmSub">Enter PIN to authorise</div>
+    <div class="modal-dots">
+      <div class="modal-dot" id="md0"></div>
+      <div class="modal-dot" id="md1"></div>
+      <div class="modal-dot" id="md2"></div>
+      <div class="modal-dot" id="md3"></div>
+    </div>
+    <div class="modal-npad">
+      <button class="mnk" onclick="mnk('1')">1</button>
+      <button class="mnk" onclick="mnk('2')">2</button>
+      <button class="mnk" onclick="mnk('3')">3</button>
+      <button class="mnk" onclick="mnk('4')">4</button>
+      <button class="mnk" onclick="mnk('5')">5</button>
+      <button class="mnk" onclick="mnk('6')">6</button>
+      <button class="mnk" onclick="mnk('7')">7</button>
+      <button class="mnk" onclick="mnk('8')">8</button>
+      <button class="mnk" onclick="mnk('9')">9</button>
+      <button class="mnk mblank"></button>
+      <button class="mnk" onclick="mnk('0')">0</button>
+      <button class="mnk mdel" onclick="mnkDel()">&#9003;</button>
+    </div>
+    <div class="modal-err" id="confirmErr"></div>
+    <button class="modal-cancel" onclick="closeConfirm()">✕ Cancel</button>
+  </div>
+</div>
+</body>
+</html>
