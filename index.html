@@ -361,6 +361,13 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .bnav-it.on{color:var(--ac);background:var(--acl);box-shadow:inset 0 0 0 1px rgba(105,190,81,.28);}
 .bnav-it:active{transform:scale(.94);}
 .bnav-ico{font-size:1.15rem;line-height:1;}
+/* Per-item identity colours — coral / green / amber */
+.bnav-it.bi-bal{color:#ff405f;}
+.bnav-it.bi-dep{color:#69be51;}
+.bnav-it.bi-stm{color:#ffa519;}
+.bnav-it.bi-bal.on{color:#ff405f;background:rgba(255,64,95,.13);box-shadow:inset 0 0 0 1px rgba(255,64,95,.3);}
+.bnav-it.bi-dep.on{color:#69be51;background:rgba(105,190,81,.13);box-shadow:inset 0 0 0 1px rgba(105,190,81,.3);}
+.bnav-it.bi-stm.on{color:#ffa519;background:rgba(255,165,25,.13);box-shadow:inset 0 0 0 1px rgba(255,165,25,.3);}
 
 .lscreen{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--t3);font-size:var(--t-subhead);}
 .spin{width:32px;height:32px;border:3px solid var(--br2);border-top-color:var(--ac);border-radius:50%;animation:rot .7s linear infinite;}
@@ -2093,15 +2100,15 @@ function App() {
 
       {/* BOTTOM NAV — personal destinations */}
       <div className="bnav">
-        <button className={`bnav-it${tab==='balance'?' on':''}`} onClick={() => setTab('balance')}>
+        <button className={`bnav-it bi-bal${tab==='balance'?' on':''}`} onClick={() => setTab('balance')}>
           <span className="bnav-ico">&#128188;</span>
           <span>My Balance</span>
         </button>
-        <button className="bnav-it" onClick={openContrib}>
+        <button className="bnav-it bi-dep" onClick={openContrib}>
           <span className="bnav-ico">&#129534;</span>
           <span>Deposit Log</span>
         </button>
-        <button className={`bnav-it${tab==='statements'?' on':''}`} onClick={() => setTab('statements')}>
+        <button className={`bnav-it bi-stm${tab==='statements'?' on':''}`} onClick={() => setTab('statements')}>
           <span className="bnav-ico">&#128196;</span>
           <span>Statements</span>
         </button>
