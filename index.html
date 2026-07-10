@@ -187,7 +187,7 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .tab-mo.on{background:#8b5cf6;color:#fff;box-shadow:0 2px 12px rgba(139,92,246,.35);}
 
 
-.panel{display:none;padding-bottom:80px;}
+.panel{display:none;padding-bottom:120px;}
 .panel.on{display:block;animation:up .3s ease;}
 
 .hero{padding:28px 20px 10px;text-align:center;}
@@ -306,6 +306,20 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .stmt-btn{width:100%;padding:13px;background:var(--card);border:1px solid var(--br2);border-radius:14px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:var(--t-subhead);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s;margin-bottom:14px;}
 .stmt-btn:hover{background:var(--acl);border-color:var(--ac);color:var(--ac);}
 .stmt-btn:active{transform:scale(.97);}
+
+/* ── Bottom nav — personal destinations ── */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;
+  display:flex;gap:6px;z-index:60;
+  background:var(--card);border-top:1px solid var(--br2);
+  padding:8px 10px calc(10px + env(safe-area-inset-bottom));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.bnav-it{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 4px;border:none;background:transparent;border-radius:14px;
+  color:var(--t3);font-size:var(--t-caption2);font-weight:700;cursor:pointer;
+  transition:all .18s;white-space:nowrap;}
+.bnav-it.on{color:var(--ac);background:var(--acl);}
+.bnav-it:active{transform:scale(.94);}
+.bnav-ico{font-size:1.15rem;line-height:1;}
 
 .lscreen{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--t3);font-size:var(--t-subhead);}
 .spin{width:32px;height:32px;border:3px solid var(--br2);border-top-color:var(--ac);border-radius:50%;animation:rot .7s linear infinite;}
@@ -994,8 +1008,8 @@ function AllMembers({month, rows, ts, data, theme, onBack, members}) {
   const fmt = n => n.toLocaleString('en-KE',{maximumFractionDigits:0});
   return (
     <div className="inner">
-      <button className="back-btn" onClick={onBack}>&#8592; Back to Overview</button>
-      <div className="inner-title">Group Saving &amp; Interest &middot; {month}</div>
+      {onBack && <button className="back-btn" onClick={onBack}>&#8592; Back to Overview</button>}
+      <div className="inner-title">Interest Accrual &middot; {month}</div>
       <div className="ccrd">
         <div className="clbl">Group Monthly Totals &amp; Projection</div>
         <div className="csub"><span style={{color:'#00c87a'}}>&#9646;</span> Monthly &nbsp;&middot;&nbsp; <span style={{color:'#3b82f6'}}>&#8213;</span> Projected</div>
@@ -1058,8 +1072,8 @@ function App() {
   const [tab,     setTab]      = useState('overview');
   const [overviewMonth, setOverviewMonth] = useState(curMonth);
   const [balanceMonth,  setBalanceMonth]  = useState(curMonth);
+  const [accrualMonth,  setAccrualMonth]  = useState(curMonth);
   const [alias,   setAlias]    = useState('');
-  const [allView, setAllView]  = useState(false);
   const [ts,      setTs]       = useState(null);
   const [pdfMsg,  setPdfMsg]   = useState(null);
   const [openDrop, setOpenDrop] = useState(null);
@@ -1101,7 +1115,7 @@ function App() {
         el.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
       });
     });
-  }, [loading, tab, overviewMonth, balanceMonth, alias, allView]);
+  }, [loading, tab, overviewMonth, balanceMonth, accrualMonth, alias]);
 
   const load = async () => {
     try {
@@ -1537,6 +1551,24 @@ function App() {
     window.open(URL.createObjectURL(new Blob([arr],{type:'text/html'})),'_blank');
   };
 
+  // Shared alias picker grid — used in My Balance and Statements
+  const aliasGrid = (
+    <div className="alias-grid-inline">
+      {members.map(a => (
+        <div key={a}
+          className="alias-cell"
+          style={{
+            background:   cityColor[a]  || 'var(--ibg)',
+            borderColor:  cityBorder[a] || 'var(--br)'
+          }}
+          onClick={() => setAlias(a)}>
+          <span className="alias-cell-ico">{cityIcon[a] || '👤'}</span>
+          <span className="alias-cell-lbl">{a}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="shell">
 
@@ -1567,9 +1599,9 @@ function App() {
       {/* PILL NAV */}
       <div className="nav-wrap">
         <div className="nav-track">
-          {[['overview','Overview','tab-ov'],['balance','My Balance','tab-bl'],['more','More+','tab-mo']].map(([id,lbl,cls]) => (
+          {[['overview','Overview','tab-ov'],['accrual','Interest Accrual','tab-bl'],['info','Info','tab-mo']].map(([id,lbl,cls]) => (
             <button key={id} className={`tab ${cls}${tab===id?' on':''}`}
-              onClick={() => { setTab(id); setAllView(false); }}>
+              onClick={() => setTab(id)}>
               {lbl}
             </button>
           ))}
@@ -1578,9 +1610,7 @@ function App() {
 
       {/* ══ OVERVIEW ══ */}
       <div className={`panel${tab==='overview'?' on':''}`}>
-        {allView
-          ? <AllMembers month={overviewMonth} rows={getRows(overviewMonth)} ts={ts} data={data} theme={theme} onBack={() => setAllView(false)} members={members} />
-          : <>
+        <>
               {/* Month selector — same pill style as My Balance */}
               <div className="bpad" style={{paddingTop:14,paddingBottom:0}}>
                 <div className="mscroll">
@@ -1623,20 +1653,6 @@ function App() {
                 </div>
               )}
 
-              {/* Quick-action glass cards — side by side */}
-              <div className="qarow">
-                <div className="qac qac1" onClick={openContrib}>
-                  <div className="qac-ico">&#129534;</div>
-                  <div className="qac-lbl">View Group Deposit Tracker</div>
-                  <div className="qac-arr">&#8599;</div>
-                </div>
-                <div className="qac qac2" onClick={() => setAllView(true)}>
-                  <div className="qac-ico">&#128202;</div>
-                  <div className="qac-lbl">View Group Saving &amp; Interest</div>
-                  <div className="qac-arr">&#8594;</div>
-                </div>
-              </div>
-
               {/* Group Performance card */}
               <div className="perf-card">
                 <div className="perf-head">
@@ -1658,7 +1674,20 @@ function App() {
 
               <div className="priv">&#128274; <strong>Members only.</strong> Do not share outside LMF.</div>
             </>
-        }
+      </div>
+
+      {/* ══ INTEREST ACCRUAL ══ */}
+      <div className={`panel${tab==='accrual'?' on':''}`}>
+        <div className="bpad" style={{paddingBottom:0}}>
+          <div className="mscroll">
+            {MONTHS.map(m => (
+              <button key={m} className={`mpill${accrualMonth===m?' on':''}`} onClick={() => setAccrualMonth(m)}>
+                {m.slice(0,3)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <AllMembers month={accrualMonth} rows={getRows(accrualMonth)} ts={ts} data={data} theme={theme} members={members} />
       </div>
 
       {/* ══ MY BALANCE ══ */}
@@ -1669,20 +1698,7 @@ function App() {
             /* ── No alias yet: show inline grid ── */
             <>
               <div className="alias-pick-hdr">&#128100; Who are you?</div>
-              <div className="alias-grid-inline">
-                {members.map(a => (
-                  <div key={a}
-                    className="alias-cell"
-                    style={{
-                      background:   cityColor[a]  || 'var(--ibg)',
-                      borderColor:  cityBorder[a] || 'var(--br)'
-                    }}
-                    onClick={() => setAlias(a)}>
-                    <span className="alias-cell-ico">{cityIcon[a] || '👤'}</span>
-                    <span className="alias-cell-lbl">{a}</span>
-                  </div>
-                ))}
-              </div>
+              {aliasGrid}
             </>
           ) : (
             /* ── Alias selected: show balance content ── */
@@ -1722,10 +1738,6 @@ function App() {
               </div>
               {ts && <div className="sts">Data as of {ts.toLocaleString('en-KE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true})}</div>}
             </div>
-
-            <button className="stmt-btn" onClick={generateStatement}>
-              &#128196; Generate My Statement
-            </button>
 
             {warn && (
               <div className="wcrd">
@@ -1873,8 +1885,8 @@ function App() {
         </div>
       </div>
 
-      {/* ══ MORE+ ══ */}
-      <div className={`panel${tab==='more'?' on':''}`}>
+      {/* ══ INFO ══ */}
+      <div className={`panel${tab==='info'?' on':''}`}>
         <div className="morepad">
 
           <div className="morecrd">
@@ -1910,6 +1922,44 @@ function App() {
             </div>
           </div>
 
+
+        </div>
+      </div>
+
+      {/* ══ STATEMENTS ══ */}
+      <div className={`panel${tab==='statements'?' on':''}`}>
+        <div className="morepad">
+
+          {/* My member statement */}
+          <div className="morecrd">
+            <div className="morehead">&#128196; My Member Statement</div>
+            <div className="morebody">
+              {!alias ? (
+                <>
+                  <div className="alias-pick-hdr" style={{marginTop:0}}>&#128100; Who are you?</div>
+                  {aliasGrid}
+                </>
+              ) : (
+                <>
+                  <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+                    <span style={{fontSize:'1.5rem'}}>{cityIcon[alias]||'👤'}</span>
+                    <span style={{fontFamily:"'Sora',sans-serif",fontWeight:800,fontSize:'var(--t-title3)'}}>{alias}</span>
+                    <button className="change-alias" style={{marginBottom:0,marginLeft:'auto'}} onClick={() => setAlias('')}>
+                      &#9998; Change
+                    </button>
+                  </div>
+                  <div style={{fontSize:'var(--t-footnote)',color:'var(--t3)',marginBottom:12,lineHeight:1.5}}>
+                    Year-to-date summary of your deposits, interest and balance &middot; Jan &ndash; {curMonth()} {CUR_YEAR}
+                  </div>
+                  <button className="stmt-btn" style={{marginBottom:0}} onClick={generateStatement}>
+                    &#128196; Generate My Statement
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Etica monthly PDFs */}
           <div className="morecrd">
             <div className="morehead">&#128196; Etica Monthly Statements</div>
             <div className="morebody">
@@ -1922,6 +1972,7 @@ function App() {
             </div>
           </div>
 
+          {/* STATEMENTS MODAL */}
           {/* Withdrawal Statement — shown in Dec if a request exists for the selected alias */}
           {alias && wdrawReqs[alias] && (() => {
             const r = wdrawReqs[alias];
@@ -1958,7 +2009,6 @@ function App() {
             );
           })()}
 
-          {/* STATEMENTS MODAL */}
           {openDrop === 'stmt' && (
             <>
               <div className="modal-blur" onClick={() => setOpenDrop(null)} />
@@ -1998,6 +2048,22 @@ function App() {
           )}
 
         </div>
+      </div>
+
+      {/* BOTTOM NAV — personal destinations */}
+      <div className="bnav">
+        <button className={`bnav-it${tab==='balance'?' on':''}`} onClick={() => setTab('balance')}>
+          <span className="bnav-ico">&#128188;</span>
+          <span>My Balance</span>
+        </button>
+        <button className="bnav-it" onClick={openContrib}>
+          <span className="bnav-ico">&#129534;</span>
+          <span>Deposit Log</span>
+        </button>
+        <button className={`bnav-it${tab==='statements'?' on':''}`} onClick={() => setTab('statements')}>
+          <span className="bnav-ico">&#128196;</span>
+          <span>Statements</span>
+        </button>
       </div>
 
     </div>
