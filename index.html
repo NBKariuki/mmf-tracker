@@ -253,16 +253,18 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .clbl{font-size:var(--t-caption1);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:2px;}
 .csub{font-size:var(--t-caption1);color:var(--t3);margin-bottom:10px;}
 
-.mtbl-wrap{background:var(--card);border:1px solid var(--br);border-radius:20px;overflow:hidden;box-shadow:var(--sh);margin-bottom:12px;}
-.mtbl{width:100%;border-collapse:collapse;font-size:var(--t-caption1);table-layout:fixed;}
+.mtbl-wrap{background:var(--card);border:1px solid var(--br);border-radius:20px;box-shadow:var(--sh);margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.mtbl{width:100%;border-collapse:collapse;font-size:var(--t-caption1);min-width:340px;}
 .mtbl thead{background:var(--card2);}
-.mtbl th{padding:7px 5px;text-align:right;color:var(--t3);font-size:var(--t-caption2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--br);white-space:nowrap;overflow:hidden;}
+.mtbl th{padding:8px 7px;text-align:right;color:var(--t3);font-size:var(--t-caption2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--br);white-space:nowrap;}
 .mtbl th.tl{text-align:left;}
-.mtbl td{padding:7px 5px;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mtbl td{padding:8px 7px;text-align:right;border-bottom:1px solid var(--br);color:var(--t2);white-space:nowrap;}
 .mtbl td.tl{text-align:left;}
+.mtbl th:first-child,.mtbl td:first-child{padding-left:12px;}
+.mtbl th:last-child,.mtbl td:last-child{padding-right:12px;}
 .mtbl tbody tr:last-child td{border-bottom:none;}
 .mtbl .tot td{background:var(--card2);color:var(--t1);font-weight:700;border-top:1px solid var(--br2);border-bottom:none;}
-.nm{font-family:'JetBrains Mono',monospace;font-size:var(--t-caption1);}
+.nm{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
 .ac{color:var(--ac)!important;font-weight:700!important;}
 .tcell{display:flex;align-items:center;justify-content:flex-end;gap:5px;}
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
@@ -279,8 +281,20 @@ button,select,input{touch-action:manipulation;font-family:inherit;}
 .asel:focus{border-color:var(--ac);}
 .asel option{background:var(--card);}
 .scrd{background:var(--card);border:1px solid var(--br);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:var(--sh);}
+.s-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.s-avatar{width:42px;height:42px;border-radius:13px;background:var(--ibg);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
 .s-alias{font-family:'Sora',sans-serif;font-size:var(--t-title2);font-weight:800;margin-bottom:2px;}
-.s-month{font-size:var(--t-footnote);color:var(--t3);margin-bottom:18px;}
+.s-month{font-size:var(--t-footnote);color:var(--t3);}
+/* Current Balance — full-width hero banner */
+.s-hero{position:relative;border-radius:18px;padding:18px 20px;margin-bottom:8px;overflow:hidden;
+  background:linear-gradient(135deg, rgba(105,190,81,.16), rgba(105,190,81,.04) 60%, rgba(143,224,106,.10));
+  border:1px solid rgba(105,190,81,.28);}
+.s-hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 70% at 12% 0%, rgba(255,255,255,.14), transparent 50%);}
+.s-hero-lbl{font-size:var(--t-caption2);font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ac);margin-bottom:6px;position:relative;}
+.s-hero-num{font-family:'Sora',sans-serif;font-size:var(--t-title1);font-weight:800;color:var(--ac);letter-spacing:-.03em;line-height:1;position:relative;
+  text-shadow:0 0 24px rgba(105,190,81,.28);}
+.s-hero-cur{position:absolute;top:16px;right:20px;font-size:var(--t-caption2);font-weight:700;color:var(--ac);opacity:.6;}
 .srow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--br);}
 .srow:last-child{border-bottom:none;padding-bottom:0;}
 .slbl{font-size:var(--t-subhead);color:var(--t2);}
@@ -1067,12 +1081,12 @@ function AllMembers({month, rows, ts, data, theme, onBack, members}) {
         <table className="mtbl">
           <thead>
             <tr>
-              <th className="tl" style={{width:'5%'}}>#</th>
-              <th className="tl" style={{width:'20%'}}>Alias</th>
-              <th className="nm" style={{width:'18%'}}>Opening</th>
-              <th className="nm" style={{width:'18%'}}>Top-ups</th>
-              <th className="nm" style={{width:'16%'}}>Int.</th>
-              <th className="nm" style={{width:'23%'}}>Balance</th>
+              <th className="tl">#</th>
+              <th className="tl">Alias</th>
+              <th className="nm">Opening</th>
+              <th className="nm">Top-ups</th>
+              <th className="nm">Int.</th>
+              <th className="nm">Balance</th>
             </tr>
           </thead>
           <tbody>
@@ -1763,8 +1777,20 @@ function App() {
                 &#9998; Change
               </button>
             <div className="scrd">
-              <div className="s-alias">{alias}</div>
-              <div className="s-month">{balanceMonth} {CUR_YEAR}</div>
+              <div className="s-head">
+                <div>
+                  <div className="s-alias">{alias}</div>
+                  <div className="s-month">{balanceMonth} {CUR_YEAR}</div>
+                </div>
+                <div className="s-avatar">{cityIcon[alias] || '👤'}</div>
+              </div>
+
+              <div className="s-hero">
+                <div className="s-hero-lbl">Current Balance</div>
+                <div className="s-hero-num">{f2(md.closingBalance)}</div>
+                <div className="s-hero-cur">KES</div>
+              </div>
+
               <div className="srow">
                 <span className="slbl">Opening Balance</span>
                 <span className="sval">{f2(md.openingBalance)}</span>
@@ -1779,10 +1805,6 @@ function App() {
                   <div className="hint">Early deposits earn more</div>
                 </span>
                 <span className="sval gr">{f2(md.interest)}</span>
-              </div>
-              <div className="srow">
-                <span className="slbl big">Current Balance</span>
-                <span className="sval hero">{f2(md.closingBalance)}</span>
               </div>
               {ts && <div className="sts">Data as of {ts.toLocaleString('en-KE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true})}</div>}
             </div>
